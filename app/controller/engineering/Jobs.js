@@ -25,7 +25,7 @@ Ext.define('Civic.controller.engineering.Jobs', {
 			selector: 'jobwindow'
 		},{
 			ref: 'callsGrid',
-			selector: 'engjobcalls'
+			selector: 'jobwindow engjobcalls'
 		},{
 			ref: 'searchWindow',
 			selector: 'searchcall'
@@ -46,10 +46,13 @@ Ext.define('Civic.controller.engineering.Jobs', {
 				click: this.onButtonClickEdit
 			},
 			'jobspanel button#delete': {
-				click: this.onButtonClickDelete
+				//click: this.onButtonClickDelete
 			},
 			'jobspanel button#clearFilter': {
 				click: this.onButtonClickClearFilter
+			},
+			'jobwindow': {
+				close: this.onWindowClose
 			},
 			'jobwindow engjobcalls': {
 				//render: this.onPanelRender,
@@ -132,7 +135,26 @@ Ext.define('Civic.controller.engineering.Jobs', {
 	},
 
 	onButtonClickAdd3: function (button, e, options) {
-		
+		searchWindow = this.getSearchWindow();
+		records = searchWindow.down('engjobcalls').getSelectionModel().getSelection();
+		form = this.getJobWindow().down('form');
+		callStore = form.down('engjobcalls').getStore();
+
+		if (callStore.data.length == 0) {
+			callStore = Ext.create('Civic.store.engineering.Calls', {
+				data: records
+			});
+			
+			form.getForm().setValues({
+				suburb: records[0].get('suburb')
+			});
+		} else{
+			callStore.add(records);
+		}
+
+		form.down('engjobcalls').reconfigure(callStore, this.getCallsGrid().cloneConfig().columns);
+		var cancelBtn = searchWindow.down('button#cancel');
+		cancelBtn.fireEvent('click', cancelBtn, e, options);
 	},
 
 	onButtonClickEdit: function (button, e, options) {
@@ -165,7 +187,27 @@ Ext.define('Civic.controller.engineering.Jobs', {
 	},
 
 	onButtonClickDelete: function (button, e, options) {
-		
+		var grid = button.up('engjobcalls');
+		var store = grid.getStore();
+		record = grid.getSelectionModel().getSelection();
+
+		if (record[0]) {
+			Ext.Msg.show({
+				title: 'Remove Call?',
+				msg: 'Are you sure you want to remove the selected call from the list?',
+				buttons: Ext.Msg.YESNO,
+				icon: Ext.Msg.QUESTION,
+				fn: function (buttonId) {
+					if (buttonId == 'yes') {
+						if (store.data.length < 2) {
+							Ext.Msg.alert('Error!', 'You cannot remove all calls from the job!');
+						} else{							
+							store.remove(record);
+						};
+					};
+				}
+			});
+		}
 	},
 
 	onButtonClickClear: function (button, e, options) {
@@ -183,5 +225,11 @@ Ext.define('Civic.controller.engineering.Jobs', {
 
 	onButtonClickSave: function (button, e, options) {
 		console.log('hey');
+	},
+
+	onWindowClose: function (window, eOpts) {
+		grid = this.getJobsGrid();
+		grid.getSelectionModel().deselectAll();
+		grid.fireEvent('render', grid);
 	} 
 });

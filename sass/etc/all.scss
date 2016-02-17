@@ -1,0 +1,124 @@
+//div css
+
+#titleHeader{
+	color: #000;
+	font-size: 20px;
+	font-family: 'Helvetica', sans-serif;
+}
+
+#appuser{
+	color: #00a0d9;
+	font-size: 10px;
+}
+
+//all menu iconCls
+
+.menu_admin{
+	background-image: url(images/app/menu_admin.png)!important;	
+}
+
+.menu_staticdata{
+	background-image: url(images/app/menu_staticdata.png)!important;	
+}
+
+.home{
+	background-image: url(images/app/home.png)!important;
+}
+
+.key{
+	background-image: url(images/app/key.png)!important;
+}	
+
+.cancel{
+	background-image: url(images/app/cancel.png)!important;
+}
+
+.key-go{
+	background-image: url(images/app/login.png)!important;
+}
+
+.capslock{
+	background: url(images/app/warning.png) no-repeat center left;
+	padding: 8px;
+	padding-left: 10px;
+	font-weight: 700;
+}
+
+//all buttons iconCls
+
+.logout{
+	background-image: url(images/app/logout.png)!important;
+}
+
+.add{
+	background-image: url(images/app/add.png)!important;
+}
+
+.edit{
+	background-image: url(images/app/edit.png)!important;
+}
+
+.delete{
+	background-image: url(images/app/delete.png)!important;
+}
+
+.save{
+	background-image: url(images/app/save.png)!important;
+}
+
+.save_all{
+	background-image: url(images/app/save_all.png)!important;
+}
+
+.clear_filter{
+	background-image: url(images/app/filter_del.gif)!important;
+}
+
+.find{
+	background-image: url(images/app/find.png)!important;
+}
+
+//map iconCls
+
+.previous{
+	background-image: url(images/app/previous.png)!important;
+}
+
+.next{
+	background-image: url(images/app/next.png)!important;
+}
+
+.zoom_in{
+	background-image: url(images/app/zoom_in.png)!important;
+}
+
+.zoom_out{
+	background-image: url(images/app/zoom_out.png)!important;
+}
+
+.zoom_extent{
+	background-image: url(images/app/zoom_ext.png)!important;
+}
+
+.pan{
+	background-image: url(images/app/pan_off.png)!important;
+}
+
+.info{
+	background-image: url(images/app/info.png)!important;
+}
+
+.legend{
+	background-image: url(images/app/legend.png)!important;
+}
+
+//mouse iconCls
+/*
+.olControlZoomIn{
+	background-image: url(images/app/zoom-in.png)!important;
+}
+
+.olControlZoomOut{
+	background-image: url(images/app/zoom-out.png)!important;
+}
+*/

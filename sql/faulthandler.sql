@@ -44,26 +44,31 @@ CREATE OR REPLACE FUNCTION fault_upd(callid INTEGER, cod TEXT, callerid INTEGER,
 
 
 --function to handle fault jobs
-CREATE OR REPLACE FUNCTION job_handler(callid INTEGER, createdby TEXT)
+CREATE OR REPLACE FUNCTION job_handler(jobid INTEGER, callid INTEGER [], createdby TEXT)
 	RETURNS TEXT AS 
 	$$
-		DECLARE
-			jobid engineering.job.job_id%TYPE;
+		DECLARE 
+			c INTEGER;
+			d BOOL;
 		BEGIN
-		/*	IF TG_OP = 'INSERT' THEN
-				INSERT INTO engineering.job(call_id, opened_on, last_update) 
-				VALUES(NEW.call_id, now(),now());
-			ELSIF TG_OP = 'DELETE' THEN
-				DELETE FROM engineering.job
-				WHERE call_id = OLD.call_id;
+			SELECT INTO d true FROM engineering.job WHERE job_id = jobid;
+			IF d THEN --update query--
+				FOREACH c IN ARRAY callid
+				LOOP
+					UPDATE engineering.call
+						SET job_id = jobid, status = 'PENDING'
+						WHERE call_id = c;
+				END LOOP;
+			ELSE --insert query--
+				INSERT INTO engineering.job(job_id, opened_by)
+					VALUES(jobid, createdby);
+				FOREACH c IN ARRAY callid
+				LOOP
+					UPDATE engineering.call
+						SET job_id = jobid, status = 'PENDING'
+						WHERE call_id = c;
+				END LOOP;
 			END IF;
-		*/
-			INSERT INTO engineering.job(opened_by)
-				VALUES(createdby);
-			SELECT INTO jobid SETVAL('engineering.job_job_id_seq', (SELECT MAX(job_id) FROM engineering.job));
-			UPDATE engineering.call
-				SET job_id = jobid
-				WHERE call_id = callid;
 			RETURN TRUE;
 		END;
 	$$ 
@@ -94,12 +99,14 @@ BEGIN;
 		('SB','MRS','NCUBE','772655306',7598,'joseph msipa st','Nkulumane',1,'t','PASSED TO MR SITHOLE AT 0746HRS AND HE STATED WILL ATTEND');
 	SELECT fault_handler
 		('BF','Mrs a','Khumalo','776775523',3977,NULL,'Iminyela',1,'t','PASSED TO MR SITHOLE AT 0746HRS AND HE STATED WILL ATTEND');
+	SELECT fault_handler
+		('BM','precious','mthupa','09269673',39,'moyana rd','Iminyela',1,'f','annual maintenance due');
 	SELECT job_handler
-		(1, 'reason');
+		(1, '{1}', 'reason');
 	SELECT job_handler
-		(2, 'reason');
+		(2, '{2}', 'reason');
 	SELECT job_handler
-		(3, 'brian');
+		(3, '{3,4}', 'brian');
 COMMIT;
 
 SELECT fault_upd

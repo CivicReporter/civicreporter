@@ -126,11 +126,18 @@ Ext.define('Civic.controller.engineering.Jobs', {
 
 	onButtonClickAdd: function (button, e, options) {
 		var win = Ext.widget('jobwindow');
+		store = this.getEngineeringJobsStore();
+		win.down('form').getForm().setValues({
+			job_id: store.data.length + 1
+		});
 		win.show();
 	},
 
 	onButtonClickAdd2: function (button, e, options) {
 		var win = Ext.widget('searchcall');
+		store = this.getEngineeringPendingCallsStore();
+		win.down('engjobcalls').reconfigure(store, this.getCallsGrid().cloneConfig().columns);
+		win.down('pagingtoolbar').bindStore(store);
 		win.show();
 	},
 
@@ -224,12 +231,58 @@ Ext.define('Civic.controller.engineering.Jobs', {
 	},
 
 	onButtonClickSave: function (button, e, options) {
-		console.log('hey');
+		var callsList = [];
+		win = this.getJobWindow();
+		grid = this.getJobsGrid();
+		form = win.down('form');
+
+		form.down('engjobcalls').getStore().each(function (record) {
+			callsList.push(record.get('call_id'));
+		});
+			
+		Ext.get(win.getEl()).mask('Saving...Please Wait...', 'loading');
+
+		form.getForm().submit({
+			clientValidation: false,
+			url: 'php/engineering/jobs/saveJob.php',
+			params: {
+				calls: Ext.JSON.encode(callsList)
+			},
+			success: function (form, action) {
+				Ext.get(win.getEl()).unmask();
+
+				var result = action.result;
+
+				if (result.success) {
+					Ext.Msg.alert('Success', 'Job saved successfully!');
+					grid.fireEvent('render', grid);
+					win.close()
+				} else {
+					Civic.util.Util.showErrorMsg(result.msg);
+				};
+			},
+			failure: function (form, action) {
+				Ext.get(win.getEl()).unmask();
+
+				switch (action.failureType) {
+					case Ext.form.action.Action.CLIENT_INVALID:
+						Ext.Msg.alert('Failure', 'Invalid values submitted!');
+						break;
+
+					case Ext.form.action.Action.CONNECT_FAILURE:
+						Ext.Msg.alert('Failure', 'Ajax communication failed.');
+						break;
+
+					case Ext.form.action.Action.SERVER_INVALID:
+						Ext.Msg.alert('Failure', action.result.msg);
+						break;
+				}
+			}
+		});
 	},
 
 	onWindowClose: function (window, eOpts) {
 		grid = this.getJobsGrid();
 		grid.getSelectionModel().deselectAll();
-		grid.fireEvent('render', grid);
 	} 
 });

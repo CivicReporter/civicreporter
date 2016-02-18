@@ -8,7 +8,7 @@ Ext.define('Civic.store.engineering.PendingCalls', {
 
 	model: 'Civic.model.engineering.Call',
 
-	pageSize: 5,
+	//pageSize: 5,
 	storeId: 'pendingcalls',
 
 	proxy: {

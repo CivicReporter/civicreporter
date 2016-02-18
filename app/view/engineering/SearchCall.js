@@ -29,7 +29,6 @@ Ext.define('Civic.view.engineering.SearchCall', {
 				},{
 					xtype: 'engjobcalls',
 					height: 210,
-					store: 'engineering.PendingCalls',
 					selModel: {
 						mode: 'MULTI',
 						allowDeselect: true
@@ -38,7 +37,6 @@ Ext.define('Civic.view.engineering.SearchCall', {
 						{
 							dock: 'bottom',
 							xtype: 'pagingtoolbar',
-							store: 'engineering.PendingCalls',
 							displayInfo: true,
 							displayMsg: 'Displaying Calls {0} - {1} of {2}'
 						}

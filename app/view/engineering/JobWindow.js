@@ -61,8 +61,7 @@ Ext.define('Civic.view.engineering.JobWindow', {
 							items: [
 								{
 									fieldLabel: 'Job Id',
-									name: 'job_id',
-									value: Ext.getStore('engineering.Jobs').data.length + 1
+									name: 'job_id'
 								},{
 									fieldLabel: 'Suburb',
 									name: 'suburb'

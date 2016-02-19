@@ -164,6 +164,36 @@ Ext.define('Civic.view.civicr.JobsGrid', {
 			format: 'Y-m-d H:i:s',
 			filter: true,
 			renderer: Ext.util.Format.dateRenderer('j M Y H:i:s')
+		},{
+			xtype: 'actioncolumn',
+			width: 30,
+			align: 'center',
+			sortable: false,
+			menuDisabled: true,
+			items: [
+				{
+					handler: function (view, rowIndex, colIndex, item, e) {
+						
+					},
+					iconCls: 'accept',
+					tooltip: 'Close job'
+				}
+			]
+		},{
+			xtype: 'actioncolumn',
+			width: 30,
+			align: 'center',
+			sortable: false,
+			menuDisabled: true,
+			items: [
+				{
+					handler: function (view, rowIndex, colIndex, item, e) {
+						
+					},
+					iconCls: 'cancel',
+					tooltip: 'Cancel job'
+				}
+			]
 		}
 	] 
 });

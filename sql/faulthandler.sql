@@ -44,16 +44,27 @@ CREATE OR REPLACE FUNCTION fault_upd(callid INTEGER, cod TEXT, callerid INTEGER,
 
 
 --function to handle fault jobs
-CREATE OR REPLACE FUNCTION job_handler(jobid INTEGER, callid INTEGER [], createdby TEXT)
+CREATE OR REPLACE FUNCTION job_handler(jobid INTEGER, newcalls INTEGER [], createdby TEXT)
 	RETURNS TEXT AS 
 	$$
 		DECLARE 
 			c INTEGER;
 			d BOOL;
+			oldcalls INTEGER [];
 		BEGIN
 			SELECT INTO d true FROM engineering.job WHERE job_id = jobid;
+
 			IF d THEN --update query--
-				FOREACH c IN ARRAY callid
+				SELECT INTO oldcalls call_id FROM engineering.call WHERE job_id = jobid;
+				FOREACH c IN ARRAY oldcalls
+				LOOP
+					IF NOT (c = ANY (CAST(newcalls AS INTEGER []))) THEN --remove old call from job--
+						UPDATE engineering.call
+							SET job_id = NULL
+							WHERE call_id = c;
+					END IF;
+				END LOOP;
+				FOREACH c IN ARRAY newcalls
 				LOOP
 					UPDATE engineering.call
 						SET job_id = jobid, status = 'PENDING'
@@ -62,7 +73,7 @@ CREATE OR REPLACE FUNCTION job_handler(jobid INTEGER, callid INTEGER [], created
 			ELSE --insert query--
 				INSERT INTO engineering.job(job_id, opened_by)
 					VALUES(jobid, createdby);
-				FOREACH c IN ARRAY callid
+				FOREACH c IN ARRAY newcalls
 				LOOP
 					UPDATE engineering.call
 						SET job_id = jobid, status = 'PENDING'
@@ -79,8 +90,16 @@ CREATE OR REPLACE FUNCTION job_closer()
   RETURNS TRIGGER AS 
   $$
     BEGIN
-    	IF NEW.status IN ('CLOSED','CANCELLED') THEN
+    	IF NEW.status ='CLOSED' THEN
        		NEW.closed_on = CURRENT_TIMESTAMP;
+       		UPDATE engineering.call
+       			SET status = 'CLOSED'
+       			WHERE job_id = NEW.job_id;
+       	ELSIF NEW.status ='CANCELLED' THEN
+       		NEW.closed_on = CURRENT_TIMESTAMP;
+       		UPDATE engineering.call
+       			SET status = 'OPEN', job_id = NULL
+       			WHERE job_id = NEW.job_id;
        	END IF;
       RETURN NEW;
     END;

@@ -4,33 +4,59 @@
 
 	session_start();
  
-	$calls = json_decode($_POST['calls']);
 	$userName = $_SESSION['username'];
 	$jobId = $_POST['job_id'];
-
-	$callId = '{';
-
-	foreach ($calls as $call) {
-		$callId .= $call. ',';
-	}
-
-	$callId = substr($callId, 0, -1) . '}';
-
-
-	$insertQuery = "SELECT job_handler('$jobId','$callId','$userName')";
-
-	$sth = pg_query($dbh, $insertQuery);
-
+	
 	$success = false;
-	$msg = pg_last_error($dbh);
 
-	while ($r = pg_fetch_assoc($sth)) {
+	if (isset($_POST['calls'])) { //create or edit job details
+		
+		$calls = json_decode($_POST['calls']);
 
-		if ($r['job_handler']) {
+		$callId = '{';
+
+		foreach ($calls as $call) {
+			$callId .= $call. ',';
+		}
+
+		$callId = substr($callId, 0, -1) . '}';
+
+
+		$insertQuery = "SELECT job_handler('$jobId','$callId','$userName')";
+
+		$sth = pg_query($dbh, $insertQuery);
+
+		$msg = pg_last_error($dbh);
+
+		while ($r = pg_fetch_assoc($sth)) {
+
+			if ($r['job_handler']) {
+				$success = true;
+				$msg = 'New job created!';
+			} 				
+		}
+
+	} else { //modify job status only
+
+		$status = $_POST['status'];
+		
+		$updateQuery = "UPDATE engineering.job ";
+		$updateQuery.= "SET status = '$status', closed_by = '$userName' ";
+		$updateQuery.= "WHERE job_id = '$jobId'";
+
+		$sth = pg_query($dbh, $updateQuery);
+
+		if (!pg_last_error($dbh)) {			
+			$msg = 'Job status updated.';
 			$success = true;
-			$msg = 'New job created!';
-		} 				
-	}	
+			
+		} else {
+			$msg = pg_last_error($dbh);
+		}
+
+	}
+	
+		
 
 	header('Content-type: text/html');
 

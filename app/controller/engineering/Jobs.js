@@ -12,7 +12,6 @@ Ext.define('Civic.controller.engineering.Jobs', {
 
 	stores: [
 		'engineering.Jobs',
-		'staticData.Status',
 		'engineering.PendingCalls' 
 	],
 
@@ -45,8 +44,11 @@ Ext.define('Civic.controller.engineering.Jobs', {
 			'jobspanel button#edit': {
 				click: this.onButtonClickEdit
 			},
-			'jobspanel button#delete': {
-				//click: this.onButtonClickDelete
+			'jobspanel button#close': {
+				click: this.onButtonClickCloseJob
+			},
+			'jobspanel button#cancel': {
+				click: this.onButtonClickCancelJob
 			},
 			'jobspanel button#clearFilter': {
 				click: this.onButtonClickClearFilter
@@ -95,10 +97,12 @@ Ext.define('Civic.controller.engineering.Jobs', {
 
 		if (selModel.hasSelection()) {		
 			grid.down('button#edit').enable();
-			grid.down('button#delete').enable();
+			grid.down('button#close').enable();
+			grid.down('button#cancel').enable();
 		} else{
 			grid.down('button#edit').disable();
-			grid.down('button#delete').disable();
+			grid.down('button#close').disable();
+			grid.down('button#cancel').disable();
 		};
 	},
 
@@ -128,7 +132,8 @@ Ext.define('Civic.controller.engineering.Jobs', {
 		var win = Ext.widget('jobwindow');
 		store = this.getEngineeringJobsStore();
 		win.down('form').getForm().setValues({
-			job_id: store.data.length + 1
+			job_id: store.data.length + 1,
+			status: 'OPEN'
 		});
 		win.show();
 	},
@@ -191,6 +196,84 @@ Ext.define('Civic.controller.engineering.Jobs', {
 			win.show();
 
 		};
+	},
+
+	onButtonClickCloseJob: function (button, e, options) {
+		var grid = button.up('jobspanel');
+		record = grid.getSelectionModel().getSelection();
+
+		if (record[0]) {
+			Ext.Msg.show({
+				title: 'Close Job?',
+				msg: 'Are you sure you want to close the selected job?',
+				buttons: Ext.Msg.YESNO,
+				icon: Ext.Msg.QUESTION,
+				fn: function (buttonId) {
+					if (buttonId == 'yes') {
+						Ext.Ajax.request({
+                            url: 'php/engineering/jobs/saveJob.php',
+                            params: {
+                                job_id: record[0].get('job_id'),
+                                status: 'CLOSED'
+                            },
+                            success: function(conn, response, options, eOpts) {
+                                var result = Civic.util.Util.decodeJSON(conn.responseText);
+
+                                if (result.success) {
+                                    //Civic.util.Alert.msg('Success!', 'Call Deleted.');
+									Ext.Msg.alert('Success!', 'Job status set to "CLOSED".');
+                                    grid.getStore().load();                                  
+                                } else {
+                                    Civic.util.Util.showErrorMsg(conn.responseText);
+                                }
+                            },
+                            failure: function(conn, response, options, eOpts) {
+                                Civic.util.Util.showErrorMsg(conn.responseText);
+                            }
+                        });
+					};
+				}
+			});
+		}
+	},
+
+	onButtonClickCancelJob: function (button, e, options) {
+		var grid = button.up('jobspanel');
+		record = grid.getSelectionModel().getSelection();
+
+		if (record[0]) {
+			Ext.Msg.show({
+				title: 'Cancel Job?',
+				msg: 'Are you sure you want to cancel the selected job?',
+				buttons: Ext.Msg.YESNO,
+				icon: Ext.Msg.QUESTION,
+				fn: function (buttonId) {
+					if (buttonId == 'yes') {
+						Ext.Ajax.request({
+                            url: 'php/engineering/jobs/saveJob.php',
+                            params: {
+                                job_id: record[0].get('job_id'),
+                                status: 'CANCELLED'
+                            },
+                            success: function(conn, response, options, eOpts) {
+                                var result = Civic.util.Util.decodeJSON(conn.responseText);
+
+                                if (result.success) {
+                                    //Civic.util.Alert.msg('Success!', 'Call Deleted.');
+									Ext.Msg.alert('Success!', 'Job status set to "CANCELLED".');
+                                    grid.getStore().load();                                  
+                                } else {
+                                    Civic.util.Util.showErrorMsg(conn.responseText);
+                                }
+                            },
+                            failure: function(conn, response, options, eOpts) {
+                                Civic.util.Util.showErrorMsg(conn.responseText);
+                            }
+                        });
+					};
+				}
+			});
+		}
 	},
 
 	onButtonClickDelete: function (button, e, options) {

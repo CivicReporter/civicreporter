@@ -7,28 +7,41 @@ Ext.define('Civic.view.toolbar.AddEditDeleteFilter', {
 	items: [
 		{
 			xtype: 'button',
-			text: 'Add',
+			text: 'New',
 			itemId: 'add',
-			iconCls: 'add'
+			iconCls: 'add',
+			tooltip: 'Create new job'
+		},{
+			xtype: 'tbseparator'
 		},{
 			xtype: 'button',
 			text: 'Edit',
 			itemId: 'edit',
 			disabled: true,
-			iconCls: 'edit'
+			iconCls: 'edit',
+			tooltip: 'Edit selected job'
 		},{
 			xtype: 'button',
-			text: 'Delete',
-			itemId: 'delete',
+			text: 'Close',
+			itemId: 'close',
 			disabled: true,
-			iconCls: 'delete'
+			iconCls: 'accept',
+			tooltip: 'Set job status to "Closed"'
+		},{
+			xtype: 'button',
+			text: 'Cancel',
+			itemId: 'cancel',
+			disabled: true,
+			iconCls: 'cancel',
+			tooltip: 'Set job status to "Cancelled"'
 		},{
 			xtype: 'tbseparator'
 		},{
 			xtype: 'button',
 			itemId: 'clearFilter',
 			text: 'Clear Filters',
-			iconCls: 'clear_filter'
+			iconCls: 'clear_filter',
+			tooltip: 'Clear column filters'
 		}
 	]
 });

@@ -8,7 +8,7 @@ Ext.define('Civic.store.staticData.Status', {
 	],
 
 	data: [
-		['OPEN'],['PENDING'],['CANCELLED'],['CLOSED']
+		['PENDING'],['CANCELLED'],['CLOSED']
 	],
 
 	autoLoad: true

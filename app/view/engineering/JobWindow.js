@@ -66,15 +66,8 @@ Ext.define('Civic.view.engineering.JobWindow', {
 									fieldLabel: 'Suburb',
 									name: 'suburb'
 								},{
-									xtype: 'combobox',
 									fieldLabel: 'Status',
-									name: 'status',
-									displayField: 'text',
-									valueField: 'text',
-									queryMode: 'local',
-									store: 'staticData.Status',
-									value: 'OPEN',
-									readOnly: true
+									name: 'status'
 								},{
 									xtype: 'datefield',
 									fieldLabel: 'Opened On',

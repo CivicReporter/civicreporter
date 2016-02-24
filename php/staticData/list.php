@@ -18,7 +18,7 @@
 			$r = array();
 			$r['data'] = array();
 			
-			if ($count == 1 AND $user['urole'] == 'admin' || $user['urole'] == 'it') {
+			if ($count == 1 AND $user['urole'] == 'admin' || $user['urole'] == 'call centre') {
 
 				pg_free_result($sth);
 

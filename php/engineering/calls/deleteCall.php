@@ -4,17 +4,29 @@
 
 	session_start();
  
-	$callerId = $_POST['caller_id'];
+	$callId = $_POST['call_id'];
+	$success = false;
 
-	$deleteQuery = "DELETE FROM staticdata.caller WHERE caller_id = $callerId";
+	$cancelQuery = "UPDATE engineering.call ";
+	$cancelQuery.= "SET status = 'CANCELLED' ";
+	$cancelQuery.= "WHERE call_id = '$callId'";
 
-	$sth = pg_query($dbh, $deleteQuery) or die(pg_last_error($dbh));
+	$sth = pg_query($dbh, $cancelQuery);
+
+	if (!pg_last_error($dbh)) {
+		$msg = 'Call status updated.';
+		$success = true;
+
+	} else {
+		$msg = pg_last_error($dbh);
+	}
+	
 
 	header('Content-type: text/html');
 
 	echo json_encode(array(
-		"success" => true,
-		"msg" => ''
+		"success" => $success,
+		"msg" => $msg
 	));
 	
 	pg_close($dbh);

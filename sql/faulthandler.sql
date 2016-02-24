@@ -44,23 +44,23 @@ CREATE OR REPLACE FUNCTION fault_upd(callid INTEGER, cod TEXT, callerid INTEGER,
 
 
 --function to handle fault jobs
-CREATE OR REPLACE FUNCTION job_handler(jobid INTEGER, newcalls INTEGER [], createdby TEXT)
+CREATE OR REPLACE FUNCTION job_handler(jobid INTEGER, subb TEXT ,newcalls INTEGER [], createdby TEXT)
 	RETURNS TEXT AS 
 	$$
 		DECLARE 
 			c INTEGER;
 			d BOOL;
 			oldcalls INTEGER [];
+			suburbid staticdata.suburb.suburb_id%TYPE;
 		BEGIN
 			SELECT INTO d true FROM engineering.job WHERE job_id = jobid;
-
 			IF d THEN --update query--
-				SELECT INTO oldcalls call_id FROM engineering.call WHERE job_id = jobid;
+				SELECT INTO oldcalls ARRAY(SELECT call_id FROM engineering.call WHERE job_id = jobid);
 				FOREACH c IN ARRAY oldcalls
 				LOOP
-					IF NOT (c = ANY (CAST(newcalls AS INTEGER []))) THEN --remove old call from job--
+					IF NOT (c = ANY (newcalls)) THEN --remove old call from job--
 						UPDATE engineering.call
-							SET job_id = NULL
+							SET job_id = NULL, status = 'OPEN'
 							WHERE call_id = c;
 					END IF;
 				END LOOP;
@@ -71,8 +71,9 @@ CREATE OR REPLACE FUNCTION job_handler(jobid INTEGER, newcalls INTEGER [], creat
 						WHERE call_id = c;
 				END LOOP;
 			ELSE --insert query--
-				INSERT INTO engineering.job(job_id, opened_by)
-					VALUES(jobid, createdby);
+				SELECT INTO suburbid suburb_id FROM staticdata.suburb WHERE name = UPPER(subb);
+				INSERT INTO engineering.job(job_id, suburb_id, opened_by)
+					VALUES(jobid, suburbid, createdby);
 				FOREACH c IN ARRAY newcalls
 				LOOP
 					UPDATE engineering.call

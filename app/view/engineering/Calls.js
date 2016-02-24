@@ -3,7 +3,7 @@ Ext.define('Civic.view.engineering.Calls', {
 	alias: 'widget.engcallsgrid',
 
 	requires: [
-		'Civic.view.toolbar.AddEditDeleteFilter',
+		'Civic.view.toolbar.AddEditCancelFilter',
 		'Civic.util.Util'
 	],
 
@@ -40,7 +40,7 @@ Ext.define('Civic.view.engineering.Calls', {
 			displayInfo: true,
 			displayMsg: 'Displaying Calls {0} - {1} of {2}'
 		},{
-			xtype: 'addeditdeletefilter'
+			xtype: 'addeditcancelfilter'
 		}
 	]
 });

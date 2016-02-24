@@ -21,7 +21,7 @@ Ext.define('Civic.view.engineering.SearchCall', {
 			items: [
 				{
 					xtype: 'label',
-					text: 'Hold Ctrl to select more than one call.',
+					text: 'Hold CTRL or SHIFT to select more than one call.',
 					padding: '10 5 5 5',
 					style: {
 						fontWeight: 'bold'

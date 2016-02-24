@@ -116,6 +116,13 @@ Ext.define('Civic.view.civicr.JobsGrid', {
 				type: 'numeric'
 			}
 		},{
+			text: 'Suburb',
+			width: 150,
+			dataIndex: 'suburb',
+			filter: {
+				type: 'string'
+			}
+		},{
 			text: 'Status',
 			width: 200,
 			flex: 1,
@@ -172,8 +179,8 @@ Ext.define('Civic.view.civicr.JobsGrid', {
 			menuDisabled: true,
 			items: [
 				{
-					handler: function (view, rowIndex, colIndex, item, e) {
-						
+					handler: function (view, rowIndex, colIndex, item, e, record) {
+						this.fireEvent('itemclick', this, 'close', view, e, record);						
 					},
 					iconCls: 'accept',
 					tooltip: 'Close job'
@@ -187,8 +194,8 @@ Ext.define('Civic.view.civicr.JobsGrid', {
 			menuDisabled: true,
 			items: [
 				{
-					handler: function (view, rowIndex, colIndex, item, e) {
-						
+					handler: function (view, rowIndex, colIndex, item, e, record) {
+						this.fireEvent('itemclick', this, 'cancel', view, e, record);
 					},
 					iconCls: 'cancel',
 					tooltip: 'Cancel job'

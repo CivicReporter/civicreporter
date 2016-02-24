@@ -7,6 +7,6 @@ Ext.define('Civic.store.engineering.Jobs', {
 
 	model: 'Civic.model.engineering.Job',
 
-	pageSize: 25,
+	pageSize: 10,
 	storeId: 'jobs'
 });

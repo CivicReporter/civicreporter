@@ -6,6 +6,7 @@
  
 	$userName = $_SESSION['username'];
 	$jobId = $_POST['job_id'];
+	$suburb = $_POST['suburb'];
 	
 	$success = false;
 
@@ -22,7 +23,7 @@
 		$callId = substr($callId, 0, -1) . '}';
 
 
-		$insertQuery = "SELECT job_handler('$jobId','$callId','$userName')";
+		$insertQuery = "SELECT job_handler('$jobId','$suburb','$callId','$userName')";
 
 		$sth = pg_query($dbh, $insertQuery);
 

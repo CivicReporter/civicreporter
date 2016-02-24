@@ -18,25 +18,23 @@
 
 			$folder = array();
 			
-			if ($count == 1 AND $user['urole'] == 'admin') {
+			if ($count == 1 AND ($user['urole'] == 'admin' || $user['urole'] == 'call centre')) {
 
 				pg_free_result($sth);
 
-				$sql = "SELECT job_id, status, opened_on, closed_on, last_update, opened_by, closed_by ";
-				$sql.= "FROM engineering.job ";
-				$sql.= "ORDER BY job_id ";
+				$sql = "SELECT ej.job_id, ss.name suburb, ej.status, ej.opened_on, ej.closed_on, ej.last_update, ej.opened_by, ej.closed_by ";
+				$sql.= "FROM engineering.job ej ";
+				$sql.= "INNER JOIN staticdata.suburb ss ON ej.suburb_id = ss.suburb_id ";
+				$sql.= "ORDER BY job_id DESC ";
 				$sql.= "OFFSET $offset LIMIT $limit";
 
 				if ($sth = pg_query($dbh, $sql)) {
 
 					$c = pg_num_rows($sth);
 
-					$folder['msg'] = $c.' records retrieved.';
-
 					if ($c > 0) {
 
 						$folder['success'] = true;
-						$folder['total'] = $c;
 
 						while ($r = pg_fetch_assoc($sth)) {
 
@@ -64,6 +62,17 @@
 								}
 
 								$folder['jobs'][] = $r;
+							}
+						}
+
+						pg_free_result($sth);
+
+						$countQuery = "SELECT COUNT(*) count FROM engineering.job ";
+
+						if ($sth = pg_query($dbh, $countQuery)) {
+							while ($count = pg_fetch_assoc($sth)) {
+								$folder['msg'] = $count['count'].' records retrieved.';
+								$folder['total'] = $count['count'];
 							}
 						}
 

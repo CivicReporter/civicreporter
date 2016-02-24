@@ -19,7 +19,7 @@
 			$r = array();
 			$r['data'] = array();
 			
-			if ($count == 1 AND $user['urole'] == 'admin') {
+			if ($count == 1 AND ($user['urole'] == 'admin' || $user['urole'] == 'call centre')) {
 
 				pg_free_result($sth);
 
@@ -30,23 +30,37 @@
 				if (isset($_REQUEST['status'])) {
 					$sql.= " WHERE status = 'OPEN' ";
 				}
-				$sql.= "ORDER BY ec.call_id ";
+				$sql.= "ORDER BY ec.call_id DESC ";
 				$sql.= "OFFSET $offset LIMIT $limit";
 
 				if ($sth = pg_query($dbh, $sql)) {
 					$c = pg_num_rows($sth);
 
-					$r['msg'] = $c.' records retrieved.';
-					$r['total'] = $c;
 					if ($c > 0) {
 						$r['success'] = true;
 
 						while ($items = pg_fetch_assoc($sth)) {
 							$r['data'][] = $items;
 						}
+
+						pg_free_result($sth);
+
+						$countQuery = "SELECT COUNT(*) count FROM engineering.call ";
+						
+						if (isset($_REQUEST['status'])) {
+							$countQuery.= " WHERE status = 'OPEN' ";
+						}
+
+						if ($sth = pg_query($dbh, $countQuery)) {
+							while ($count = pg_fetch_assoc($sth)) {
+								$r['msg'] = $count['count'].' records retrieved.';
+								$r['total'] = $count['count'];
+							}
+						}
+
 					} else {
 						$r['success'] = false;
-					}	
+					}						
 				}
 				
 			} else {

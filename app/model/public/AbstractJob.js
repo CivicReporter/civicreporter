@@ -6,6 +6,9 @@ Ext.define('Civic.model.public.AbstractJob', {
 			name: 'job_id',
 			type: 'int'
 		},{
+			name: 'suburb',
+			type: 'string'
+		},{
 			name: 'status',
 			type: 'string'
 		},{

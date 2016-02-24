@@ -293,6 +293,7 @@ DROP TABLE IF EXISTS engineering.job ;
 
 CREATE TABLE IF NOT EXISTS engineering.job (
   job_id SERIAL NOT NULL,
+  suburb_id INT NOT NULL,
   status JOBSTATUS NOT NULL DEFAULT 'OPEN',
   opened_on TIMESTAMP(0) NOT NULL DEFAULT CURRENT_TIMESTAMP,
   closed_on TIMESTAMP(0) NULL,
@@ -300,7 +301,12 @@ CREATE TABLE IF NOT EXISTS engineering.job (
   opened_by VARCHAR(45),
   closed_by VARCHAR(45),
   UNIQUE (job_id),
-  PRIMARY KEY (job_id)
+  PRIMARY KEY (job_id),
+  CONSTRAINT job_suburb
+    FOREIGN KEY (suburb_id)
+    REFERENCES staticdata.suburb (suburb_id)
+    ON DELETE CASCADE
+    ON UPDATE CASCADE
 );
 
 CREATE TRIGGER upd_engjob BEFORE UPDATE ON engineering.job FOR EACH ROW EXECUTE PROCEDURE upd_time();

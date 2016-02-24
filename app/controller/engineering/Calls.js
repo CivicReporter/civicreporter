@@ -39,7 +39,7 @@ Ext.define('Civic.controller.engineering.Calls', {
 			'engcallsgrid button#edit': {
 				click: this.onButtonClickEdit
 			},
-			'engcallsgrid button#delete': {
+			'engcallsgrid button#cancel': {
 				click: this.onButtonClickDelete
 			},
 			'engcallsgrid button#clearFilter': {
@@ -80,11 +80,11 @@ Ext.define('Civic.controller.engineering.Calls', {
 		if (selModel.hasSelection()) {
 			
 			grid.down('button#edit').enable();
-			grid.down('button#delete').enable();
+			grid.down('button#cancel').enable();
 		} else{
 
 			grid.down('button#edit').disable();
-			grid.down('button#delete').disable();
+			grid.down('button#cancel').disable();
 		};
 	},
 
@@ -96,38 +96,40 @@ Ext.define('Civic.controller.engineering.Calls', {
 	onButtonClickEdit: function (button, e, options) {
 		var grid = button.up('engcallsgrid');
 		record = grid.getSelectionModel().getSelection();
-
 		var callersStore = Ext.getStore('staticData.Callers');
 
 		if (record[0]) {
-			var editWindow = Ext.create('Civic.view.engineering.CallWindow');
+			status = record[0].get('status');
 
-			var form = editWindow.down('form');
+			if (status == 'OPEN') {
+				var editWindow = Ext.create('Civic.view.engineering.CallWindow');
+				var form = editWindow.down('form');
+				var callerId = record[0].get('caller_id');
+				var caller = callersStore.findRecord('caller_id', callerId);
 
-			var callerId = record[0].get('caller_id');
+				var values = {
+					firstname: caller.get('firstname'),
+					lastname: caller.get('surname'),
+					phone: caller.get('phone'),
+					call_id: record[0].get('call_id'),
+					caller_id: callerId,
+					code: record[0].get('code'),
+					suburb: record[0].get('suburb'),
+					street: record[0].get('street'),
+					stand_no: record[0].get('stand_no'),
+					severity: record[0].get('severity'),
+					description: record[0].get('description'),
+					property_damage: record[0].get('property_damage') 
+				};
 
-			var caller = callersStore.findRecord('caller_id', callerId);
+				form.getForm().setValues(values);
 
-			var values = {
-				firstname: caller.get('firstname'),
-				lastname: caller.get('surname'),
-				phone: caller.get('phone'),
-				call_id: record[0].get('call_id'),
-				caller_id: callerId,
-				code: record[0].get('code'),
-				suburb: record[0].get('suburb'),
-				street: record[0].get('street'),
-				stand_no: record[0].get('stand_no'),
-				severity: record[0].get('severity'),
-				description: record[0].get('description'),
-				property_damage: record[0].get('property_damage') 
-			};
-
-			form.getForm().setValues(values);
-
-			editWindow.setTitle('Editing Call #' + record[0].get('call_id'));
-			editWindow.setIconCls('call_edit');
-			editWindow.show();
+				editWindow.setTitle('Editing Call #' + record[0].get('call_id'));
+				editWindow.setIconCls('call_edit');
+				editWindow.show();
+			} else {				
+				Civic.util.Util.showErrorMsg('You cannot edit a '+status+' call!');
+			}
 		};
 	},
 
@@ -137,40 +139,46 @@ Ext.define('Civic.controller.engineering.Calls', {
 		record = grid.getSelectionModel().getSelection();
 
 		if (record[0]) {
-			Ext.Msg.show({
-				title: 'Delete Call?',
-				msg: 'Are you sure you want to delete the selected call?',
-				buttons: Ext.Msg.YESNO,
-				icon: Ext.Msg.QUESTION,
-				fn: function (buttonId) {
-					if (buttonId == 'yes') {
-						Ext.Ajax.request({
-                            url: 'php/engineering/calls/deleteCall.php',
-                            params: {
-                                caller_id: record[0].get('caller_id')
-                            },
-                            success: function(conn, response, options, eOpts) {
+			status = record[0].get('status');
 
-                                var result = Civic.util.Util.decodeJSON(conn.responseText);
+			if (status == 'OPEN') {
+				Ext.Msg.show({
+					title: 'Cancel Call?',
+					msg: 'Are you sure you want to cancel the selected call?',
+					buttons: Ext.Msg.YESNO,
+					icon: Ext.Msg.QUESTION,
+					fn: function (buttonId) {
+						if (buttonId == 'yes') {
+							Ext.Ajax.request({
+	                            url: 'php/engineering/calls/deleteCall.php',
+	                            params: {
+	                                call_id: record[0].get('call_id')
+	                            },
+	                            success: function(conn, response, options, eOpts) {
 
-                                if (result.success) {
-                                    //Civic.util.Alert.msg('Success!', 'Call Deleted.');
-									Ext.Msg.alert('Success!', 'Call Deleted.');
+	                                var result = Civic.util.Util.decodeJSON(conn.responseText);
 
-                                    store.load();                                  
-                                } else {
+	                                if (result.success) {
+	                                    //Civic.util.Alert.msg('Success!', 'Call Deleted.');
+										Ext.Msg.alert('Success!', 'Call status set to "CANCELLED".');
 
-                                    Civic.util.Util.showErrorMsg(conn.responseText);
-                                }
-                            },
-                            failure: function(conn, response, options, eOpts) {
+	                                    store.load();                                  
+	                                } else {
 
-                                Civic.util.Util.showErrorMsg(conn.responseText);
-                            }
-                        });
-					};
-				}
-			});
+	                                    Civic.util.Util.showErrorMsg(conn.responseText);
+	                                }
+	                            },
+	                            failure: function(conn, response, options, eOpts) {
+
+	                                Civic.util.Util.showErrorMsg(conn.responseText);
+	                            }
+	                        });
+						};
+					}
+				});
+			} else {
+				Civic.util.Util.showErrorMsg('This call is currently '+status+' !');				
+			}
 		}
 	},
 

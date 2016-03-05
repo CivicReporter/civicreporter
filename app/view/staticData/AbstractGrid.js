@@ -73,6 +73,7 @@ Ext.define('Civic.view.staticData.AbstractGrid', {
 			},{
 				xtype: 'actioncolumn',
 				width: 30,
+				align: 'center',
 				sortable: false,
 				menuDisabled: true,
 				items: [

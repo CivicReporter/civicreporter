@@ -85,6 +85,7 @@ CREATE TABLE IF NOT EXISTS staticdata.staff (
   section_id INT NOT NULL,
   station_id INT NOT NULL,
   role VARCHAR(45) NOT NULL,
+  active BOOL NOT NULL DEFAULT FALSE,
   last_update TIMESTAMP(0) NOT NULL DEFAULT CURRENT_TIMESTAMP,
   PRIMARY KEY (staff_id) ,
   UNIQUE (call_sign) ,

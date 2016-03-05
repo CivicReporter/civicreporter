@@ -22,6 +22,8 @@ Ext.define('Civic.model.staticData.Staff', {
 			name: 'station_id'
 		},{
 			name: 'role'
+		},{
+			name: 'active'
 		}
 	]
 });

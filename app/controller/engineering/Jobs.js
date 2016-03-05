@@ -7,7 +7,7 @@ Ext.define('Civic.controller.engineering.Jobs', {
 	],
 
 	views: [
-		'engineering.Jobs'
+		'civicr.JobsPanel'
 	],
 
 	stores: [
@@ -18,7 +18,7 @@ Ext.define('Civic.controller.engineering.Jobs', {
 	refs: [
 		{
 			ref: 'jobsGrid',
-			selector: 'jobspanel'
+			selector: 'engjobsgrid'
 		},{
 			ref: 'jobWindow',
 			selector: 'jobwindow'
@@ -34,26 +34,26 @@ Ext.define('Civic.controller.engineering.Jobs', {
 	init: function(application){
 		this.control({
 			//---engineering jobsgrid---
-			'jobspanel': {
+			'engjobsgrid': {
 				render: this.onPanelRender,
 				selectionchange: this.onSelectionChange
 			},
-			'jobspanel button#add': {
+			'engjobsgrid button#add': {
 				click: this.onButtonClickAdd
 			},
-			'jobspanel button#edit': {
+			'engjobsgrid button#edit': {
 				click: this.onButtonClickEdit
 			},
-			'jobspanel button#close': {
+			'engjobsgrid button#close': {
 				click: this.onButtonClickCloseJob
 			},
-			'jobspanel button#cancel': {
+			'engjobsgrid button#cancel': {
 				click: this.onButtonClickCancelJob
 			},
-			'jobspanel button#clearFilter': {
+			'engjobsgrid button#clearFilter': {
 				click: this.onButtonClickClearFilter
 			},
-			'jobspanel actioncolumn': {
+			'engjobsgrid actioncolumn': {
 				itemclick: this.onItemClick
 			},
 			'jobwindow': {
@@ -173,7 +173,7 @@ Ext.define('Civic.controller.engineering.Jobs', {
 	},
 
 	onButtonClickEdit: function (button, e, options) {
-		var grid = button.up('jobspanel');
+		var grid = button.up('engjobsgrid');
 		record = grid.getSelectionModel().getSelection();
 		callStore = record[0].calls();
 
@@ -210,7 +210,7 @@ Ext.define('Civic.controller.engineering.Jobs', {
 	},
 
 	onButtonClickCloseJob: function (button, e, options) {
-		var grid = button.up('jobspanel');
+		var grid = button.up('engjobsgrid');
 		record = grid.getSelectionModel().getSelection();
 
 		if (record[0]) {
@@ -219,7 +219,7 @@ Ext.define('Civic.controller.engineering.Jobs', {
 	},
 
 	onButtonClickCancelJob: function (button, e, options) {
-		var grid = button.up('jobspanel');
+		var grid = button.up('engjobsgrid');
 		record = grid.getSelectionModel().getSelection();
 
 		if (record[0]) {
@@ -257,7 +257,7 @@ Ext.define('Civic.controller.engineering.Jobs', {
 	},
 
 	onButtonClickClearFilter: function (button, e, options) {
-		button.up('jobspanel').filters.clearFilters();
+		button.up('engjobsgrid').filters.clearFilters();
 	},
 
 	onItemClick: function (column, action, view, e, record) {

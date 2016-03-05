@@ -1,6 +1,6 @@
 Ext.define('Civic.view.engineering.Jobs', {
 	extend: 'Civic.view.civicr.JobsGrid',
-	alias: 'widget.jobspanel',//engjobsgrid
+	alias: 'widget.engjobsgrid',
 
 	requires: [
 		'Civic.view.toolbar.AddEditDeleteFilter'

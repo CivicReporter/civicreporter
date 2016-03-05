@@ -3,7 +3,7 @@ Ext.define('Civic.view.engineering.JobWindow', {
 	alias: 'widget.jobwindow',
 
 	height: 300,
-	width: 450,
+	width: 550,
 
 	requires: [
 		'Civic.util.Util',
@@ -56,7 +56,7 @@ Ext.define('Civic.view.engineering.JobWindow', {
 								anchor: '100%',
 								xtype: 'textfield',
 								readOnly: true,
-								labelWidth: 100
+								labelWidth: 150
 							},
 							items: [
 								{

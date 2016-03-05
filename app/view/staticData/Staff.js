@@ -6,14 +6,14 @@ Ext.define('Civic.view.staticData.Staff', {
 	columns:[
 		{
 			text: 'Staff Id',
-			width: 100,
+			width: 80,
 			dataIndex: 'staff_id',
 			filter: {
 				type: 'numeric'
 			}
 		},{
 			text: 'Call Sign',
-			width: 100,
+			width: 80,
 			dataIndex: 'call_sign',
 			filter: {
 				type: 'numeric'
@@ -66,7 +66,7 @@ Ext.define('Civic.view.staticData.Staff', {
 		},{
 			text: 'Station',
 			dataIndex: 'station_id',
-			width: 200,
+			width: 150,
 			editor: {
 				allowBlank: false,
 				maxLength: 45
@@ -87,6 +87,18 @@ Ext.define('Civic.view.staticData.Staff', {
 			},
 			filter: {
 				type: 'string'
+			}
+		},{
+			text: 'Status',
+			dataIndex: 'active',
+			width: 80,
+			editor: {
+				allowBlank: false,
+				maxLength: 45
+			},
+			renderer: function(value, metaData, record){
+
+				return value == 't' ? 'ACTIVE' : 'INACTIVE';
 			}
 		}
 	]

@@ -18,7 +18,8 @@ Ext.define('Civic.Application', {
         'security.Users',
         'staticData.AbstractController',
         'engineering.Calls',
-        'engineering.Jobs'
+        'engineering.Jobs',
+        'gis.Map'
     ],
 
     stores: [

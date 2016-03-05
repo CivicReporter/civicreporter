@@ -39,7 +39,7 @@ Ext.define('Civic.view.engineering.JobCalls', {
 	columns: [
 		{
 			text: 'Call Id',
-			width: 60,
+			width: 45,
 			dataIndex: 'call_id',
 			filter: {
 				type: 'numeric'
@@ -55,6 +55,13 @@ Ext.define('Civic.view.engineering.JobCalls', {
 			text: 'Caller Name',
 			flex: 1,
 			dataIndex: 'caller',
+			filter: {
+				type: 'string'
+			}
+		},{
+			text: 'Suburb',
+			width: 100,
+			dataIndex: 'suburb',
 			filter: {
 				type: 'string'
 			}

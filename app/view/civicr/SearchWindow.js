@@ -7,7 +7,7 @@ Ext.define('Civic.view.civicr.SearchWindow', {
 	],
 
 	height: 300,
-	width: 450,
+	width: 550,
 	autoScroll: true,
 	modal: true,
 

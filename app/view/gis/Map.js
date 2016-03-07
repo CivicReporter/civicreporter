@@ -9,7 +9,7 @@ Ext.define('Civic.view.gis.Map', {
 
     border: 'false',
     //title: 'My Map',
-    zoom: 4,
+    zoom: 3,
     extent: OpenLayers.Bounds.fromArray([583076.3125,7735767.0,748277.25,7816663.0]),
 
     initComponent: function() {

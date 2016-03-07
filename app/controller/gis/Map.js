@@ -57,8 +57,7 @@ Ext.define('Civic.controller.gis.Map', {
             {
             	layers: 'geointel:property_rifflerange',
             	format: 'image/png',
-            	transparent: true,
-            	opacity: 0.6
+            	transparent: true
             },{
             	isBaseLayer: false
             }
@@ -105,6 +104,7 @@ Ext.define('Civic.controller.gis.Map', {
         me.getSummitsStore().bind(vecLayer);
 
     */    mapPanel.map.addLayers(layers);
+    	//mapPanel.map.zoomToExtent(mapPanel.map.layers[0].getExtent());
 
         // some more controls
     /*    mapPanel.map.addControls([new OpenLayers.Control.DragFeature(vecLayer, {

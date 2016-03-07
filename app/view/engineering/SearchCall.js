@@ -20,15 +20,35 @@ Ext.define('Civic.view.engineering.SearchCall', {
 			},
 			items: [
 				{
-					xtype: 'label',
-					text: 'Hold CTRL or SHIFT to select more than one call.',
-					padding: '10 5 5 5',
-					style: {
-						fontWeight: 'bold'
-					}
+					xtype: 'form',
+					itemId: 'comboForm',
+					layout: {
+						type: 'vbox',
+						align: 'stretch'
+					},
+					items: [
+						{
+							xtype: 'label',
+							text: 'Hold CTRL or SHIFT to select more than one call.',
+							padding: '10 5 5 5',
+							style: {
+								fontWeight: 'bold'
+							}
+						},{
+							xtype: 'combo',
+							emptyText: 'search for calls by suburb',
+							padding: '1 210 1 5',
+							store: 'staticData.Suburbs',
+							displayField: 'name',
+							valueField: 'suburb_id',
+							hideTrigger: true,
+							typeAhead: true
+						}
+
+					]
 				},{
 					xtype: 'engjobcalls',
-					height: 210,
+					height: 180,
 					selModel: {
 						mode: 'MULTI',
 						allowDeselect: true

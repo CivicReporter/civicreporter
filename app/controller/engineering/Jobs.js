@@ -60,7 +60,6 @@ Ext.define('Civic.controller.engineering.Jobs', {
 				close: this.onWindowClose
 			},
 			'jobwindow engjobcalls': {
-				//render: this.onPanelRender,
 				selectionchange: this.onSelectionChange2
 			},
 			'jobwindow engjobcalls button#add': {
@@ -75,8 +74,15 @@ Ext.define('Civic.controller.engineering.Jobs', {
 			'jobwindow button#save': {
 				click: this.onButtonClickSave
 			},
+			'searchcall': {
+				close: this.onWindowClose2
+			},
+			'searchcall form combobox': {
+				render: this.onComboRender,
+				select: this.onComboSelect,
+				specialkey: this.onSpecialKeyPress
+			},
 			'searchcall engjobcalls': {
-				render: this.onPanelRender,
 				selectionchange: this.onSelectionChange3
 			},
 			'searchcall button#cancel': {
@@ -164,7 +170,11 @@ Ext.define('Civic.controller.engineering.Jobs', {
 				suburb: records[0].get('suburb')
 			});
 		} else{
-			callStore.add(records);
+			if (records[0].get('suburb') == callStore.data.getAt(0).get('suburb')) {
+				callStore.add(records);
+			} else{
+				Civic.util.Util.showErrorMsg('<p>You cannot create a job with calls from different suburbs.</p>'+'<p>These calls are not linked!</p>');				
+			};
 		}
 
 		form.down('engjobcalls').reconfigure(callStore, this.getCallsGrid().cloneConfig().columns);
@@ -400,5 +410,32 @@ Ext.define('Civic.controller.engineering.Jobs', {
 	onWindowClose: function (window, eOpts) {
 		grid = this.getJobsGrid();
 		grid.getSelectionModel().deselectAll();
+	},
+
+	onWindowClose2: function (window, eOpts) {
+		window.down('engjobcalls').getStore().removeAll();
+	},
+
+	onComboRender: function (combo, eOpts) {
+		combo.getStore().sort('name', 'ASC');
+	},
+
+	onComboSelect: function (combo, records, eOpts ) {
+		pendingStore = this.getEngineeringPendingCallsStore();
+		pendingStore.setProxy({
+			type: 'cvr',
+			url: 'php/engineering/calls/list.php',
+			extraParams: {
+				status: 'OPEN',
+				suburb: combo.getValue()
+			}
+		});
+		pendingStore.load();
+	},
+
+	onSpecialKeyPress: function (combo, e, eOpts) {
+		if (e.getKey() == e.ENTER) {
+			combo.fireEvent('select', combo);
+		};
 	} 
 });

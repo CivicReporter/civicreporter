@@ -9,13 +9,5 @@ Ext.define('Civic.store.engineering.PendingCalls', {
 	model: 'Civic.model.engineering.Call',
 
 	pageSize: 5,
-	storeId: 'pendingcalls',
-
-	proxy: {
-		type: 'cvr',
-		url: 'php/engineering/calls/list.php',
-		extraParams: {
-			status: 'pending'
-		}
-	}
+	storeId: 'pendingcalls'
 });

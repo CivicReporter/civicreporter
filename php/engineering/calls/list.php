@@ -7,6 +7,15 @@
 	$offset = $_REQUEST['start'];
 	$limit = $_REQUEST['limit'];
 
+	if (isset($_REQUEST['status'])) {
+		$status = $_REQUEST['status'];
+	}
+
+	if (isset($_REQUEST['suburb'])) {
+		$suburb = $_REQUEST['suburb'];
+	}
+	
+
 	$queryString = "SELECT g.name urole FROM security.user u, security.groups g ";
 	$queryString.= "WHERE u.groupid = g.id AND u.username = '$userName'";
 
@@ -27,8 +36,11 @@
 				$sql.= "FROM engineering.call ec INNER JOIN staticdata.fault_codes sfc ON ec.code_id = sfc.code_id ";
 				$sql.= "INNER JOIN staticdata.caller sc ON ec.caller_id = sc.caller_id ";
 				$sql.= "INNER JOIN staticdata.suburb ss ON ec.suburb_id = ss.suburb_id ";
-				if (isset($_REQUEST['status'])) {
-					$sql.= " WHERE status = 'OPEN' ";
+				if (isset($status)) {
+					$sql.= "WHERE status = '$status' ";
+				}
+				if (isset($suburb)) {
+					$sql.= "AND ec.suburb_id = '$suburb' ";
 				}
 				$sql.= "ORDER BY ec.call_id DESC ";
 				$sql.= "OFFSET $offset LIMIT $limit";
@@ -47,8 +59,11 @@
 
 						$countQuery = "SELECT COUNT(*) count FROM engineering.call ";
 						
-						if (isset($_REQUEST['status'])) {
-							$countQuery.= " WHERE status = 'OPEN' ";
+						if (isset($status)) {
+							$countQuery.= " WHERE status = '$status' ";
+						}
+						if (isset($suburb)) {
+							$countQuery.= " AND suburb_id = '$suburb' ";
 						}
 
 						if ($sth = pg_query($dbh, $countQuery)) {
@@ -60,11 +75,13 @@
 
 					} else {
 						$r['success'] = false;
+						$r['msg'] = 'No records retrieved.';
 					}						
 				}
 				
 			} else {
 				$r['success'] = false;
+				$r['msg'] = 'Operation denied.';
 			}
 			
 		}

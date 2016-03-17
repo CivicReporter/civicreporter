@@ -27,14 +27,19 @@ Ext.define('Civic.view.gis.Map', {
 
         var nav = new OpenLayers.Control.NavigationHistory();
 
-		var pan = new OpenLayers.Control.DragPan();
+		var pan = new OpenLayers.Control.DragPan({
+			id: 'olDragPan',
+			classname: 'navig'
+		});
 
 		var zoomin = new OpenLayers.Control.ZoomBox({
-			//displayClass:'olControlZoomIn' 	
+			id: 'olZoomIn',
+			classname: 'navig' 	
 		});
 
 		var zoomout = new OpenLayers.Control.ZoomBox({
-	        //displayClass:'olControlZoomOut',
+			id: 'olZoomOut',
+	        classname: 'navig',
 			out : true 	
 		});
 
@@ -44,8 +49,8 @@ Ext.define('Civic.view.gis.Map', {
             text: "Back",
             control: nav.previous,
             disabled: true,
-            toggleGroup: "draw",
-            allowDepress: false,
+            //toggleGroup: "draw",
+            enableToggle: false,
             group: "draw",
             tooltip: "previous",
             iconCls: 'previous'
@@ -55,8 +60,8 @@ Ext.define('Civic.view.gis.Map', {
             text: "Next",
             control: nav.next,
             disabled: true,
-            toggleGroup: "draw",
-            allowDepress: false,
+            //toggleGroup: "draw",
+            enableToggle: false,
             group: "draw",
             tooltip: "forward",
             iconCls: 'next'
@@ -90,7 +95,7 @@ Ext.define('Civic.view.gis.Map', {
             control: new OpenLayers.Control.ZoomToMaxExtent(),
             map: map,
             text: "Full",
-            allowDepress: false,
+            enableToggle: false,
             iconCls: 'zoom_extent',
             tooltip: "zoom to max extent"
         })));

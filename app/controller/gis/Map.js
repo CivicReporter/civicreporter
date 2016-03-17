@@ -5,15 +5,14 @@ Ext.define('Civic.controller.gis.Map', {
 		'gis.Map'
 	],
 
-/*    models: ['Summit'],
-    stores: ['Summits'],
-
     refs: [
-        {ref: 'summitChart', selector: 'summitchart'},
-        {ref: 'summitGrid', selector: 'summitgrid'}
-    ],
+		{
+			ref: 'mapPanel', 
+			selector: 'civicr_map'
+		}
+    ],    
 
-*/    init: function() {
+    init: function() {
         var me = this;
 
 /*        me.getSummitsStore().on({
@@ -21,21 +20,24 @@ Ext.define('Civic.controller.gis.Map', {
             load : me.onSummitsStoreLoad
         });
 
-*/        this.control({
-            'civicr_map': {
-                'beforerender': this.onMapPanelBeforeRender
-            }
-        }, this);
-    },
+*/        
+		this.control(
+			{
+				'civicr_map': {
+					'beforerender': this.onMapPanelBeforeRender
+				}
+			}, this
+		);
+	},
 
-    onMapPanelBeforeRender: function(mapPanel, options) {
+    onMapPanelBeforeRender: function(mapPanel, eOpts) {
         var me = this;
 
         var layers = [];
 
         var road = new OpenLayers.Layer.WMS(
             "Bulawayo Roads",
-            "http://127.0.0.1:8080/geoserver/wms?",
+            "http://127.0.0.1/geoserver/wms?",
             {
             	layers: 'geointel:road_all',
             	format: 'image/png',
@@ -51,7 +53,7 @@ Ext.define('Civic.controller.gis.Map', {
             }*/
         );
 
-        var property = new OpenLayers.Layer.WMS(
+        var property1 = new OpenLayers.Layer.WMS(
             "Riffle Range",
             "http://127.0.0.1:8080/geoserver/wms?",
             {
@@ -62,8 +64,21 @@ Ext.define('Civic.controller.gis.Map', {
             	isBaseLayer: false
             }
         );
+	
+		var property = new OpenLayers.Layer.Vector('Riffle Range', {
+            strategies: [
+            	new OpenLayers.Strategy.BBOX()
+            ],
+            protocol: new OpenLayers.Protocol.WFS({
+                url: 'http://127.0.0.1/geoserver/wfs',
+                featureType: 'property_rifflerange',
+                featureNS: 'http://www.geointel.biz',
+                srsName: 'EPSG: 32735',
+                geometryName: 'geom'
+            })
+        });
 
-        layers.push(road, property);
+        layers.push(road, /*property1,*/ property);
 
     /*    // create vector layer
         var context = {
@@ -104,6 +119,7 @@ Ext.define('Civic.controller.gis.Map', {
         me.getSummitsStore().bind(vecLayer);
 
     */    mapPanel.map.addLayers(layers);
+    	me.setMousePointerSwitcher();
     	//mapPanel.map.zoomToExtent(mapPanel.map.layers[0].getExtent());
 
         // some more controls
@@ -134,5 +150,34 @@ Ext.define('Civic.controller.gis.Map', {
         if (dataExtent) {
             store.layer.map.zoomToExtent(dataExtent);
         }
-*/    }
+*/    },
+
+	setMousePointerSwitcher: function (argument) {
+
+		var mousePointerStyle = 'default';
+
+		var MOUSE_POINTER_STYLES = {
+		    'olDragPan': "url('http://127.0.0.1/civicreporter/resources/images/app/pan-off.cur'), default",
+		    'olZoomIn': "url('http://127.0.0.1/civicreporter/resources/images/app/zoom-in.cur'), default",
+		    'olZoomOut': "url('http://127.0.0.1/civicreporter/resources/images/app/zoom-out.cur'), default",
+		    'none': 'default'
+		};
+
+		map = this.getMapPanel().map;
+
+		var panelControls = map.getControlsBy('classname', 'navig');
+
+		for (var i = 0; i < panelControls.length; i = i + 1) {
+			var c = panelControls[i];
+			c.events.register('activate', c, function() {
+				mousePointerStyle = MOUSE_POINTER_STYLES[this.id];
+			});
+		}
+
+		map.events.register('mouseover', map, function (e) {
+			document.getElementsByClassName('olMap')[0].style.cursor = mousePointerStyle;
+		});
+
+		map.getControl('olDragPan').activate();
+	}
 });

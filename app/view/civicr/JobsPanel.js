@@ -17,7 +17,12 @@ Ext.define('Civic.view.civicr.JobsPanel', {
 			xtype: 'civicr_map',
 			flex: 1
 		},{
-			xtype: 'engjobsgrid'
+			xtype: 'engjobsgrid',
+			title: 'Jobs List',
+			iconCls: 'menu_jobs',
+			collapsible: true,
+			collapseDirection: 'bottom',
+			collapsed: true
 		}
 	]
 });

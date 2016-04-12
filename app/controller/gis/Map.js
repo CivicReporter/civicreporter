@@ -35,9 +35,8 @@ Ext.define('Civic.controller.gis.Map', {
 
         var layers = [];
 
-        var road = new OpenLayers.Layer.WMS(
-            "Bulawayo Roads",
-            "http://127.0.0.1/geoserver/wms?",
+        var road = new OpenLayers.Layer.WMS('Bulawayo Roads',
+            'http://127.0.0.1/geoserver/wms?',
             {
             	layers: 'geointel:road_all',
             	format: 'image/png',
@@ -53,9 +52,8 @@ Ext.define('Civic.controller.gis.Map', {
             }*/
         );
 
-        var property1 = new OpenLayers.Layer.WMS(
-            "Riffle Range",
-            "http://127.0.0.1:8080/geoserver/wms?",
+        var property1 = new OpenLayers.Layer.WMS('Riffle Range',
+            'http://127.0.0.1/geoserver/wms?',
             {
             	layers: 'geointel:property_rifflerange',
             	format: 'image/png',
@@ -78,43 +76,25 @@ Ext.define('Civic.controller.gis.Map', {
             })
         });
 
-        layers.push(road, /*property1,*/ property);
-
-    /*    // create vector layer
-        var context = {
-            getColor: function(feature) {
-                if (feature.attributes.elevation < 2000) {
-                    return 'green';
-                }
-                if (feature.attributes.elevation < 2300) {
-                    return 'orange';
-                }
-                return 'red';
-            }
-        };
-        var template = {
-            cursor: "pointer",
-            fillOpacity: 0.5,
-            fillColor: "${getColor}",
-            pointRadius: 5,
-            strokeWidth: 1,
-            strokeOpacity: 1,
-            strokeColor: "${getColor}",
-            graphicName: "triangle"
-        };
-        var style = new OpenLayers.Style(template, {context: context});
-        var vecLayer = new OpenLayers.Layer.Vector("vector", {
-            styleMap: new OpenLayers.StyleMap({
-                'default': style
-            }),
-            protocol: new OpenLayers.Protocol.HTTP({
-                url: "../../data/summits.json",
+        var suburb = new OpenLayers.Layer.Vector('Bulawayo Suburbs', {
+            styleMap: Civic.util.Util.suburbStyle,
+        	protocol: new OpenLayers.Protocol.HTTP({
+                url: "http://127.0.0.1/civicreporter/php/gis/list.php",
+                params: {
+                	start: 0,
+                	limit: 500,
+                	entity: 'gis.suburb_all'
+                },
                 format: new OpenLayers.Format.GeoJSON()
             }),
-            strategies: [new OpenLayers.Strategy.Fixed()]
+            strategies: [
+            	new OpenLayers.Strategy.Fixed()
+            ]
         });
-        layers.push(vecLayer);
 
+        layers.push(road, suburb/*, property1, property*/);
+
+    /*    
         // manually bind store to layer
         me.getSummitsStore().bind(vecLayer);
 
@@ -157,7 +137,7 @@ Ext.define('Civic.controller.gis.Map', {
 		var mousePointerStyle = 'default';
 
 		var MOUSE_POINTER_STYLES = {
-		    'olDragPan': "url('http://127.0.0.1/civicreporter/resources/images/app/pan-off.cur'), default",
+		    'olDragPan': "url('http://127.0.0.1/civicreporter/resources/images/app/pan.cur'), default",
 		    'olZoomIn': "url('http://127.0.0.1/civicreporter/resources/images/app/zoom-in.cur'), default",
 		    'olZoomOut': "url('http://127.0.0.1/civicreporter/resources/images/app/zoom-out.cur'), default",
 		    'none': 'default'

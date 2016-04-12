@@ -209,7 +209,7 @@ Ext.define('Civic.controller.engineering.Jobs', {
 				form.down('tabpanel').setActiveTab(2);
 
 				win.setTitle('Editing Job #' + values.job_id);
-				win.setIconCls('call_edit');
+				win.setIconCls('edit');
 				win.show();
 
 			} else{

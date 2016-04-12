@@ -13,6 +13,10 @@
 
 //all menu iconCls
 
+.sitemap{
+	background-image: url(images/app/menu.png)!important;	
+}
+
 .menu_admin{
 	background-image: url(images/app/menu_admin.png)!important;	
 }
@@ -21,12 +25,56 @@
 	background-image: url(images/app/menu_staticdata.png)!important;	
 }
 
+.menu_engineering{
+	background-image: url(images/app/engi.png)!important;	
+}
+
 .menu_calls{
 	background-image: url(images/app/calls.png)!important;	
 }
 
 .menu_jobs{
 	background-image: url(images/app/jobs.png)!important;	
+}
+
+.menu_roster{
+	background-image: url(images/app/agenda.png)!important;	
+}
+
+.menu_vehicle{
+	background-image: url(images/app/ambulance.png)!important;	
+}
+
+.menu_properties{
+	background-image: url(images/app/layers.png)!important;	
+}
+
+.menu_station{
+	background-image: url(images/app/points.png)!important;	
+}
+
+.menu_section{
+	background-image: url(images/app/layers.png)!important;	
+}
+
+.menu_suburb{
+	background-image: url(images/app/layers.png)!important;	
+}
+
+.menu_zones{
+	background-image: url(images/app/layers.png)!important;	
+}
+
+.menu_groups{
+	background-image: url(images/app/group.png)!important;	
+}
+
+.menu_staff{
+	background-image: url(images/app/staff.png)!important;	
+}
+
+.menu_users{
+	background-image: url(images/app/user.png)!important;	
 }
 
 .home{
@@ -86,6 +134,10 @@
 	background-image: url(images/app/filter_del.gif)!important;
 }
 
+.refresh_view{
+	background-image: url(images/app/refresh.png)!important;
+}
+
 .find{
 	background-image: url(images/app/find.png)!important;
 }
@@ -113,7 +165,7 @@
 }
 
 .pan{
-	background-image: url(images/app/pan_off.png)!important;
+	background-image: url(images/app/pan.png)!important;
 }
 
 .info{

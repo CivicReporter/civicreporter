@@ -6,7 +6,8 @@ Ext.define('Civic.model.staticData.Zone', {
 	fields: [
 		{
 			name: 'zone_id',
-			type: 'int'
+			type: 'int',
+			useNull: false
 		},{
 			name: 'name'
 		}

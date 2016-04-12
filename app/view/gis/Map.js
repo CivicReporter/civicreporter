@@ -4,11 +4,11 @@ Ext.define('Civic.view.gis.Map', {
 
     requires: [
         'Ext.window.MessageBox',
+        'Civic.util.Util',
         'GeoExt.Action'
     ],
 
     border: 'false',
-    //title: 'My Map',
     zoom: 3,
     extent: OpenLayers.Bounds.fromArray([583076.3125,7735767.0,748277.25,7816663.0]),
 
@@ -49,7 +49,6 @@ Ext.define('Civic.view.gis.Map', {
             text: "Back",
             control: nav.previous,
             disabled: true,
-            //toggleGroup: "draw",
             enableToggle: false,
             group: "draw",
             tooltip: "previous",
@@ -60,7 +59,6 @@ Ext.define('Civic.view.gis.Map', {
             text: "Next",
             control: nav.next,
             disabled: true,
-            //toggleGroup: "draw",
             enableToggle: false,
             group: "draw",
             tooltip: "forward",
@@ -73,7 +71,7 @@ Ext.define('Civic.view.gis.Map', {
             text: "Down",
             control: zoomin,
             toggleGroup: "draw",
-            allowDepress: true,
+            allowDepress: false,
             group: "draw",
             tooltip: "zoom in",
             iconCls: 'zoom_in'
@@ -104,7 +102,7 @@ Ext.define('Civic.view.gis.Map', {
             text: "Pan",
             control: pan,
             toggleGroup: "draw",
-            allowDepress: true,
+            allowDepress: false,
             group: "draw",
             tooltip: "pan",
             iconCls: 'pan'
@@ -117,8 +115,7 @@ Ext.define('Civic.view.gis.Map', {
                 dock: 'top',
                 items: items,
                 style: {
-                    border: 0,
-                    padding: 0
+                    padding: 5
                 }
             }]
         });

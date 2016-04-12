@@ -34,7 +34,7 @@ Ext.define('Civic.view.staticData.Suburbs', {
 				var zonesStore = Ext.getStore('staticData.Zones');
 				var zone = zonesStore.findRecord('zone_id', value);
 
-				return zone != null ? zone.get('name'): value;
+				return value ? zone.get('name'): '';
 			}
 		}
 	]

@@ -8,13 +8,15 @@ Ext.define('Civic.view.engineering.JobWindow', {
 	requires: [
 		'Civic.util.Util',
 		'Ext.form.field.ComboBox',
-		'Civic.view.engineering.JobCalls'
+		'Civic.view.engineering.JobCalls',
+		'Civic.view.engineering.JobStaff'
 	],
 
 	layout: {
 		type: 'fit'
 	},
 	title: 'Create New Job',
+	iconCls: 'add',
 
 	items: [
 		{
@@ -44,19 +46,25 @@ Ext.define('Civic.view.engineering.JobWindow', {
 							layout: {
 								type: 'anchor'
 							},
-							title: 'Assignment Details'
+							title: 'Attending Technicians',
+							items: [
+								{
+									xtype: 'engjobstaff'
+								}
+							]
 						},{
 							xtype: 'panel',
 							layout: {
 								type: 'anchor'
 							},
 							title: 'Job Summary',
-							bodyPadding: 15,
+							bodyPadding: '15 100 15 20',
+							frame: true,
 							defaults: {
 								anchor: '100%',
 								xtype: 'textfield',
 								readOnly: true,
-								labelWidth: 150
+								labelWidth: 100
 							},
 							items: [
 								{

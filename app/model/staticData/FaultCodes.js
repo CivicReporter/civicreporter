@@ -6,7 +6,8 @@ Ext.define('Civic.model.staticData.FaultCodes', {
 	fields: [
 		{
 			name: 'code_id',
-			type: 'int'
+			type: 'int',
+			useNull: false
 		},{
 			name: 'section_id',
 			type: 'int'

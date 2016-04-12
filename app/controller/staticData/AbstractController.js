@@ -35,8 +35,9 @@ Ext.define('Civic.controller.staticData.AbstractController', {
 	init: function(application){
 		this.control({
 			'staticdatagrid': {
-				render: this.render,
-				edit: this.onEdit
+				beforerender: this.render,
+				edit: this.onEdit,
+				canceledit: this.onCancelEdit
 			},
 			'staticdatagrid button#add': {
 				click: this.onButtonClickAdd
@@ -50,18 +51,22 @@ Ext.define('Civic.controller.staticData.AbstractController', {
 			'staticdatagrid button#clearFilter': {
 				click: this.onButtonClickClearFilter
 			},
+			'staticdatagrid button#refresh': {
+				click: this.onButtonClickRefresh
+			},
 			'staticdatagrid actioncolumn': {
 				itemclick: this.handleActionColumn
 			}
 		});
 
-		this.listen({
+	/*	this.listen({
 			store: {
 				'#staticDataAbstract': {
-					write: this.onStoreSync
+					write: this.onStoreSync,
+					update: this.onStoreSync
 				}
 			}
-		})
+		});*/
 	},
 
 	render: function (component, options) {
@@ -90,24 +95,34 @@ Ext.define('Civic.controller.staticData.AbstractController', {
 				break;
 		};
 
-		component.getStore().load();
+		var gridStore = component.getStore();
+		gridStore.load();
+		gridStore.sort('%id', 'ASC');
 	},
 
 	onButtonClickAdd: function (button, e, options) {
 		var grid = button.up('staticdatagrid');
 		store = grid.getStore();
 		modelName = store.getProxy().getModel().modelName;
-		cellEditing = grid.getPlugin('cellplugin');
+		rowEditing = grid.getPlugin('rowplugin');
 
 		store.insert(0, Ext.create(modelName, {
 			last_update: new Date()
 		}));
 
-		cellEditing.startEditByPosition({row: 0, column: 1});
+		rowEditing.startEdit(0, 1);
 	},
 
-	onEdit: function (editor, context, options) {
-		context.record.set('last_update', new Date());
+	onEdit: function (editor, e, options) {
+		Ext.Msg.alert('Update', 'Save changes to persist the modified record.');
+	},
+
+	onCancelEdit: function (editor, e, options) {
+		rec = e.record;
+		store = e.grid.getStore();
+		if (rec.phantom) {
+            store.remove(rec);
+        }
 	},
 
 	handleActionColumn: function (column, action, view, rowIndex, colIndex, item, e) {
@@ -122,7 +137,14 @@ Ext.define('Civic.controller.staticData.AbstractController', {
 	},
 
 	onButtonClickSave: function (button, e, options) {
-		button.up('staticdatagrid').getStore().sync();
+		var me = this;
+		store = button.up('staticdatagrid').getStore();
+		store.sync({
+			success: function (batch) {
+				me.onStoreSync(batch);
+				store.load();
+			}
+		});
 	},
 
 	onButtonClickCancel: function (button, e, options) {
@@ -133,7 +155,26 @@ Ext.define('Civic.controller.staticData.AbstractController', {
 		button.up('staticdatagrid').filters.clearFilters();
 	},
 
-	onStoreSync: function (store, operation, options) {
-		Civic.util.Alert.msg('Success!', 'Your changes have been saved.')
+	onButtonClickRefresh: function (button, e, options) {
+		button.up('staticdatagrid').getStore().reload();
+	},
+
+	onStoreSync: function (batch) {		 
+		batch.operations.forEach(function (value) {
+			switch (value.action) {
+				case 'create':
+					Ext.Msg.alert('Success!', 'New records created.');
+					break;
+				case 'update':
+					Ext.Msg.alert('Success!', 'Your changes have been saved.');
+					break;
+				case 'destroy':
+					Ext.Msg.alert('Success!', 'Records deleted.');
+					break;
+				default:
+					Ext.Msg.alert('Success!', 'Records loaded.');
+					break;
+			};
+		})			
 	}
 });

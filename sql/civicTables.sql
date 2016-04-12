@@ -24,7 +24,10 @@ DROP TYPE IF EXISTS jobstatus CASCADE;
 
 
 CREATE TYPE jobstatus
-  AS ENUM ('OPEN','PENDING','CLOSED','CANCELLED'); 
+  AS ENUM ('OPEN','PENDING','CLOSED','CANCELLED');
+
+CREATE TYPE staffstatus
+  AS ENUM ('OFF DUTY','BUSY','AVAILABLE','STANDBY'); 
 
 
 -- -----------------------------------------------------
@@ -86,6 +89,7 @@ CREATE TABLE IF NOT EXISTS staticdata.staff (
   station_id INT NOT NULL,
   role VARCHAR(45) NOT NULL,
   active BOOL NOT NULL DEFAULT FALSE,
+  status STAFFSTATUS NOT NULL DEFAULT 'AVAILABLE',
   last_update TIMESTAMP(0) NOT NULL DEFAULT CURRENT_TIMESTAMP,
   PRIMARY KEY (staff_id) ,
   UNIQUE (call_sign) ,
@@ -827,5 +831,3 @@ CREATE TRIGGER upd_ambcharge BEFORE UPDATE ON ambulance.charges FOR EACH ROW EXE
 DROP SCHEMA IF EXISTS gis CASCADE;
 
 CREATE SCHEMA IF NOT EXISTS gis;
-
-

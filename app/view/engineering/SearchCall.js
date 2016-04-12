@@ -6,8 +6,8 @@ Ext.define('Civic.view.engineering.SearchCall', {
 		'Civic.view.engineering.JobCalls'
 	],
 
-	title: 'Add Call',
-	iconCls: 'add',
+	title: 'Seach and Add Calls',
+	iconCls: 'find',
 
 	items: [
 		{

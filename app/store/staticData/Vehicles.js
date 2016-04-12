@@ -11,7 +11,8 @@ Ext.define('Civic.store.staticData.Vehicles', {
 	proxy: {
 		type: 'staticdataproxy',
 		extraParams: {
-			entity: 'Vehicle'
+			entity: 'Vehicle',
+			pkey: 'vehicle_id'
 		}
 	}
 });

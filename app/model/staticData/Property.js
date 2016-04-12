@@ -6,7 +6,8 @@ Ext.define('Civic.model.staticData.Property', {
 	fields: [
 		{
 			name: 'property_id',
-			type: 'int'
+			type: 'int',
+			useNull: false
 		},{
 			name: 'suburb_id',
 			type: 'int'

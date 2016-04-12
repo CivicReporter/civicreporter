@@ -11,7 +11,8 @@ Ext.define('Civic.store.staticData.Zones', {
 	proxy: {
 		type: 'staticdataproxy',
 		extraParams: {
-			entity: 'Zone'
+			entity: 'Zone',
+			pkey: 'zone_id'
 		}
 	}
 });

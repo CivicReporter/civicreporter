@@ -30,7 +30,7 @@
 		if ($sth = pg_query($dbh, $sql)) {
 			while ($r = pg_fetch_assoc($sth)) {
 				$sqlquery = "SELECT * FROM security.menu WHERE parentid = ";
-				$sqlquery.= $r['id'] ." AND id in $in ORDER BY id";
+				$sqlquery.= $r['id'] ." AND id in $in ORDER BY ttext";
 
 				if ($nodes = pg_query($dbh, $sqlquery)) {
 					$count = pg_num_rows($nodes);

@@ -14,7 +14,7 @@ Ext.application({
 
 Ext.Loader.setConfig({
     enabled: true,
-    disableCaching: true,
+    disableCaching: false,
     paths: {
         Ext: './ext/src',
         GeoExt: './resources/geoext/src/GeoExt',

@@ -17,6 +17,9 @@ Ext.define('Civic.view.engineering.Calls', {
 			sortable: true,
 			filter: {
 				type: 'numeric'
+			},
+			renderer: function (value, metaData, record) {
+				 return Civic.util.Util.renderText(value, metaData, record);
 			}
 		},{
 			text: 'Property Damage',

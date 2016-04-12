@@ -115,14 +115,15 @@ BEGIN;
 				('Vehicles', 'menu_vehicle', 2, 'vehiclesgrid'),
 				('Zones', 'menu_zones', 2, 'zonesgrid'),
 				('Calls', 'menu_calls', 3, 'engcallsgrid'),
-				('Jobs', 'menu_jobs', 3, 'jobspanel');
+				('Jobs', 'menu_jobs', 3, 'jobspanel'),
+				('Duty Roster', 'menu_roster', 3, 'engdutyroster');
 
 	INSERT INTO security.permissions(menuid, groupid)
 		VALUES
 			(1, 1),(2, 1),(3, 1),(4, 1),(5, 1),(6, 1),
 			(7, 1),(8, 1),(9, 1),(10, 1),(11, 1),(12, 1),
-			(13, 1),(14, 1),(15, 1),(16, 1),(17, 1),(3, 2),
-			(16, 2),(17, 2);
+			(13, 1),(14, 1),(15, 1),(16, 1),(17, 1),(18, 1),(3, 2),
+			(16, 2),(17, 2),(18, 2);
 
 COMMIT;
 

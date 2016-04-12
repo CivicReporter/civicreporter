@@ -6,7 +6,8 @@ Ext.define('Civic.model.staticData.Station', {
 	fields: [
 		{
 			name: 'station_id',
-			type: 'int'
+			type: 'int',
+			useNull: false
 		},{
 			name: 'name'
 		}

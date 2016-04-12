@@ -102,7 +102,51 @@ CREATE OR REPLACE FUNCTION job_closer()
        			SET status = 'OPEN', job_id = NULL
        			WHERE job_id = NEW.job_id;
        	END IF;
-      RETURN NEW;
+    	RETURN NEW;
+    END;
+  $$ 
+  LANGUAGE plpgsql;
+
+--function to handle static table inserts
+CREATE OR REPLACE FUNCTION serial_pk()
+  RETURNS TRIGGER AS 
+  $$
+  	DECLARE
+  		pk INTEGER;
+    BEGIN
+    	CASE TG_TABLE_NAME
+    		WHEN 'emergency_codes' THEN 
+    			SELECT INTO pk MAX(code_id) + 1 FROM staticdata.emergency_codes;
+    			NEW.code_id = pk;
+    		WHEN 'fault_codes' THEN 
+    			SELECT INTO pk MAX(code_id) + 1 FROM staticdata.fault_codes;
+    			NEW.code_id = pk;
+    		WHEN 'fire_codes' THEN 
+    			SELECT INTO pk MAX(code_id) + 1 FROM staticdata.fire_codes;
+    			NEW.code_id = pk;
+    		WHEN 'property' THEN 
+    			SELECT INTO pk MAX(property_id) + 1 FROM staticdata.property;
+    			NEW.property_id = pk;
+    		WHEN 'section' THEN 
+    			SELECT INTO pk MAX(section_id) + 1 FROM staticdata.section;
+    			NEW.section_id = pk;
+    		WHEN 'staff' THEN 
+    			SELECT INTO pk MAX(staff_id) + 1 FROM staticdata.section;
+    			NEW.staff_id = pk;
+    		WHEN 'station' THEN 
+    			SELECT INTO pk MAX(station_id) + 1 FROM staticdata.station;
+    			NEW.station_id = pk;
+    		WHEN 'suburb' THEN 
+    			SELECT INTO pk MAX(suburb_id) + 1 FROM staticdata.suburb;
+    			NEW.suburb_id = pk;
+    		WHEN 'vehicle' THEN 
+    			SELECT INTO pk MAX(vehicle_id) + 1 FROM staticdata.vehicle;
+    			NEW.vehicle_id = pk;
+    		WHEN 'zone' THEN 
+    			SELECT INTO pk MAX(zone_id) + 1 FROM staticdata.zone;
+    			NEW.zone_id = pk;
+    	END CASE; 
+    	RETURN NEW;
     END;
   $$ 
   LANGUAGE plpgsql;
@@ -113,6 +157,18 @@ CREATE TRIGGER close_job
 	BEFORE UPDATE ON engineering.job
 		FOR EACH ROW EXECUTE PROCEDURE job_closer();
 
+--triggers for staticdata inserts
+
+CREATE TRIGGER serial_ec BEFORE INSERT ON staticdata.emergency_codes FOR EACH ROW EXECUTE PROCEDURE serial_pk();
+CREATE TRIGGER serial_ftc BEFORE INSERT ON staticdata.fault_codes FOR EACH ROW EXECUTE PROCEDURE serial_pk();
+CREATE TRIGGER serial_frc BEFORE INSERT ON staticdata.fire_codes FOR EACH ROW EXECUTE PROCEDURE serial_pk();
+CREATE TRIGGER serial_pt BEFORE INSERT ON staticdata.property FOR EACH ROW EXECUTE PROCEDURE serial_pk();
+CREATE TRIGGER serial_sx BEFORE INSERT ON staticdata.section FOR EACH ROW EXECUTE PROCEDURE serial_pk();
+CREATE TRIGGER serial_stf BEFORE INSERT ON staticdata.staff FOR EACH ROW EXECUTE PROCEDURE serial_pk();
+CREATE TRIGGER serial_stn BEFORE INSERT ON staticdata.station FOR EACH ROW EXECUTE PROCEDURE serial_pk();
+CREATE TRIGGER serial_sb BEFORE INSERT ON staticdata.suburb FOR EACH ROW EXECUTE PROCEDURE serial_pk();
+CREATE TRIGGER serial_vh BEFORE INSERT ON staticdata.vehicle FOR EACH ROW EXECUTE PROCEDURE serial_pk();
+CREATE TRIGGER serial_zn BEFORE INSERT ON staticdata.zone FOR EACH ROW EXECUTE PROCEDURE serial_pk();
 
 BEGIN;
 	SELECT fault_handler

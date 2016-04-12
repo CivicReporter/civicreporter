@@ -11,7 +11,8 @@ Ext.define('Civic.store.staticData.FireCodes', {
 	proxy: {
 		type: 'staticdataproxy',
 		extraParams: {
-			entity: 'Fire_Codes'
+			entity: 'Fire_Codes',
+			pkey: 'code_id'
 		}
 	}
 });

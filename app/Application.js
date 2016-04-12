@@ -19,6 +19,7 @@ Ext.define('Civic.Application', {
         'staticData.AbstractController',
         'engineering.Calls',
         'engineering.Jobs',
+        'engineering.DutyRoster',
         'gis.Map'
     ],
 

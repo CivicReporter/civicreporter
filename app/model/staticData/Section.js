@@ -6,7 +6,8 @@ Ext.define('Civic.model.staticData.Section', {
 	fields: [
 		{
 			name: 'section_id',
-			type: 'int'
+			type: 'int',
+			useNull: false
 		},{
 			name: 'name'
 		},{

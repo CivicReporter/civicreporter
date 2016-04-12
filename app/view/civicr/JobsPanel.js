@@ -20,6 +20,7 @@ Ext.define('Civic.view.civicr.JobsPanel', {
 			xtype: 'engjobsgrid',
 			title: 'Jobs List',
 			iconCls: 'menu_jobs',
+			height: 320,
 			collapsible: true,
 			collapseDirection: 'bottom',
 			collapsed: true

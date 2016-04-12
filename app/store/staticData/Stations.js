@@ -11,7 +11,8 @@ Ext.define('Civic.store.staticData.Stations', {
 	proxy: {
 		type: 'staticdataproxy',
 		extraParams: {
-			entity: 'Station'
+			entity: 'Station',
+			pkey: 'station_id'
 		}
 	}
 });

@@ -15,11 +15,23 @@ Ext.define('Civic.view.staticData.FaultCodes', {
 			text: 'Section',
 			width: 150,
 			dataIndex: 'section_id',
+			editor: {
+				xtype: 'combobox',
+				store: 'staticData.Sections',
+				displayField: 'name',
+				valueField: 'section_id',
+				queryMode: 'local',
+				allowBlank: false,
+				maxLength: 45
+			},
+			filter: {
+				type: 'string'
+			},
 			renderer: function(value, metaData, record){
 				var sectionsStore = Ext.getStore('staticData.Sections');
 				var section = sectionsStore.findRecord('section_id', value);
 
-				return section != null ? section.get('name'): value;
+				return value ? section.get('name'): '';
 			}
 		},{
 			text: 'Code',

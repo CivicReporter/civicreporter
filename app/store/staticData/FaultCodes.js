@@ -11,7 +11,8 @@ Ext.define('Civic.store.staticData.FaultCodes', {
 	proxy: {
 		type: 'staticdataproxy',
 		extraParams: {
-			entity: 'Fault_Codes'
+			entity: 'Fault_Codes',
+			pkey: 'code_id'
 		}
 	}
 });

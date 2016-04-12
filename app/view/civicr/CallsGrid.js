@@ -40,17 +40,23 @@ Ext.define('Civic.view.civicr.CallsGrid', {
 		me.columns = Ext.Array.merge([
 			{
 				text: 'Call Id',
-				width: 100,
+				width: 80,
 				dataIndex: 'call_id',
 				filter: {
 					type: 'numeric'
+				},
+				renderer: function (value, metaData, record) {
+					 return Civic.util.Util.renderText(value, metaData, record);
 				}
 			},{
 				text: 'Fault Code',
-				width: 100,
+				width: 80,
 				dataIndex: 'code',
 				filter: {
 					type: 'string'
+				},
+				renderer: function (value, metaData, record) {
+					 return Civic.util.Util.renderText(value, metaData, record);
 				}
 			},{
 				text: 'Caller Name',
@@ -58,6 +64,9 @@ Ext.define('Civic.view.civicr.CallsGrid', {
 				dataIndex: 'caller',
 				filter: {
 					type: 'string'
+				},
+				renderer: function (value, metaData, record) {
+					 return Civic.util.Util.renderText(value, metaData, record);
 				}
 			},{
 				text: 'Stand Number',
@@ -65,13 +74,19 @@ Ext.define('Civic.view.civicr.CallsGrid', {
 				dataIndex: 'stand_no',
 				filter: {
 					type: 'numeric'
+				},
+				renderer: function (value, metaData, record) {
+					 return Civic.util.Util.renderText(value, metaData, record);
 				}
 			},{
 				text: 'Suburb',
-				width: 200,
+				width: 160,
 				dataIndex: 'suburb',
 				filter: {
 					type: 'string'
+				},
+				renderer: function (value, metaData, record) {
+					 return Civic.util.Util.renderText(value, metaData, record);
 				}
 			}
 		],
@@ -89,19 +104,23 @@ Ext.define('Civic.view.civicr.CallsGrid', {
 			},{
 				xtype: 'datecolumn',
 				text: 'Time Reported',
-				width: 120,
+				width: 140,
 				dataIndex: 'reported_on',
 				format: 'Y-m-d H:i:s',
 				filter: true,
-				renderer: Ext.util.Format.dateRenderer('j M Y H:i:s')
+				renderer: function (value, metaData, record) {
+					 return Civic.util.Util.renderText(value, metaData, record);
+				}
 			},{
 				xtype: 'datecolumn',
 				text: 'Last Update',
-				width: 120,
+				width: 140,
 				dataIndex: 'last_update',
 				format: 'Y-m-d H:i:s',
 				filter: true,
-				renderer: Ext.util.Format.dateRenderer('j M Y H:i:s')
+				renderer: function (value, metaData, record) {
+					 return Civic.util.Util.renderText(value, metaData, record);
+				}
 			}
 		]);
 

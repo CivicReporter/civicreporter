@@ -2,22 +2,24 @@ Ext.define('Civic.view.staticData.AbstractGrid', {
 	extend: 'Ext.ux.LiveSearchGridPanel',
 	alias: 'widget.staticdatagrid',
 
+	requires: [
+		'Civic.util.Util'
+	],
+
 	columnLines: true,
 	viewConfig: {
 		stripeRows: true
 	},
 
 	initComponent: function () {
-		var me = this;
-
-		me.selModel = {
-			selType: 'cellmodel'
-		};
+		var me = this;	
 
 		me.plugins = [
-			Ext.create('Ext.grid.plugin.CellEditing', {
+			Ext.create('Ext.grid.plugin.RowEditing', {
 				clicksToEdit: 2,
-				pluginId: 'cellplugin'
+				pluginId: 'rowplugin', 
+				clicksToMoveEditor: 1, 
+				autoCancel: true
 			})
 		];
 
@@ -57,6 +59,11 @@ Ext.define('Civic.view.staticData.AbstractGrid', {
 						itemId: 'clearFilter',
 						text: 'Clear Filters',
 						iconCls: 'clear_filter'
+					},{
+						xtype: 'button',
+						itemId: 'refresh',
+						text: 'Refresh View',
+						iconCls: 'refresh_view'
 					}
 				]
 			}
@@ -66,10 +73,14 @@ Ext.define('Civic.view.staticData.AbstractGrid', {
 			[{
 				xtype: 'datecolumn',
 				text: 'Last Update',
-				width: 120,
+				width: 140,
 				dataIndex: 'last_update',
 				format: 'Y-m-d H:i:s',
-				filter: true
+				filter: true,
+				renderer: function (value, metaData, record) {
+					 return Civic.util.Util.renderActive(value, metaData, record);
+				}
+
 			},{
 				xtype: 'actioncolumn',
 				width: 30,
@@ -91,3 +102,4 @@ Ext.define('Civic.view.staticData.AbstractGrid', {
 		me.callParent(arguments);
 	}
 });
+

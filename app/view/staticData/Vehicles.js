@@ -37,6 +37,11 @@ Ext.define('Civic.view.staticData.Vehicles', {
 			dataIndex: 'station_id',
 			width: 200,
 			editor: {
+				xtype: 'combobox',
+				store: 'staticData.Stations',
+				displayField: 'name',
+				valueField: 'station_id',
+				queryMode: 'local',
 				allowBlank: false,
 				maxLength: 45
 			},
@@ -44,14 +49,15 @@ Ext.define('Civic.view.staticData.Vehicles', {
 				var stationsStore = Ext.getStore('staticData.Stations');
 				var station = stationsStore.findRecord('station_id', value);
 
-				return station != null ? station.get('name'): value;
+				return value ? station.get('name'): '';
 			}
 		},{
 			text: 'Radio',
 			dataIndex: 'radio',
 			editor: {
+				xtype: 'numberfield',				
 				allowBlank: false,
-				maxLength: 45
+				minVal: 31000
 			},
 			filter: {
 				type: 'numeric'

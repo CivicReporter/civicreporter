@@ -6,7 +6,8 @@ Ext.define('Civic.model.staticData.EmergencyCodes', {
 	fields: [
 		{
 			name: 'code_id',
-			type: 'int'
+			type: 'int',
+			useNull: false
 		},{
 			name: 'description'
 		}

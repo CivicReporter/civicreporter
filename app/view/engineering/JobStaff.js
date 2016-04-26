@@ -1,19 +1,6 @@
 Ext.define('Civic.view.engineering.JobStaff', {
-	extend: 'Ext.grid.Panel',
+	extend: 'Civic.view.civcr.AbstractJobDetails',
 	alias: 'widget.engjobstaff',
-
-	requires: [
-		'Civic.view.toolbar.SearchAddDelete',
-		'Ext.grid.plugin.RowExpander',
-		'Ext.ux.grid.FiltersFeature',
-		'Civic.util.Util'
-	],
-
-	columnLines: true,
-	viewConfig: {
-		stripeRows: true
-	},
-	autoScroll: true,
 
 	plugins: [
 		{
@@ -27,29 +14,24 @@ Ext.define('Civic.view.engineering.JobStaff', {
 		}
 	],
 
-	features: [
-		{
-			ftype: 'filters',
-			local: true
-		}
-	],
-
 	columns: [
 		{
 			text: 'Staff Id',
-			width: 80,
+			width: 60,
 			dataIndex: 'staff_id',
 			filter: {
 				type: 'numeric'
 			}
 		},{
 			text: 'First Name',
+			width: 70,
 			dataIndex: 'firstname',
 			filter: {
 				type: 'string'
 			}
 		},{
 			text: 'Last Name',
+			width: 100,
 			flex: 1,
 			dataIndex: 'surname',
 			filter: {
@@ -57,29 +39,25 @@ Ext.define('Civic.view.engineering.JobStaff', {
 			}
 		},{
 			text: 'Call Sign',
-			width: 80,
+			width: 70,
 			dataIndex: 'call_sign',
 			filter: {
 				type: 'numeric'
 			}
 		},{
 			text: 'Phone',
+			width: 80,
 			dataIndex: 'phone',
 			filter: {
 				type: 'string'
 			}
 		},{
 			text: 'Role',
+			width: 120,
 			dataIndex: 'role',
 			filter: {
 				type: 'string'
 			}
-		}
-	],
-
-	dockedItems: [
-		{
-			xtype: 'searchadddelete'
 		}
 	]
 });

@@ -1,11 +1,9 @@
 <?php
-	require('../db/db.php');
+	require('../../db/db.php');
 
 	session_start();
 
 	$userName = $_SESSION['username'];
-	$entity = $_REQUEST['entity'];
-	$pkey = $_REQUEST['pkey'];
 
 	$queryString = "SELECT g.name urole FROM security.user u, security.groups g ";
 	$queryString.= "WHERE u.groupid = g.id AND u.username = '$userName'";
@@ -23,10 +21,14 @@
 
 				pg_free_result($sth);
 
-				$sql = "SELECT * FROM staticdata.$entity ";
-				$sql.= "ORDER BY $pkey";
+				$sql = "SELECT * FROM staff_engineering ";
+				$sql.= "ORDER BY staff_id";
 
-				if ($sth = pg_query($dbh, $sql)) {
+			/*	if (isset($start) && isset($limit)) {
+					$sql.= " OFFSET $offset LIMIT $limit";
+				}
+
+			*/	if ($sth = pg_query($dbh, $sql)) {
 					$c = pg_num_rows($sth);
 
 					$r['msg'] = $c.' records retrieved.';

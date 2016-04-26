@@ -1,11 +1,9 @@
 <?php
-	require('../db/db.php');
+	require('../../db/db.php');
 
 	session_start();
 
 	$userName = $_SESSION['username'];
-	$entity = $_POST['entity'];
-	$pkey = $_POST['pkey'];
 	$staticdata = json_decode($_POST['data'], true);
 
 	$queryString = "SELECT g.name urole FROM security.user u, security.groups g ";
@@ -20,7 +18,7 @@
 			
 		while ($user = pg_fetch_assoc($sth)) {
 			
-			if ($count == 1 && ($user['urole'] == 'admin' || $user['urole'] == 'call centre')) {
+			if ($count == 1 && ($user['urole'] == 'admin')) {
 
 				foreach ($staticdata as $data) {
 					
@@ -29,14 +27,14 @@
 					$in = '(';					
 
 					foreach ($data as $key => $value) {
-						if ($key == $pkey) {
+						if ($key == 'id') {
 							$in.= "$value,";
 						}
 					}
 					
 					$in = substr($in, 0, -1). ')';
 
-					$deleteQuery = "DELETE FROM staticdata.$entity WHERE $pkey IN $in";
+					$deleteQuery = "DELETE FROM security.user WHERE id IN $in";
 
 					$sth = pg_query($dbh, $deleteQuery);
 				}

@@ -9,11 +9,11 @@ Ext.define('Civic.view.civicr.WindowForm', {
 	layout: {
 		type: 'fit'
 	},
-	modal: true,
+	modal: true/*,
 
 	dockedItems: [
 		{
 			xtype: 'cancelsave'			
 		}
-	]
+	]*/
 });

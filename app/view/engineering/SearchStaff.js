@@ -1,18 +1,18 @@
-Ext.define('Civic.view.engineering.SearchCall', {
+Ext.define('Civic.view.engineering.SearchStaff', {
 	extend: 'Civic.view.civicr.SearchWindow',
-	alias: 'widget.searchcall',
+	alias: 'widget.searchstaff',
 
 	requires: [
-		'Civic.view.engineering.JobCalls'
+		'Civic.view.engineering.JobStaff'
 	],
 
-	title: 'Seach and Add Calls',
+	title: 'Seach and Add Technicians',
 	iconCls: 'find',
 
 	items: [
 		{
 			xtype: 'form',
-			itemId: 'callForm',
+			itemId: 'staffForm',
 			layout: {
 				type: 'vbox',
 				align: 'stretch',
@@ -29,25 +29,25 @@ Ext.define('Civic.view.engineering.SearchCall', {
 					items: [
 						{
 							xtype: 'label',
-							text: 'Hold CTRL or SHIFT to select more than one call.',
+							text: 'Hold CTRL or SHIFT to select more than one technician.',
 							padding: '10 5 5 5',
 							style: {
 								fontWeight: 'bold'
 							}
 						},{
 							xtype: 'combo',
-							emptyText: 'search for calls by suburb',
+							emptyText: 'search for technicians by station',
 							padding: '1 210 1 5',
-							store: 'staticData.Suburbs',
+							store: 'staticData.Stations',
 							displayField: 'name',
-							//valueField: 'suburb_id',
+							valueField: 'station_id',
 							hideTrigger: true,
 							typeAhead: true
 						}
 
 					]
 				},{
-					xtype: 'engjobcalls',
+					xtype: 'engjobstaff',
 					height: 180,
 					selModel: {
 						mode: 'MULTI',
@@ -58,7 +58,7 @@ Ext.define('Civic.view.engineering.SearchCall', {
 							dock: 'bottom',
 							xtype: 'pagingtoolbar',
 							displayInfo: true,
-							displayMsg: 'Displaying Calls {0} - {1} of {2}'
+							displayMsg: 'Displaying Technicians {0} - {1} of {2}'
 						}
 					]
 				}

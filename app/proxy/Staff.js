@@ -1,21 +1,33 @@
-Ext.define('Civic.proxy.CVR', {
+Ext.define('Civic.proxy.Staff', {
 	extend: 'Ext.data.proxy.Ajax',
-	alias: 'proxy.cvr',
+	alias: 'proxy.staffproxy',
 
 	type: 'ajax',
-
 	reader: {
 		type: 'json',
 		messageProperty: 'msg',
 		root: 'data'
 	},
-
 	writer: {
 		type: 'json',
 		writeAllFields: true,
 		encode: true,
 		allowSingle: false,
 		root: 'data'
+	},
+
+	actionMethods: {
+		create: 'POST',
+		read: 'POST',
+		update: 'POST',
+		destroy: 'POST'
+	},
+
+	api: {
+		create: 'php/engineering/staff/create.php',
+		read: 'php/engineering/staff/list.php',
+		update: 'php/engineering/staff/update.php',
+		destroy: 'php/engineering/staff/delete.php'
 	},
 
 	listeners: {

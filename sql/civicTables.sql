@@ -298,7 +298,8 @@ DROP TABLE IF EXISTS engineering.job ;
 
 CREATE TABLE IF NOT EXISTS engineering.job (
   job_id SERIAL NOT NULL,
-  suburb_id INT NOT NULL,
+  suburb_id INT,
+  station_id INT,
   status JOBSTATUS NOT NULL DEFAULT 'OPEN',
   opened_on TIMESTAMP(0) NOT NULL DEFAULT CURRENT_TIMESTAMP,
   closed_on TIMESTAMP(0) NULL,
@@ -310,6 +311,11 @@ CREATE TABLE IF NOT EXISTS engineering.job (
   CONSTRAINT job_suburb
     FOREIGN KEY (suburb_id)
     REFERENCES staticdata.suburb (suburb_id)
+    ON DELETE CASCADE
+    ON UPDATE CASCADE,
+  CONSTRAINT job_station
+    FOREIGN KEY (station_id)
+    REFERENCES staticdata.station (station_id)
     ON DELETE CASCADE
     ON UPDATE CASCADE
 );
@@ -408,7 +414,6 @@ DROP TABLE IF EXISTS engineering.assignment ;
 
 
 CREATE TABLE IF NOT EXISTS engineering.assignment (
-  assign_id SERIAL NOT NULL,
   job_id INT NOT NULL,
   staff_id INT NOT NULL,
   assigned_on TIMESTAMP(0) NOT NULL DEFAULT CURRENT_TIMESTAMP,
@@ -831,3 +836,39 @@ CREATE TRIGGER upd_ambcharge BEFORE UPDATE ON ambulance.charges FOR EACH ROW EXE
 DROP SCHEMA IF EXISTS gis CASCADE;
 
 CREATE SCHEMA IF NOT EXISTS gis;
+
+-- -----------------------------------------------------
+-- View public.job_engineering
+-- -----------------------------------------------------
+DROP VIEW IF EXISTS public.job_engineering;
+
+CREATE VIEW public.job_engineering AS(
+	SELECT ej.job_id, ss.name suburb, st.name station, ej.status, ej.opened_on, ej.closed_on, ej.last_update, ej.opened_by, ej.closed_by
+		FROM engineering.job ej
+		INNER JOIN staticdata.suburb ss ON ej.suburb_id = ss.suburb_id
+		INNER JOIN staticdata.station st ON ej.station_id = st.station_id
+);
+
+-- -----------------------------------------------------
+-- View public.call_engineering
+-- -----------------------------------------------------
+DROP VIEW IF EXISTS public.call_engineering;
+
+CREATE VIEW public.call_engineering AS(
+	SELECT ec.call_id, sfc.code, CONCAT_WS(' ', sc.firstname, sc.surname) caller, ec.caller_id, ec.job_id, ec.stand_no, ec.street, ss.name suburb, ec.severity, ec.property_damage, ec.status, ec.description, ec.reported_on, ec.last_update
+		FROM engineering.call ec INNER JOIN staticdata.fault_codes sfc ON ec.code_id = sfc.code_id
+		INNER JOIN staticdata.caller sc ON ec.caller_id = sc.caller_id
+		INNER JOIN staticdata.suburb ss ON ec.suburb_id = ss.suburb_id
+);
+
+-- -----------------------------------------------------
+-- View public.call_engineering
+-- -----------------------------------------------------
+DROP VIEW IF EXISTS public.staff_engineering;
+
+CREATE VIEW public.staff_engineering AS(
+	SELECT staff_id, call_sign, firstname, surname, phone, sn.name section_id, st.name station_id, role, sf.last_update, active, status
+	FROM staticdata.staff sf INNER JOIN staticdata.section sn ON sf.section_id = sn.section_id
+	INNER JOIN staticdata.station st ON sf.station_id = st.station_id
+);
+

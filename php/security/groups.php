@@ -5,7 +5,7 @@
 
 	$userName = $_SESSION['username'];
 
-	$queryString = "SELECT * FROM security.groups";
+	$queryString = "SELECT id, UPPER(name) AS name FROM security.groups";
 
 	if ($sth = pg_query($dbh, $queryString)) {
 		

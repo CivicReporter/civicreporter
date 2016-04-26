@@ -3,7 +3,8 @@ Ext.define('Civic.view.engineering.DutyRoster', {
 	alias: 'widget.engdutyroster',
 
 	requires: [
-		'Civic.view.civicr.AbstractRoster'
+		'Civic.view.civicr.AbstractRoster',
+		'Ext.form.RadioGroup'
 	],
 
 	layout: {
@@ -16,7 +17,85 @@ Ext.define('Civic.view.engineering.DutyRoster', {
 			items: [
 				{
 					xtype: 'abstractroster',
-					flex: 1
+					flex: 1,
+					store: 'engineering.ActiveStaff',
+					columns: [
+						{
+							text: 'Staff Id',
+							width: 80,
+							dataIndex: 'staff_id',
+							filter: {
+								type: 'numeric'
+							},
+							renderer: function (value, metaData, record) {
+								 return Civic.util.Util.renderText(value, metaData, record);
+							}
+						},{
+							text: 'First Name',
+							dataIndex: 'firstname',
+							filter: {
+								type: 'string'
+							},
+							renderer: function (value, metaData, record) {
+								 return Civic.util.Util.renderText(value, metaData, record);
+							}
+						},{
+							text: 'Last Name',
+							flex: 1,
+							dataIndex: 'surname',
+							filter: {
+								type: 'string'
+							},
+							renderer: function (value, metaData, record) {
+								 return Civic.util.Util.renderText(value, metaData, record);
+							}
+						},{
+							text: 'Call Sign',
+							width: 80,
+							dataIndex: 'call_sign',
+							filter: {
+								type: 'numeric'
+							},
+							renderer: function (value, metaData, record) {
+								 return Civic.util.Util.renderText(value, metaData, record);
+							}
+						},{
+							text: 'Phone',
+							dataIndex: 'phone',
+							filter: {
+								type: 'string'
+							},
+							renderer: function (value, metaData, record) {
+								 return Civic.util.Util.renderText(value, metaData, record);
+							}
+						},{
+							text: 'Status',
+							dataIndex: 'status',
+							width: 90,
+							editor: {
+								xtype: 'combobox',
+								store: 'engineering.StaffStatus',
+								displayField: 'text',
+								queryMode: 'local',
+								allowBlank: false,
+								maxLength: 45
+							},
+							renderer: function (value, metaData, record) {
+								 return Civic.util.Util.renderText(value, metaData, record);
+							}
+						},{
+							xtype: 'datecolumn',
+							text: 'Last Update',
+							width: 140,
+							dataIndex: 'last_update',
+							format: 'Y-m-d H:i:s',
+							filter: true,
+							renderer: function (value, metaData, record) {
+								 return Civic.util.Util.renderText(value, metaData, record);
+							}
+
+						}
+					]
 				},{
 					title: 'Staff details',
 					xtype: 'form',

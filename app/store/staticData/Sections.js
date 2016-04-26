@@ -14,5 +14,7 @@ Ext.define('Civic.store.staticData.Sections', {
 			entity: 'Section',
 			pkey: 'section_id'
 		}
-	}
+	},
+
+	autoLoad: true
 });

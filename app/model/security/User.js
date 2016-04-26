@@ -14,6 +14,8 @@ Ext.define('Civic.model.security.User', {
 		},{
 			name: 'username'
 		},{
+			name: 'password'
+		},{
 			name: 'email'
 		},{
 			name: 'picture'

@@ -33,6 +33,9 @@ Ext.define('Civic.controller.login.Login', {
 			'login form button#cancel': {
 				click: this.onButtonClickCancel
 			},
+			'login form button#new': {
+				click: this.onButtonClickNew
+			},
 			'login form textfield': {
 				specialkey: this.onTextfieldSpecialKey
 			},
@@ -89,6 +92,28 @@ Ext.define('Civic.controller.login.Login', {
 			})
 		};
 	},
+	
+	onButtonClickNew: function(button, e, options) {
+		editWindow = Ext.create('Civic.view.security.Profile');
+		form = editWindow.down('form');
+
+		form.getComponent('userinfo').items.items.forEach(function (field) {
+			if (field.xtype == 'combobox') {
+				field.setVisible(false);	
+
+				if (field.name == 'active') {
+					field.setValue('f');
+				} else if (field.name == 'groupid') {
+					field.setValue(5);
+				};				
+			};
+			if (field.inputType == 'password') {
+				field.enable();					
+			};			
+		});
+
+		editWindow.show();
+	},
 
 	onTextfieldSpecialKey: function(field, e, options){
 		if (e.getKey()==e.ENTER) {
@@ -117,7 +142,7 @@ Ext.define('Civic.controller.login.Login', {
 		toolbar.add(
 			{
 				xtype: 'label',
-				html: '<div id="titleHeader"><span style="font-size: 10px;">You are logged in as <span id="appuser">'+user+'</span></span></div>'
+				html: '<div id="titleHeader"><span style="font-size: 11px;">You are logged in as <span id="appuser">'+user+'</span></span></div>'
 			},{
 				xtype: 'tbseparator'
 			},{

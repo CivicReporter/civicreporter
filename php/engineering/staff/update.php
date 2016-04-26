@@ -1,11 +1,9 @@
 <?php
-	require('../db/db.php');
+	require('../../db/db.php');
 
 	session_start();
 
 	$userName = $_SESSION['username'];
-	$entity = $_POST['entity'];
-	$pkey = $_POST['pkey'];
 	$staticdata = json_decode($_POST['data'], true);
 
 	$queryString = "SELECT g.name urole FROM security.user u, security.groups g ";
@@ -26,19 +24,18 @@
 					
 					pg_free_result($sth);
 
-					$in = '(';					
+					$updateQuery = "UPDATE staticdata.staff SET ";					
 
 					foreach ($data as $key => $value) {
-						if ($key == $pkey) {
-							$in.= "$value,";
+						if ($key != 'staff_id' && $key != 'last_update' && $data[$key] != '') {
+							$updateQuery.= "$key = '$value',";
 						}
 					}
 					
-					$in = substr($in, 0, -1). ')';
+					$updateQuery = substr($updateQuery, 0, -1). " WHERE staff_id = ";
+					$updateQuery.= $data['staff_id'];
 
-					$deleteQuery = "DELETE FROM staticdata.$entity WHERE $pkey IN $in";
-
-					$sth = pg_query($dbh, $deleteQuery);
+					$sth = pg_query($dbh, $updateQuery);
 				}
 				
 			}
@@ -46,7 +43,7 @@
 		}
 
 		if (!pg_last_error($dbh)) {			
-			$r['msg'] = 'Records deleted';
+			$r['msg'] = $entity.' details updated.';
 			$r['success'] = true;
 			
 		} else {

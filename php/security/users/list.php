@@ -1,5 +1,5 @@
 <?php
-	require('../db/db.php');
+	require('../../db/db.php');
 
 	session_start();
 
@@ -21,7 +21,9 @@
 
 				pg_free_result($sth);
 
-				$sql = "SELECT id, firstname, lastname, username, email, picture, groupid, active, created_on, last_update FROM security.user";
+				$sql = "SELECT id, UPPER(firstname) firstname, UPPER(lastname) lastname, username, email, picture, groupid, active, created_on, last_update ";
+				$sql.= "FROM security.user ";
+				$sql.= "ORDER BY id";
 
 				if ($sth = pg_query($dbh, $sql)) {
 					$c = pg_num_rows($sth);

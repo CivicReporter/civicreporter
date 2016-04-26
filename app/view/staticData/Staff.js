@@ -84,9 +84,8 @@ Ext.define('Civic.view.staticData.Staff', {
 			renderer: function(value, metaData, record){
 				var sectionsStore = Ext.getStore('staticData.Sections');
 				var section = sectionsStore.findRecord('section_id', value);
-				var value = section.get('name');
 
-				return value ? Civic.util.Util.renderActive(value, metaData, record): '';
+				return value ? Civic.util.Util.renderActive(section.get('name'), metaData, record) : '';
 			}
 		},{
 			text: 'Station',
@@ -103,9 +102,8 @@ Ext.define('Civic.view.staticData.Staff', {
 			renderer: function(value, metaData, record){
 				var stationsStore = Ext.getStore('staticData.Stations');
 				var station = stationsStore.findRecord('station_id', value);
-				var value = station.get('name');
 
-				return value ? Civic.util.Util.renderActive(value, metaData, record): '';
+				return value ? Civic.util.Util.renderActive(station.get('name'), metaData, record): '';
 			}
 		},{
 			text: 'Role',

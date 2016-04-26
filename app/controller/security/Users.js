@@ -2,7 +2,8 @@ Ext.define('Civic.controller.security.Users', {
 	extend: 'Ext.app.Controller',
 
 	view: [
-		'security.Users'
+		'security.Users',
+		'security.Profile'
 	],
 
 	stores: [
@@ -29,11 +30,11 @@ Ext.define('Civic.controller.security.Users', {
 				render: this.onRender,
 				selectionchange: this.onSelectionChange
 			},
-
+		/*
 			'users button#add': {
 				click: this.onButtonClickAdd
 			},
-
+		*/
 			'users button#edit': {
 				click: this.onButtonClickEdit
 			},
@@ -44,6 +45,12 @@ Ext.define('Civic.controller.security.Users', {
 
 			'users button#clearFilter': {
 				click: this.onButtonClickClearFilter
+			},
+			'users button#refresh': {
+				click: this.onButtonClickRefresh
+			},
+			'userslist actioncolumn': {
+				itemclick: this.handleActionColumn
 			},
 
 			'profile button#save': {
@@ -56,6 +63,15 @@ Ext.define('Civic.controller.security.Users', {
 
 			'profile filefield': {
 				change: this.onFilefieldChange
+			}
+		});
+
+		this.listen({
+			store: {
+				'#security.Users': {
+					write: this.onStoreSync,
+					update: this.onStoreSync
+				}
 			}
 		});
 	},
@@ -80,7 +96,7 @@ Ext.define('Civic.controller.security.Users', {
 	},
 
 	onButtonClickAdd: function (button, e, options) {
-		var win = Ext.create('Civic.view.security.Profile');
+		var win = Ext.widget('profile');
 		win.setTitle('Add New User');
 		win.show();
 	},
@@ -90,16 +106,25 @@ Ext.define('Civic.controller.security.Users', {
 		record = grid.getSelectionModel().getSelection();
 
 		if (record[0]) {
-			var editWindow = Ext.create('Civic.view.security.Profile');
+			var editWindow = Ext.widget('profile');
+			form = editWindow.down('form');
 
-			editWindow.down('form').loadRecord(record[0]);
+			form.loadRecord(record[0]);
+			form.getComponent('userinfo').items.items.forEach(function (field) {
+				if (field.xtype == 'textfield') {
+					field.setReadOnly(true);					
+				};
+				if (field.xtype == 'filefield' || field.inputType == 'password') {
+					field.setVisible(false);					
+				};
+			});
 
 			if (record[0].get('picture')) {
 				var img = editWindow.down('image');
 				img.setSrc('resources/profileImages/' + record[0].get('picture'));
 			};
 
-			editWindow.setTitle(record[0].get('name'));
+			editWindow.setTitle(record[0].get('firstname')+' '+record[0].get('lastname'));
 			editWindow.show();
 		};
 	},
@@ -107,46 +132,10 @@ Ext.define('Civic.controller.security.Users', {
 	onButtonClickDelete: function (button, e, options) {
 		var grid = this.getUsersList();
 		record = grid.getSelectionModel().getSelection();
-		store = grid.getStore();
 
-		if (store.getCount() >= 2 && record[0]) {
-			Ext.Msg.show({
-				title: 'Delete User?',
-				msg: 'Are you sure you want to delete the selected user?',
-				buttons: Ext.Msg.YESNO,
-				icon: Ext.Msg.QUESTION,
-				fn: function (buttonId) {
-					if (buttonId == 'yes') {
-						Ext.Ajax.request({
-							url: 'php/security/deleteUser.php',
-							params: {
-								id: record[0].get('id')
-							},
-							success: function (conn, response, options, eOpts) {
-								var result = Civic.util.Util.decodeJSON(conn.responseText);
-
-								if (result.success) {
-									Civic.util.Alert.msg('Success!', 'User deleted.');
-									store.load();
-								} else{
-									Civic.util.Util.showErrorMsg(conn.responseText);
-								};
-							},
-							failure: function (conn, response, options, eOpts) {
-								Civic.util.Util.showErrorMsg(conn.responseText);
-							}
-						})
-					};
-				}
-			});
-		} else if (store.getCount() == 1) {
-			Ext.Msg.show({
-				title: 'Warning',
-				msg: 'You cannot delete all the users from CivicReporter !',
-				buttons: Ext.Msg.OK,
-				icon: Ext.Msg.WARNING
-			});
-		};
+		if (record[0]) {
+			this.handleActionColumn(grid.down('actioncolumn'), 'delete', grid.getView(), e, record[0]);				
+		}
 
 	},
 
@@ -154,46 +143,86 @@ Ext.define('Civic.controller.security.Users', {
 		button.up('users').down('userslist').filters.clearFilters();
 	},
 
+	onButtonClickRefresh: function (button, e, options) {
+		button.up('users').down('userslist').getStore().reload();
+	},
+
+	handleActionColumn: function (column, action, view, e, record) {
+		if (action == 'delete') {
+			var grid = this.getUsersList();
+			store = grid.getStore();
+
+			if (store.getCount() >= 2 && record) {
+				Ext.Msg.show({
+					title: 'DELETE USER?',
+					msg: 'Are you sure you want to delete the selected user?',
+					buttons: Ext.Msg.YESNO,
+					icon: Ext.Msg.QUESTION,
+					fn: function (buttonId) {
+						if (buttonId == 'yes') {
+							if (record.get('username') == user) {
+								Ext.Msg.show({
+									title: 'RESTRICTED ACTION',
+									msg: 'You cannot delete a currently logged user!',
+									buttons: Ext.Msg.OK,
+									icon: Ext.Msg.WARNING
+								});
+							} else{
+								Ext.get(Ext.getBody()).mask('Deleting...Please Wait...', 'loading');
+								store.remove(record);
+							};							
+						};
+					}
+				});
+			} else if (store.getCount() == 1) {
+				Ext.Msg.show({
+					title: 'RESTRICTED ACTION',
+					msg: 'You cannot delete all the users from CivicReporter!',
+					buttons: Ext.Msg.OK,
+					icon: Ext.Msg.WARNING
+				});
+			};
+
+		};
+	},
+
 	onButtonClickSave: function (button, e, options) {
 		var win = button.up('window');
-		formPanel = win.down('form');
+		form = win.down('form').getForm();
 
-		store = this.getUsersList().getStore();
+		store = Ext.getStore('security.Users');
 
-		if (formPanel.getForm().isValid()) {
-			formPanel.getForm().submit({
-				clientValidation: true,
-				url: 'php/security/saveUser.php',
-				success: function (form, action) {
-					var result = action.result;
+		if (form.isValid()) {
 
-					if (result.success) {
-						Civic.util.Alert.msg('User saved successfully!');
-						store.load();
-						win.close()
-					} else {
-						Civic.util.Util.showErrorMsg(result.msg);
-					};
-				},
-				failure: function (form, action) {
-					switch (action.failureType) {
-						case Ext.form.action.Action.CLIENT_INVALID:
-							Ext.Msg.alert('Failure', 'Invalid values submitted!');
+			if (form.getRecord()) {
+				
+				Ext.get(Ext.getBody()).mask('Saving...Please Wait...', 'loading');
+				
+				form.updateRecord();
 
-							break;
+			} else{
 
-						case Ext.form.action.Action.CONNECT_FAILURE:
-							Ext.Msg.alert('Failure', 'Ajax communication failed.');
+				values = form.getFieldValues({
+					dirtyOnly: true
+				});
 
-							break;
+				if (values.password == values.password2) {
 
-						case Ext.form.action.Action.SERVER_INVALID:
-							Ext.Msg.alert('Failure', action.result.msg);
+					Ext.get(Ext.getBody()).mask('Saving...Please Wait...', 'loading');
 
-							break;
-					}
-				}
-			})
+					record = Ext.create('Civic.model.security.User', form.getFieldValues({
+						dirtyOnly: true
+					}));
+
+					store.add(record);
+
+				} else{
+
+					form.findField('password2').markInvalid('passwords do not match');
+				};
+			
+			};
+
 		};
 	},
 
@@ -216,5 +245,41 @@ Ext.define('Civic.controller.security.Users', {
 			Ext.Msg.alert('Warning', 'You can only upload image files!');
 			filefield.reset();
 		};
+	},
+
+	onStoreSync: function (store, operation) {	
+		win = Ext.ComponentQuery.query('profile')[0];
+		if (win) {
+			win.close();	
+		};
+		
+		Ext.get(Ext.getBody()).unmask();
+
+		switch (operation.action) {
+			case 'create':
+				Ext.MessageBox.show({
+					title: 'CREATE SUCCESSFUL',
+					msg: 'New User profile created!</br>'+'Contact administrator to get activated.',
+					icon: Ext.MessageBox.INFO,
+					buttons: Ext.Msg.OK
+				});
+				break;
+			case 'update':
+				Ext.MessageBox.show({
+					title: 'UPDATE SUCCESSFUL',
+					msg: 'User details updated!',
+					icon: Ext.MessageBox.INFO,
+					buttons: Ext.Msg.OK
+				});
+				break;
+			case 'destroy':
+				Ext.MessageBox.show({
+					title: 'DELETE SUCCESSFUL',
+					msg: 'User deleted!',
+					icon: Ext.MessageBox.INFO,
+					buttons: Ext.Msg.OK
+				});
+				break;
+		};			
 	}
 });

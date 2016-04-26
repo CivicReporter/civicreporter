@@ -1,19 +1,6 @@
 Ext.define('Civic.view.engineering.JobCalls', {
-	extend: 'Ext.grid.Panel',
+	extend: 'Civic.view.civcr.AbstractJobDetails',
 	alias: 'widget.engjobcalls',
-
-	requires: [
-		'Civic.view.toolbar.SearchAddDelete',
-		'Ext.grid.plugin.RowExpander',
-		'Ext.ux.grid.FiltersFeature',
-		'Civic.util.Util'
-	],
-
-	columnLines: true,
-	viewConfig: {
-		stripeRows: true
-	},
-	autoScroll: true,
 
 	plugins: [
 		{
@@ -26,13 +13,6 @@ Ext.define('Civic.view.engineering.JobCalls', {
 					'<tr><th align = "left">Description:</th><td>{description}</td></tr>'+
 				'</table>'
 			]
-		}
-	],
-
-	features: [
-		{
-			ftype: 'filters',
-			local: true
 		}
 	],
 
@@ -73,12 +53,6 @@ Ext.define('Civic.view.engineering.JobCalls', {
 			format: 'Y-m-d H:i:s',
 			filter: true,
 			renderer: Ext.util.Format.dateRenderer('j M Y H:i:s')
-		}
-	],
-
-	dockedItems: [
-		{
-			xtype: 'searchadddelete'
 		}
 	]
 });

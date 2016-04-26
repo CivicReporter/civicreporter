@@ -2,7 +2,7 @@ Ext.define('Civic.view.engineering.JobWindow', {
 	extend: 'Civic.view.civicr.WindowForm',
 	alias: 'widget.jobwindow',
 
-	height: 300,
+	height: 330,
 	width: 550,
 
 	requires: [
@@ -44,7 +44,7 @@ Ext.define('Civic.view.engineering.JobWindow', {
 						},{
 							xtype: 'panel',
 							layout: {
-								type: 'anchor'
+								type: 'fit'
 							},
 							title: 'Attending Technicians',
 							items: [
@@ -69,23 +69,32 @@ Ext.define('Civic.view.engineering.JobWindow', {
 							items: [
 								{
 									fieldLabel: 'Job Id',
-									name: 'job_id'
+									name: 'job_id',
+									allowBlank: false
 								},{
 									fieldLabel: 'Suburb',
-									name: 'suburb'
+									name: 'suburb',
+									allowBlank: false
 								},{
 									fieldLabel: 'Status',
-									name: 'status'
+									name: 'status',
+									allowBlank: false
+								},{
+									fieldLabel: 'Station Assigned',
+									name: 'station',
+									allowBlank: false
 								},{
 									xtype: 'datefield',
 									fieldLabel: 'Opened On',
 									name: 'opened_on',
 									value: new Date(),
-									format: 'j M Y H:i:s'
+									format: 'j M Y H:i:s',
+									allowBlank: false
 								},{
 									fieldLabel: 'Opened By',
 									name: 'opened_by',
-									value: user //the user variable from the login controller 
+									value: user, //the user variable from the login controller
+									allowBlank: false 
 								},{
 									xtype: 'datefield',
 									fieldLabel: 'Closed On',
@@ -98,7 +107,13 @@ Ext.define('Civic.view.engineering.JobWindow', {
 						}
 					]					
 				}
-			]
+			],
+
+							dockedItems: [
+								{
+									xtype: 'cancelsave'			
+								}
+							]
 		}
 	]
 });

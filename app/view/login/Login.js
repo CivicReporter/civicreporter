@@ -1,12 +1,18 @@
 Ext.define('Civic.view.login.Login', {
 	extend: 'Ext.window.Window',
 	alias: 'widget.login',
+
+	requires: [
+		'Ext.form.Label'
+	],
+
 	autoShow: true,
 	height: 200,
 	width: 360,
 	layout: {
 		type: 'fit'
 	},
+
 	iconCls: 'key',
 	title: 'Login',
 	closeAction: 'hide',
@@ -50,6 +56,11 @@ Ext.define('Civic.view.login.Login', {
 					dock: 'bottom',
 					items:[
 						{
+							xtype: 'button',
+							itemId: 'new',
+							iconCls: '',
+							text: 'Sign Up'
+						},{
 							xtype: 'tbfill'
 						},{
 							xtype: 'button',

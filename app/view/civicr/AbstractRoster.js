@@ -5,7 +5,6 @@ Ext.define('Civic.view.civicr.AbstractRoster', {
 	requires: [
 		'Ext.grid.plugin.RowEditing',
 		'Ext.ux.grid.FiltersFeature',
-		'Civic.store.engineering.StaffStatus',
 		'Civic.util.Util'
 	],
 
@@ -14,11 +13,11 @@ Ext.define('Civic.view.civicr.AbstractRoster', {
 		stripeRows: true
 	},
 
-	store: 'staticData.Staff',
 	plugins: [
 		{
 			ptype: 'rowediting',
-			clicksToEdit: 1, 
+			pluginId: 'rowplugin',
+			clicksToEdit: 2, 
 			clicksToMoveEditor: 1, 
 			autoCancel: false
 		}
@@ -29,73 +28,6 @@ Ext.define('Civic.view.civicr.AbstractRoster', {
 			local: true
 		}
 	],
-	columns: [
-		{
-			text: 'Staff Id',
-			width: 80,
-			dataIndex: 'staff_id',
-			filter: {
-				type: 'numeric'
-			},
-			renderer: function (value, metaData, record) {
-				 return Civic.util.Util.renderText(value, metaData, record);
-			}
-		},{
-			text: 'First Name',
-			dataIndex: 'firstname',
-			filter: {
-				type: 'string'
-			},
-			renderer: function (value, metaData, record) {
-				 return Civic.util.Util.renderText(value, metaData, record);
-			}
-		},{
-			text: 'Last Name',
-			flex: 1,
-			dataIndex: 'surname',
-			filter: {
-				type: 'string'
-			},
-			renderer: function (value, metaData, record) {
-				 return Civic.util.Util.renderText(value, metaData, record);
-			}
-		},{
-			text: 'Call Sign',
-			width: 80,
-			dataIndex: 'call_sign',
-			filter: {
-				type: 'numeric'
-			},
-			renderer: function (value, metaData, record) {
-				 return Civic.util.Util.renderText(value, metaData, record);
-			}
-		},{
-			text: 'Phone',
-			dataIndex: 'phone',
-			filter: {
-				type: 'string'
-			},
-			renderer: function (value, metaData, record) {
-				 return Civic.util.Util.renderText(value, metaData, record);
-			}
-		},{
-			text: 'Status',
-			dataIndex: 'status',
-			width: 90,
-			editor: {
-				xtype: 'combobox',
-				store: 'engineering.StaffStatus',
-				displayField: 'text',
-				queryMode: 'local',
-				allowBlank: false,
-				maxLength: 45
-			},
-			renderer: function (value, metaData, record) {
-				 return Civic.util.Util.renderText(value, metaData, record);
-			}
-		}
-	],
-
 	dockedItems: [
 		{
 			xtype: 'toolbar',
@@ -126,6 +58,11 @@ Ext.define('Civic.view.civicr.AbstractRoster', {
 					itemId: 'clearFilter',
 					text: 'Clear Filters',
 					iconCls: 'clear_filter'
+				},{
+					xtype: 'button',
+					itemId: 'refresh',
+					text: 'Refresh View',
+					iconCls: 'refresh_view'
 				}
 			]
 		}

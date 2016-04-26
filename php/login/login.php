@@ -21,18 +21,28 @@
 		$count = pg_num_rows($sth);
 
 		if ($count==1) {
-			
-			$_SESSION['authenticated'] = "yes";
-			$_SESSION['username'] = $userName;
 
-			$result['success'] = true;
-			$result['msg'] = 'User authenticated!';
+			while ($user = pg_fetch_assoc($sth)) {
+
+				if ($user['active'] == 't') {					
+					$_SESSION['authenticated'] = "yes";
+					$_SESSION['username'] = $userName;
+
+					$result['success'] = true;
+					$result['msg'] = 'User authenticated!';
+				} else {
+					$result['success'] = false;
+					$result['msg'] = 'This User is currently INACTIVE!</br>';
+					$result['msg'].= 'Contact administrator.';
+				}
+
+			}
 
 		} else{
-
 			$result['success'] = false;
 			$result['msg'] = 'Incorrect username or password.';
 		}
+		
 	}
 
 	pg_close();

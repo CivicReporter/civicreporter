@@ -130,9 +130,19 @@ Ext.define('Civic.view.civicr.JobsGrid', {
 			}
 		},{
 			text: 'Status',
-			width: 200,
+			width: 150,
 			flex: 1,
 			dataIndex: 'status',
+			filter: {
+				type: 'string'
+			},
+			renderer: function (value, metaData, record) {
+				 return Civic.util.Util.renderText(value, metaData, record);
+			}
+		},{
+			text: 'Station Assigned',
+			width: 150,
+			dataIndex: 'station',
 			filter: {
 				type: 'string'
 			},

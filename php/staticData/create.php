@@ -29,7 +29,7 @@
 					$insertQuery = "INSERT INTO staticdata.$entity(";					
 
 					foreach ($data as $key => $value) {
-						if ($key != $pkey && $key != 'status' && $key != 'last_update') {
+						if ($key != $pkey && $data[$key] != '' && $key != 'last_update') {
 							$insertQuery.= "$key,";
 						}
 					}
@@ -37,7 +37,7 @@
 					$insertQuery = substr($insertQuery, 0, -1). ") VALUES(";
 					
 					foreach ($data as $key => $value) {
-						if ($key != $pkey && $key != 'status' && $key != 'last_update') {
+						if ($key != $pkey && $data[$key] != '' && $key != 'last_update') {
 							$value = strtoupper($value);
 							$insertQuery.= "'$value',";
 						}

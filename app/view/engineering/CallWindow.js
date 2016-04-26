@@ -127,5 +127,11 @@ Ext.define('Civic.view.engineering.CallWindow', {
 				}
 			]
 		}
+	],
+
+	dockedItems: [
+		{
+			xtype: 'cancelsave'			
+		}
 	]
 });

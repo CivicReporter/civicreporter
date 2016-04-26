@@ -2,23 +2,26 @@ Ext.define('Civic.view.security.Profile', {
 	extend: 'Ext.window.Window',
 	alias: 'widget.profile',
 
-	height: 260,
-	width: 550,
+	title: 'User Profile',
+	iconCls: 'menu_users',
+	height: 320,
+	width: 700,
+	draggable: false,
+	resizable: false,
 
 	requires: [
 		'Civic.util.Util',
-		'Ext.form.field.ComboBox'
+		'Ext.form.field.*'
 	],
 
 	layout: {
 		type: 'fit'
 	},
-	title: 'User',
 
 	items: [
 		{
 			xtype: 'form',
-			bobyPadding: 5,
+			bodyPadding: 5,
 			layout: {
 				type: 'hbox',
 				align: 'stretch'
@@ -26,14 +29,19 @@ Ext.define('Civic.view.security.Profile', {
 			items: [
 				{
 					xtype: 'fieldset',
+					itemId: 'userinfo',
 					flex: 2,
 					title: 'User Information',
+					autoScroll: true,
 					defaults: {
 						afterLabelTextTpl: Civic.util.Util.required,
 						anchor: '100%',
 						xtype: 'textfield',
+						vtype: 'alphanum',
 						allowBlank: false,
-						labelWidth: 60
+						labelWidth: 120,
+						msgTarget: 'under',
+						padding: '0 25 0 0'
 					},
 					items: [
 						{
@@ -46,15 +54,18 @@ Ext.define('Civic.view.security.Profile', {
 						},{
 							fieldLabel: 'First Name',
 							maxLength: 100,
-							name: 'firstname'
+							name: 'firstname',
+							vtype: 'alpha'
 						},{
 							fieldLabel: 'Surname',
 							maxLength: 100,
-							name: 'lastname'
+							name: 'lastname',
+							vtype: 'alpha'
 						},{
 							fieldLabel: 'Email',
 							maxLength: 100,
-							name: 'email'
+							name: 'email',
+							vtype: 'email'
 						},{
 							xtype: 'combobox',
 							fieldLabel: 'Group',
@@ -64,22 +75,50 @@ Ext.define('Civic.view.security.Profile', {
 							queryMode: 'local',
 							store: 'security.Groups'
 						},{
+							xtype: 'combobox',
+							fieldLabel: 'Status',
+							name: 'active',
+							displayField: 'name',
+							valueField: 'int',
+							queryMode: 'local',
+							store: 'staticData.ActiveStatus'
+						},{
 							xtype: 'filefield',
 							fieldLabel: 'Picture',
 							name: 'picture',
 							allowBlank: true,
-							afterLabelTextTpl: ''
+            				emptyText: 'Select an image',
+							afterLabelTextTpl: '',
+							buttonText: 'Browse',
+				            buttonConfig: {
+				                iconCls: 'upload'
+				            }
+						},{
+							fieldLabel: 'Password',
+							inputType: 'password',
+							vtype: 'customPass',
+							maxLength: 15,
+							name: 'password',
+							disabled: true
+						},{
+							fieldLabel: 'Re-Type Password',
+							inputType: 'password',
+							vtype: 'customPass',
+							maxLength: 15,
+							name: 'password2',
+							disabled: true
 						}
 					]
 				},{
 					xtype: 'fieldset',
 					title: 'Picture',
-					width: 170,
+					width: 200,
+					layout: {
+						type: 'fit'
+					},
 					items: [
 						{
 							xtype: 'image',
-							height: 150,
-							width: 150,
 							src: ''
 						}
 					]
@@ -105,7 +144,8 @@ Ext.define('Civic.view.security.Profile', {
 							xtype: 'button',
 							text: 'Save',
 							itemId: 'save',
-							iconCls: 'save'
+							iconCls: 'save',
+							formBind: true
 						}
 					]
 				}

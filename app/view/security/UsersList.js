@@ -1,21 +1,19 @@
 Ext.define('Civic.view.security.UsersList', {
-	extend: 'Ext.grid.Panel',
+	extend: 'Ext.ux.LiveSearchGridPanel',
 	alias: 'widget.userslist',
 
 	requires: [
-		'Ext.ux.grid.FiltersFeature'
+		'Ext.ux.grid.FiltersFeature',
+		'Civic.util.Util'
 	],
 
-	frame: false,
-	store: Ext.create('Civic.store.security.Users'),
-
+	store: 'security.Users',
 	features: [
 		{
 			ftype: 'filters',
 			local: true
 		}
 	],
-
 	columns: [
 		{
 			width: 80,
@@ -23,27 +21,39 @@ Ext.define('Civic.view.security.UsersList', {
 			text: 'User ID',
 			filter: {
 				type: 'numeric'
+			},
+			renderer: function (value, metaData, record) {
+				 return Civic.util.Util.renderActive(value, metaData, record);
 			}
 		},{
-			width: 100,
+			width: 80,
 			dataIndex: 'username',
 			text: 'Username',
 			filter: {
 				type: 'string'
+			},
+			renderer: function (value, metaData, record) {
+				 return Civic.util.Util.renderActive(value, metaData, record);
 			}
 		},{
-			width: 150,
+			width: 100,
 			dataIndex: 'firstname',
 			text: 'First Name',
 			filter: {
 				type: 'string'
+			},
+			renderer: function (value, metaData, record) {
+				 return Civic.util.Util.renderActive(value, metaData, record);
 			}
 		},{
-			width: 200,
+			width: 150,
 			dataIndex: 'lastname',
 			text: 'Surname',
 			filter: {
 				type: 'string'
+			},
+			renderer: function (value, metaData, record) {
+				 return Civic.util.Util.renderActive(value, metaData, record);
 			}
 		},{
 			width: 240,
@@ -52,6 +62,9 @@ Ext.define('Civic.view.security.UsersList', {
 			text: 'Email',
 			filter: {
 				type: 'string'
+			},
+			renderer: function (value, metaData, record) {
+				 return Civic.util.Util.renderActive(value, metaData, record);
 			}
 		},{
 			width: 100,
@@ -64,32 +77,60 @@ Ext.define('Civic.view.security.UsersList', {
 				var groupsStore = Ext.getStore('security.Groups');
 				var group = groupsStore.findRecord('id', value);
 
-				return group != null ? group.get('name'): value;
+				return group ? Civic.util.Util.renderActive(group.get('name'), metaData, record): '';
 			}
 		},{
-			width: 110,
+			width: 80,
 			dataIndex: 'active',
 			text: 'Status',
 			filter: {
 				type: 'string'
 			},
 			renderer: function(value, metaData, record){
-				return value == 't' ? 'Active':'Inactive';
+				var val;
+
+				if (value == 't'){
+					return Civic.util.Util.renderActive('ACTIVE', metaData, record);
+				} else {
+					return Civic.util.Util.renderActive('INACTIVE', metaData, record);
+				}
 			}
 		},{
 			xtype: 'datecolumn',
 			text: 'Created On',
-			width: 120,
+			width: 140,
 			dataIndex: 'created_on',
 			format: 'Y-m-d H:i:s',
-			filter: true
+			filter: true,
+			renderer: function (value, metaData, record) {
+				 return Civic.util.Util.renderActive(value, metaData, record);
+			}
 		},{
 			xtype: 'datecolumn',
 			text: 'Last Update',
-			width: 120,
+			width: 140,
 			dataIndex: 'last_update',
 			format: 'Y-m-d H:i:s',
-			filter: true
+			filter: true,
+			renderer: function (value, metaData, record) {
+				 return Civic.util.Util.renderActive(value, metaData, record);
+			}
+
+		},{
+			xtype: 'actioncolumn',
+			width: 30,
+			align: 'center',
+			sortable: false,
+			menuDisabled: true,
+			items: [
+				{
+					handler: function (view, rowIndex, colIndex, item, e, record, row) {
+						this.fireEvent('itemclick', this, 'delete', view, e, record);
+					},
+					iconCls: 'delete',
+					tooltip: 'Delete'
+				}
+			]
 		}
 	]
 });

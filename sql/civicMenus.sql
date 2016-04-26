@@ -27,7 +27,8 @@ CREATE TABLE IF NOT EXISTS security.user(
   	created_on TIMESTAMP(0) NOT NULL DEFAULT CURRENT_TIMESTAMP,
   	last_update TIMESTAMP(0) NOT NULL DEFAULT CURRENT_TIMESTAMP,
 	PRIMARY KEY(id, groupid),	
-	UNIQUE (id) ,
+	UNIQUE (id) ,	
+	UNIQUE (userName) ,
 	CONSTRAINT user_groups
 		FOREIGN KEY (groupid)
 	    REFERENCES security.groups (id)

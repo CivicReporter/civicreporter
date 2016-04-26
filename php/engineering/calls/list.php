@@ -32,17 +32,14 @@
 
 				pg_free_result($sth);
 
-				$sql = "SELECT ec.call_id, sfc.code, CONCAT_WS(' ', sc.firstname, sc.surname) caller, ec.caller_id, ec.stand_no, ec.street, ss.name suburb, ec.severity, ec.property_damage, ec.status, ec.description, ec.reported_on, ec.last_update, ec.job_id ";
-				$sql.= "FROM engineering.call ec INNER JOIN staticdata.fault_codes sfc ON ec.code_id = sfc.code_id ";
-				$sql.= "INNER JOIN staticdata.caller sc ON ec.caller_id = sc.caller_id ";
-				$sql.= "INNER JOIN staticdata.suburb ss ON ec.suburb_id = ss.suburb_id ";
+				$sql = "SELECT * FROM call_engineering ";
 				if (isset($status)) {
 					$sql.= "WHERE status = '$status' ";
 				}
 				if (isset($suburb)) {
-					$sql.= "AND ec.suburb_id = '$suburb' ";
+					$sql.= "AND suburb = '$suburb' ";
 				}
-				$sql.= "ORDER BY ec.call_id DESC ";
+				$sql.= "ORDER BY call_id DESC ";
 				$sql.= "OFFSET $offset LIMIT $limit";
 
 				if ($sth = pg_query($dbh, $sql)) {
@@ -57,7 +54,7 @@
 
 						pg_free_result($sth);
 
-						$countQuery = "SELECT COUNT(*) count FROM engineering.call ";
+						$countQuery = "SELECT COUNT(*) count FROM call_engineering ";
 						
 						if (isset($status)) {
 							$countQuery.= " WHERE status = '$status' ";

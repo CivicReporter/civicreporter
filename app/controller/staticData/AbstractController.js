@@ -6,13 +6,13 @@ Ext.define('Civic.controller.staticData.AbstractController', {
 	],
 
 	views: [
-		'staticData.AbstractGrid',
+	//	'staticData.AbstractGrid',
 		'staticData.EmergencyCodes',
 		'staticData.FaultCodes',
 		'staticData.FireCodes',
 		'staticData.Properties',
-		'staticData.Sections',
 		'staticData.Staff',
+		'staticData.Sections',
 		'staticData.Stations',
 		'staticData.Suburbs',
 		'staticData.Vehicles',
@@ -24,8 +24,8 @@ Ext.define('Civic.controller.staticData.AbstractController', {
 		'staticData.FaultCodes',
 		'staticData.FireCodes',
 		'staticData.Properties',
-		'staticData.Sections',
 		'staticData.Staff',
+		'staticData.Sections',
 		'staticData.Stations',
 		'staticData.Suburbs',
 		'staticData.Vehicles',
@@ -82,10 +82,6 @@ Ext.define('Civic.controller.staticData.AbstractController', {
 		switch (component.getXType()) {
 			case 'faultcodesgrid': 
 				loadStore('staticData.Sections');
-				break;
-			case 'staffgrid': 
-				loadStore('staticData.Sections');
-				loadStore('staticData.Stations');
 				break;
 			case 'suburbsgrid': 
 				loadStore('staticData.Zones');

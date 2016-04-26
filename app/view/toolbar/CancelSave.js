@@ -19,7 +19,8 @@ Ext.define('Civic.view.toolbar.CancelSave', {
 			xtype: 'button',
 			text: 'Save',
 			itemId: 'save',
-			iconCls: 'save'			
+			iconCls: 'save',
+			formBind: true			
 		}
 	]
 });

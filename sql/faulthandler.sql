@@ -44,18 +44,23 @@ CREATE OR REPLACE FUNCTION fault_upd(callid INTEGER, cod TEXT, callerid INTEGER,
 
 
 --function to handle fault jobs
-CREATE OR REPLACE FUNCTION job_handler(jobid INTEGER, subb TEXT ,newcalls INTEGER [], createdby TEXT)
+--DROP FUNCTION job_handler(INTEGER, TEXT , INTEGER [], INTEGER [], TEXT);
+CREATE OR REPLACE FUNCTION job_handler(jobid INTEGER, subb TEXT, stn TEXT, newcalls INTEGER [], newstaff INTEGER [], createdby TEXT)
 	RETURNS TEXT AS 
 	$$
 		DECLARE 
 			c INTEGER;
+			s INTEGER;
 			d BOOL;
 			oldcalls INTEGER [];
+			oldstaff INTEGER [];
 			suburbid staticdata.suburb.suburb_id%TYPE;
+			stationid staticdata.station.station_id%TYPE;
 		BEGIN
 			SELECT INTO d true FROM engineering.job WHERE job_id = jobid;
 			IF d THEN --update query--
 				SELECT INTO oldcalls ARRAY(SELECT call_id FROM engineering.call WHERE job_id = jobid);
+				SELECT INTO oldstaff ARRAY(SELECT staff_id FROM engineering.assignment WHERE job_id = jobid);
 				FOREACH c IN ARRAY oldcalls
 				LOOP
 					IF NOT (c = ANY (newcalls)) THEN --remove old call from job--
@@ -64,21 +69,52 @@ CREATE OR REPLACE FUNCTION job_handler(jobid INTEGER, subb TEXT ,newcalls INTEGE
 							WHERE call_id = c;
 					END IF;
 				END LOOP;
+				FOREACH s IN ARRAY oldstaff
+				LOOP
+					IF NOT (s = ANY (newstaff)) THEN --remove old staff from job--
+						DELETE FROM engineering.assignment
+							WHERE job_id = jobid AND staff_id = s;
+						UPDATE staticdata.staff
+							SET status = 'AVAILABLE'
+							WHERE staff_id = s;
+					END IF;
+				END LOOP;
+				FOREACH c IN ARRAY newcalls
+				LOOP
+					IF NOT (c = ANY (oldcalls)) THEN --add new call to job--
+						UPDATE engineering.call
+							SET job_id = jobid, status = 'PENDING'
+							WHERE call_id = c;
+					END IF;
+				END LOOP;
+				FOREACH s IN ARRAY newstaff
+				LOOP
+					IF NOT (s = ANY (oldstaff)) THEN --add new staff to job--
+						INSERT INTO engineering.assignment(job_id, staff_id)
+							VALUES(jobid, s);
+						UPDATE staticdata.staff
+							SET status = 'BUSY'
+							WHERE staff_id = s;
+					END IF;
+				END LOOP;
+			ELSE --insert query--
+				SELECT INTO suburbid suburb_id FROM staticdata.suburb WHERE name = UPPER(subb);
+				SELECT INTO stationid station_id FROM staticdata.station WHERE name = UPPER(stn);
+				INSERT INTO engineering.job(job_id, status, suburb_id, station_id, opened_by)
+					VALUES(jobid, 'PENDING', suburbid, stationid, createdby);
 				FOREACH c IN ARRAY newcalls
 				LOOP
 					UPDATE engineering.call
 						SET job_id = jobid, status = 'PENDING'
 						WHERE call_id = c;
 				END LOOP;
-			ELSE --insert query--
-				SELECT INTO suburbid suburb_id FROM staticdata.suburb WHERE name = UPPER(subb);
-				INSERT INTO engineering.job(job_id, suburb_id, opened_by)
-					VALUES(jobid, suburbid, createdby);
-				FOREACH c IN ARRAY newcalls
+				FOREACH s IN ARRAY newstaff
 				LOOP
-					UPDATE engineering.call
-						SET job_id = jobid, status = 'PENDING'
-						WHERE call_id = c;
+					INSERT INTO engineering.assignment(job_id, staff_id)
+						VALUES(jobid, s);
+					UPDATE staticdata.staff
+						SET status = 'BUSY'
+						WHERE staff_id = s;
 				END LOOP;
 			END IF;
 			RETURN TRUE;
@@ -90,17 +126,37 @@ CREATE OR REPLACE FUNCTION job_handler(jobid INTEGER, subb TEXT ,newcalls INTEGE
 CREATE OR REPLACE FUNCTION job_closer()
   RETURNS TRIGGER AS 
   $$
+    DECLARE    	
+		oldstaff INTEGER [];
+		s INTEGER;
     BEGIN
+		SELECT INTO oldstaff ARRAY(SELECT staff_id FROM engineering.assignment WHERE job_id = NEW.job_id);
     	IF NEW.status ='CLOSED' THEN
        		NEW.closed_on = CURRENT_TIMESTAMP;
        		UPDATE engineering.call
        			SET status = 'CLOSED'
        			WHERE job_id = NEW.job_id;
+			FOREACH s IN ARRAY oldstaff
+			LOOP
+				--remove old staff from job--
+				UPDATE staticdata.staff
+					SET status = 'AVAILABLE'
+					WHERE staff_id = s;
+			END LOOP;
        	ELSIF NEW.status ='CANCELLED' THEN
        		NEW.closed_on = CURRENT_TIMESTAMP;
        		UPDATE engineering.call
        			SET status = 'OPEN', job_id = NULL
        			WHERE job_id = NEW.job_id;
+			FOREACH s IN ARRAY oldstaff
+			LOOP
+				--remove old staff from job--
+				DELETE FROM engineering.assignment
+					WHERE job_id = NEW.job_id AND staff_id = s;
+				UPDATE staticdata.staff
+					SET status = 'AVAILABLE'
+					WHERE staff_id = s;
+			END LOOP;
        	END IF;
     	RETURN NEW;
     END;
@@ -131,7 +187,7 @@ CREATE OR REPLACE FUNCTION serial_pk()
     			SELECT INTO pk MAX(section_id) + 1 FROM staticdata.section;
     			NEW.section_id = pk;
     		WHEN 'staff' THEN 
-    			SELECT INTO pk MAX(staff_id) + 1 FROM staticdata.section;
+    			SELECT INTO pk MAX(staff_id) + 1 FROM staticdata.staff;
     			NEW.staff_id = pk;
     		WHEN 'station' THEN 
     			SELECT INTO pk MAX(station_id) + 1 FROM staticdata.station;
@@ -145,6 +201,9 @@ CREATE OR REPLACE FUNCTION serial_pk()
     		WHEN 'zone' THEN 
     			SELECT INTO pk MAX(zone_id) + 1 FROM staticdata.zone;
     			NEW.zone_id = pk;
+    		WHEN 'user' THEN 
+    			SELECT INTO pk MAX(id) + 1 FROM security.user;
+    			NEW.id = pk;
     	END CASE; 
     	RETURN NEW;
     END;
@@ -169,6 +228,7 @@ CREATE TRIGGER serial_stn BEFORE INSERT ON staticdata.station FOR EACH ROW EXECU
 CREATE TRIGGER serial_sb BEFORE INSERT ON staticdata.suburb FOR EACH ROW EXECUTE PROCEDURE serial_pk();
 CREATE TRIGGER serial_vh BEFORE INSERT ON staticdata.vehicle FOR EACH ROW EXECUTE PROCEDURE serial_pk();
 CREATE TRIGGER serial_zn BEFORE INSERT ON staticdata.zone FOR EACH ROW EXECUTE PROCEDURE serial_pk();
+CREATE TRIGGER serial_us BEFORE INSERT ON security.user FOR EACH ROW EXECUTE PROCEDURE serial_pk();
 
 BEGIN;
 	SELECT fault_handler

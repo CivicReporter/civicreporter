@@ -1,11 +1,9 @@
 <?php
-	require('../db/db.php');
+	require('../../db/db.php');
 
 	session_start();
 
 	$userName = $_SESSION['username'];
-	$entity = $_POST['entity'];
-	$pkey = $_POST['pkey'];
 	$staticdata = json_decode($_POST['data'], true);
 
 	$queryString = "SELECT g.name urole FROM security.user u, security.groups g ";
@@ -26,19 +24,26 @@
 					
 					pg_free_result($sth);
 
-					$in = '(';					
+					$insertQuery = "INSERT INTO staticdata.staff(";					
 
 					foreach ($data as $key => $value) {
-						if ($key == $pkey) {
-							$in.= "$value,";
+						if ($key != staff_id && $key != 'last_update' && $data[$key] != '') {
+							$insertQuery.= "$key,";
 						}
 					}
 					
-					$in = substr($in, 0, -1). ')';
+					$insertQuery = substr($insertQuery, 0, -1). ") VALUES(";
+					
+					foreach ($data as $key => $value) {
+						if ($key != staff_id && $key != 'last_update' && $data[$key] != '') {
+							$value = strtoupper($value);
+							$insertQuery.= "'$value',";
+						}
+					}
 
-					$deleteQuery = "DELETE FROM staticdata.$entity WHERE $pkey IN $in";
+					$insertQuery = substr($insertQuery, 0, -1). ")";
 
-					$sth = pg_query($dbh, $deleteQuery);
+					$sth = pg_query($dbh, $insertQuery);
 				}
 				
 			}
@@ -46,7 +51,7 @@
 		}
 
 		if (!pg_last_error($dbh)) {			
-			$r['msg'] = 'Records deleted';
+			$r['msg'] = 'New record created';
 			$r['success'] = true;
 			
 		} else {

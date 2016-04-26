@@ -1,4 +1,4 @@
-Ext.define('Civic.model.staticData.Staff', {
+Ext.define('Civic.model.engineering.Staff', {
 	extend: 'Civic.model.public.AbstractDate',
 
 	idProperty: 'staff_id',
@@ -18,9 +18,11 @@ Ext.define('Civic.model.staticData.Staff', {
 		},{
 			name: 'phone'
 		},{
-			name: 'section_id'
+			name: 'section',
+			type: 'int'
 		},{
-			name: 'station_id'
+			name: 'station',
+			type: 'int'
 		},{
 			name: 'role'
 		},{

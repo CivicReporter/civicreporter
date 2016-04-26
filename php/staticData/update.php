@@ -4,8 +4,8 @@
 	session_start();
 
 	$userName = $_SESSION['username'];
-	$entity = $_POST['entity'];
-	$pkey = $_POST['pkey'];
+	$entity = $_REQUEST['entity'];
+	$pkey = $_REQUEST['pkey'];
 	$staticdata = json_decode($_POST['data'], true);
 
 	$queryString = "SELECT g.name urole FROM security.user u, security.groups g ";
@@ -29,7 +29,7 @@
 					$updateQuery = "UPDATE staticdata.$entity SET ";					
 
 					foreach ($data as $key => $value) {
-						if ($key != $pkey && $key != 'status' && $key != 'last_update') {
+						if ($key != $pkey && $data[$key] != '' && $key != 'last_update') {
 							$updateQuery.= "$key = '$value',";
 						}
 					}

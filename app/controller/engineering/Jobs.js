@@ -3,7 +3,10 @@ Ext.define('Civic.controller.engineering.Jobs', {
 
 	requires: [
 		'Civic.view.Viewport',
-		'Civic.util.Util'
+		'Civic.util.Util',
+		'Civic.view.civcr.AbstractJobDetails',
+		'Civic.view.engineering.SearchCall',
+		'Civic.view.engineering.SearchStaff'
 	],
 
 	views: [
@@ -12,7 +15,8 @@ Ext.define('Civic.controller.engineering.Jobs', {
 
 	stores: [
 		'engineering.Jobs',
-		'engineering.PendingCalls' 
+		'engineering.PendingCalls',
+		'engineering.AvailableStaff' 
 	],
 
 	refs: [
@@ -26,8 +30,11 @@ Ext.define('Civic.controller.engineering.Jobs', {
 			ref: 'callsGrid',
 			selector: 'jobwindow engjobcalls'
 		},{
+			ref: 'staffGrid',
+			selector: 'jobwindow engjobstaff'
+		},{
 			ref: 'searchWindow',
-			selector: 'searchcall'
+			selector: 'searchwindow'//searchcall
 		}
 	],
 	
@@ -62,11 +69,17 @@ Ext.define('Civic.controller.engineering.Jobs', {
 			'jobwindow engjobcalls': {
 				selectionchange: this.onSelectionChange2
 			},
+			'jobwindow engjobstaff': {
+				selectionchange: this.onSelectionChange4
+			},
 			'jobwindow engjobcalls button#add': {
 				click: this.onButtonClickAdd2
 			},
 			'jobwindow engjobcalls button#delete': {
 				click: this.onButtonClickDelete
+			},
+			'jobwindow engjobstaff button#delete': {
+				click: this.onButtonClickDelete2
 			},
 			'jobwindow button#cancel': {
 				click: this.onButtonClickCancel
@@ -77,22 +90,39 @@ Ext.define('Civic.controller.engineering.Jobs', {
 			'searchcall': {
 				close: this.onWindowClose2
 			},
+			'searchstaff': {
+				close: this.onWindowClose3
+			},
 			'searchcall form combobox': {
 				render: this.onComboRender,
 				select: this.onComboSelect,
 				specialkey: this.onSpecialKeyPress
 			},
-			'searchcall engjobcalls': {
+			'searchstaff form combobox': {
+				render: this.onComboRender,
+				select: this.onComboSelect2,
+				specialkey: this.onSpecialKeyPress
+			},
+			'searchwindow abstractjobdetails': {
 				selectionchange: this.onSelectionChange3
 			},
-			'searchcall button#cancel': {
+			'searchwindow button#cancel': {
 				click: this.onButtonClickCancel
 			},
-			'searchcall button#clear': {
+			'searchwindow button#clear': {
 				click: this.onButtonClickClear
 			},
 			'searchcall button#add': {
 				click: this.onButtonClickAdd3
+			},
+			'searchstaff button#add': {
+				click: this.onButtonClickAdd5
+			}/*,
+			'jobwindow engjobstaff': {//engjobstaff
+				selectionchange: this.onSelectionChange2
+			}*/,
+			'jobwindow engjobstaff button#add': {//engjobstaff
+				click: this.onButtonClickAdd4
 			}			
 		});
 	},
@@ -134,6 +164,16 @@ Ext.define('Civic.controller.engineering.Jobs', {
 		} else{
 			grid.down('button#clear').disable();
 			grid.down('button#add').disable();
+		};
+	},
+
+	onSelectionChange4: function (selModel, selected, eOpts) {
+		grid = this.getStaffGrid();
+
+		if (selModel.hasSelection()) {			
+			grid.down('button#delete').enable();
+		} else{
+			grid.down('button#delete').disable();
 		};
 	},
 
@@ -182,6 +222,33 @@ Ext.define('Civic.controller.engineering.Jobs', {
 		cancelBtn.fireEvent('click', cancelBtn, e, options);
 	},
 
+	onButtonClickAdd5: function (button, e, options) {
+		searchWindow = this.getSearchWindow();
+		records = searchWindow.down('engjobstaff').getSelectionModel().getSelection();
+		form = this.getJobWindow().down('form');
+		staffStore = form.down('engjobstaff').getStore();
+
+		if (staffStore.data.length == 0) {
+			staffStore = Ext.create('Civic.store.staticData.Staff', {
+				data: records
+			});
+			
+			form.getForm().setValues({
+				station: records[0].get('station')
+			});
+		} else{
+			if (records[0].get('station_id') == staffStore.data.getAt(0).get('station_id')) {
+				staffStore.add(records);
+			} else{
+				Civic.util.Util.showErrorMsg('<p>You cannot assign a job to technicians from different stations!</p>');				
+			};
+		}
+
+		form.down('engjobstaff').reconfigure(staffStore, this.getStaffGrid().cloneConfig().columns);
+		var cancelBtn = searchWindow.down('button#cancel');
+		cancelBtn.fireEvent('click', cancelBtn, e, options);
+	},
+//now working on this
 	onButtonClickEdit: function (button, e, options) {
 		var grid = button.up('engjobsgrid');
 		record = grid.getSelectionModel().getSelection();
@@ -190,7 +257,7 @@ Ext.define('Civic.controller.engineering.Jobs', {
 		if (record[0]) {
 			status = record[0].get('status');
 
-			if (status == 'OPEN') {
+			if (status == 'OPEN' || status == 'PENDING') {
 
 				var win = Ext.widget('jobwindow');
 				var form = win.down('form');
@@ -198,6 +265,7 @@ Ext.define('Civic.controller.engineering.Jobs', {
 					job_id: record[0].get('job_id'),
 					suburb: callStore.getAt(0).get('suburb'),
 					status: status,
+					station: record[0].get('station'),
 					opened_on: record[0].get('opened_on'),
 					opened_by: record[0].get('opened_by'),
 					closed_on: record[0].get('closed_on'),
@@ -261,8 +329,32 @@ Ext.define('Civic.controller.engineering.Jobs', {
 		}
 	},
 
+	onButtonClickDelete2: function (button, e, options) {
+		var grid = button.up('engjobstaff');
+		var store = grid.getStore();
+		record = grid.getSelectionModel().getSelection();
+
+		if (record[0]) {
+			Ext.Msg.show({
+				title: 'Remove Technician?',
+				msg: 'Are you sure you want to remove the selected technician from the list?',
+				buttons: Ext.Msg.YESNO,
+				icon: Ext.Msg.QUESTION,
+				fn: function (buttonId) {
+					if (buttonId == 'yes') {
+						if (store.data.length < 2) {
+							Civic.util.Util.showErrorMsg('You cannot remove all technicians from the job!');
+						} else{							
+							store.remove(record);
+						};
+					};
+				}
+			});
+		}
+	},
+
 	onButtonClickClear: function (button, e, options) {
-		grid = this.getSearchWindow().down('engjobcalls');
+		grid = this.getSearchWindow().down('abstractjobdetails');
 		grid.getSelectionModel().deselectAll();		
 	},
 
@@ -275,7 +367,7 @@ Ext.define('Civic.controller.engineering.Jobs', {
 
 		if (action == 'cancel') {
 
-			if (status == 'OPEN') {
+			if (status == 'OPEN' || status == 'PENDING') {
 				Ext.Msg.show({
 					title: 'Cancel Job?',
 					msg: 'Are you sure you want to cancel the selected job?',
@@ -313,7 +405,7 @@ Ext.define('Civic.controller.engineering.Jobs', {
 
 		} else if (action == 'close') {
 
-			if (status == 'OPEN') {
+			if (status == 'OPEN' || status == 'PENDING') {
 				Ext.Msg.show({
 					title: 'Close Job?',
 					msg: 'Are you sure you want to close the selected job?',
@@ -358,12 +450,17 @@ Ext.define('Civic.controller.engineering.Jobs', {
 
 	onButtonClickSave: function (button, e, options) {
 		var callsList = [];
+		var staffList = [];
 		win = this.getJobWindow();
 		grid = this.getJobsGrid();
 		form = win.down('form');
 
 		form.down('engjobcalls').getStore().each(function (record) {
 			callsList.push(record.get('call_id'));
+		});
+
+		form.down('engjobstaff').getStore().each(function (record) {
+			staffList.push(record.get('staff_id'));
 		});
 			
 		Ext.get(win.getEl()).mask('Saving...Please Wait...', 'loading');
@@ -372,7 +469,8 @@ Ext.define('Civic.controller.engineering.Jobs', {
 			clientValidation: false,
 			url: 'php/engineering/jobs/saveJob.php',
 			params: {
-				calls: Ext.JSON.encode(callsList)
+				calls: Ext.JSON.encode(callsList),
+				staff: Ext.JSON.encode(staffList)
 			},
 			success: function (form, action) {
 				Ext.get(win.getEl()).unmask();
@@ -416,6 +514,10 @@ Ext.define('Civic.controller.engineering.Jobs', {
 		window.down('engjobcalls').getStore().removeAll();
 	},
 
+	onWindowClose3: function (window, eOpts) {
+		window.down('engjobstaff').getStore().removeAll();
+	},
+
 	onComboRender: function (combo, eOpts) {
 		combo.getStore().sort('name', 'ASC');
 	},
@@ -430,6 +532,22 @@ Ext.define('Civic.controller.engineering.Jobs', {
 				suburb: combo.getValue()
 			}
 		});
+		endingStore.load();
+	},
+
+	onComboSelect2: function (combo, records, eOpts ) {
+		pendingStore = this.getEngineeringAvailableStaffStore();
+		pendingStore.setProxy({
+			type: 'cvr',
+			url: 'php/staticData/list.php',
+			extraParams: {
+				entity: 'Staff',
+				pkey: 'staff_id',
+				status: 'AVAILABLE',
+				active: 't',
+				station: combo.getValue()
+			}
+		});
 		pendingStore.load();
 	},
 
@@ -437,5 +555,13 @@ Ext.define('Civic.controller.engineering.Jobs', {
 		if (e.getKey() == e.ENTER) {
 			combo.fireEvent('select', combo);
 		};
+	},
+
+	onButtonClickAdd4: function (button, e, options) {
+		var win = Ext.widget('searchstaff');
+		store = this.getEngineeringAvailableStaffStore();
+		win.down('engjobstaff').reconfigure(store, this.getStaffGrid().cloneConfig().columns);
+		win.down('pagingtoolbar').bindStore(store);
+		win.show();
 	} 
 });

@@ -23,7 +23,7 @@ Ext.define('Civic.view.civicr.JobsPanel', {
 			height: 320,
 			collapsible: true,
 			collapseDirection: 'bottom',
-			collapsed: true
+			collapsed: false
 		}
 	]
 });

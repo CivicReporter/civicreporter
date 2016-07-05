@@ -71,7 +71,7 @@ Ext.define('Civic.controller.staticData.AbstractController', {
 
 	render: function (component, options) {
 
-		function loadStore (storename) {
+	/*	function loadStore (storename) {
 			store = Ext.getStore(storename);
 
 			if (store.data.items.length == 0) {
@@ -90,10 +90,10 @@ Ext.define('Civic.controller.staticData.AbstractController', {
 				loadStore('staticData.Stations');
 				break;
 		};
-
+	*/
 		var gridStore = component.getStore();
 		gridStore.load();
-		gridStore.sort('%id', 'ASC');
+	//	gridStore.sort('%id', 'ASC');
 	},
 
 	onButtonClickAdd: function (button, e, options) {

@@ -16,15 +16,24 @@
 
 		while ($user = pg_fetch_assoc($sth)) {
 
-			$folder = array();
+			$folder = array(
+				'type' => 'FeatureCollection',
+				'crs' => array(
+					'type' => 'name',
+					'properties' => array(
+						'name' => 'urn:ogc:def:crs:OGC:1.3:CRS84'
+					)
+				),
+				'features' => array()
+			);
 			
 			if ($count == 1 AND ($user['urole'] == 'admin' || $user['urole'] == 'call centre')) {
 
 				pg_free_result($sth);
 
-				$sql = "SELECT * FROM job_engineering ";
+				$sql = "SELECT *, ST_ASGEOJSON(geom) geometry  FROM job_engineering ";
 				$sql.= "ORDER BY job_id DESC ";
-				$sql.= "OFFSET $offset LIMIT $limit";
+				//$sql.= "OFFSET $offset LIMIT $limit";
 
 				if ($sth = pg_query($dbh, $sql)) {
 
@@ -36,6 +45,18 @@
 
 						while ($r = pg_fetch_assoc($sth)) {
 
+							$feature = array( 
+								'type' => 'Feature',
+								'properties' => array(),
+								'geometry' => json_decode($r['geometry'])
+							);
+
+							foreach ($r as $key => $value) {
+								if ($key != 'geometry' && $key != 'geom') {
+									$feature['properties'][$key] = $value;
+								}
+							};
+
 							$sqlquery = "SELECT * FROM call_engineering ";
 							$sqlquery.= "WHERE job_id = ".$r['job_id']; 
 							$sqlquery.= " ORDER BY call_id";
@@ -46,17 +67,18 @@
 
 								if ($count > 0) {
 
-									$r['leaf'] = false;
-									$r['calls'] = array();
+									$feature['properties']['leaf'] = false; //$r['leaf'] = false;
+									$feature['properties']['calls'] = array(); //$r['calls'] = array();
 
 									while ($call = pg_fetch_assoc($nodes)) {
 
 										$call['leaf'] = true;
-										$r['calls'][] = $call;
+										$feature['properties']['calls'][] = $call; //$r['calls'][] = $call;
 									}
 								}
 
-								$folder['jobs'][] = $r;
+								//$folder['jobs'][] = $r;
+								array_push($folder['features'], $feature);
 							}
 						}
 

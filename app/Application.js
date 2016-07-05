@@ -57,6 +57,8 @@ Ext.define('Civic.Application', {
             },
             customPassText: 'Password must be between 6 and 20 characters long and must contain one number, one letter lowercase, one letter uppercase and one special character.'
         });
+
+        Proj4js.defs['EPSG:32735'] = '+proj=utm +zone=35 +south +ellps=WGS84 +datum=WGS84 +units=m +no_defs';
     },
     
     init: function(){

@@ -1,5 +1,6 @@
 Ext.define('Civic.store.engineering.Jobs', {
-	extend: 'Ext.data.Store',
+	//extend: 'Ext.data.Store',
+	extend: 'GeoExt.data.FeatureStore',
 
 	requires: [
 		'Civic.model.engineering.Job'
@@ -8,5 +9,9 @@ Ext.define('Civic.store.engineering.Jobs', {
 	model: 'Civic.model.engineering.Job',
 
 	pageSize: 10,
-	storeId: 'jobs'
+	storeId: 'jobs',
+
+	proxy: {
+		type: 'gisdataproxy'
+	}
 });

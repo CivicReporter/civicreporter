@@ -234,7 +234,7 @@ Ext.define('Civic.controller.engineering.Jobs', {
 			});
 			
 			form.getForm().setValues({
-				station: records[0].get('station')
+				station: records[0].get('station_id')
 			});
 		} else{
 			if (records[0].get('station_id') == staffStore.data.getAt(0).get('station_id')) {
@@ -532,19 +532,15 @@ Ext.define('Civic.controller.engineering.Jobs', {
 				suburb: combo.getValue()
 			}
 		});
-		endingStore.load();
+		pendingStore.load();
 	},
 
 	onComboSelect2: function (combo, records, eOpts ) {
 		pendingStore = this.getEngineeringAvailableStaffStore();
 		pendingStore.setProxy({
-			type: 'cvr',
-			url: 'php/staticData/list.php',
+			type: 'staffproxy',
 			extraParams: {
-				entity: 'Staff',
-				pkey: 'staff_id',
 				status: 'AVAILABLE',
-				active: 't',
 				station: combo.getValue()
 			}
 		});

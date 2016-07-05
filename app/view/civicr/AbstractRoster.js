@@ -35,7 +35,7 @@ Ext.define('Civic.view.civicr.AbstractRoster', {
 			itemId: 'topToolbar',
 			items: [
 				{
-					xtype: 'button',
+			/*		xtype: 'button',
 					itemId: 'add',
 					text: 'Add',
 					iconCls: 'add'
@@ -54,7 +54,7 @@ Ext.define('Civic.view.civicr.AbstractRoster', {
 				},{
 					xtype: 'tbseparator'
 				},{
-					xtype: 'button',
+			*/		xtype: 'button',
 					itemId: 'clearFilter',
 					text: 'Clear Filters',
 					iconCls: 'clear_filter'

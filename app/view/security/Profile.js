@@ -37,7 +37,7 @@ Ext.define('Civic.view.security.Profile', {
 						afterLabelTextTpl: Civic.util.Util.required,
 						anchor: '100%',
 						xtype: 'textfield',
-						vtype: 'alphanum',
+						//vtype: 'alphanum',
 						allowBlank: false,
 						labelWidth: 120,
 						msgTarget: 'under',

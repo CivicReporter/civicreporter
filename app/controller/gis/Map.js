@@ -5,6 +5,10 @@ Ext.define('Civic.controller.gis.Map', {
 		'gis.Map'
 	],
 
+	stores: [
+		'engineering.Jobs'
+	],
+
     refs: [
 		{
 			ref: 'mapPanel', 
@@ -25,6 +29,10 @@ Ext.define('Civic.controller.gis.Map', {
 			{
 				'civicr_map': {
 					'beforerender': this.onMapPanelBeforeRender
+				},
+
+				'civicr_map toolbar form combobox': {
+					'specialkey': this.onSpecialKeyPress
 				}
 			}, this
 		);
@@ -35,47 +43,20 @@ Ext.define('Civic.controller.gis.Map', {
 
         var layers = [];
 
-        var road = new OpenLayers.Layer.WMS('Bulawayo Roads',
-            'http://127.0.0.1/geoserver/wms?',
+    	var base = new OpenLayers.Layer.WMS('OpenStreetMap',
+            'http://127.0.0.1/geoserver/gwc/service/wms?',
             {
-            	layers: 'geointel:road_all',
+            	layers: 'osm:osm',
             	format: 'image/png',
-            	transparent: false
-            },{
             	isBaseLayer: true
-            }/*,
-            {
-                attribution: '&copy; terrestris GmbH & Co. KG <br>' +
+            },{
+                attribution: '&copy; GeoIntel (Pvt) Ltd <br>' +
                     'Data &copy; OpenStreetMap ' +
                     '<a href="http://www.openstreetmap.org/copyright/en"' +
                     'target="_blank">contributors<a>'
-            }*/
-        );
-
-        var property1 = new OpenLayers.Layer.WMS('Riffle Range',
-            'http://127.0.0.1/geoserver/wms?',
-            {
-            	layers: 'geointel:property_rifflerange',
-            	format: 'image/png',
-            	transparent: true
-            },{
-            	isBaseLayer: false
             }
         );
-	
-		var property = new OpenLayers.Layer.Vector('Riffle Range', {
-            strategies: [
-            	new OpenLayers.Strategy.BBOX()
-            ],
-            protocol: new OpenLayers.Protocol.WFS({
-                url: 'http://127.0.0.1/geoserver/wfs',
-                featureType: 'property_rifflerange',
-                featureNS: 'http://www.geointel.biz',
-                srsName: 'EPSG: 32735',
-                geometryName: 'geom'
-            })
-        });
-
+    /*    
         var suburb = new OpenLayers.Layer.Vector('Bulawayo Suburbs', {
             styleMap: Civic.util.Util.suburbStyle,
         	protocol: new OpenLayers.Protocol.HTTP({
@@ -91,14 +72,37 @@ Ext.define('Civic.controller.gis.Map', {
             	new OpenLayers.Strategy.Fixed()
             ]
         });
+	*/
+		var vecLayer = new OpenLayers.Layer.Vector('5 May 2016', {
+			preFeatureInsert: function(feature) {
+	            feature.geometry.transform(new OpenLayers.Projection("EPSG:32735"), new OpenLayers.Projection("EPSG:900913"))
+	       }
+        /*    styleMap: new OpenLayers.StyleMap({
+                'default': new OpenLayers.Style(
+                	Reg.util.Util.def_template, {
+                		context: Reg.util.Util.context
+                	}
+                ),
+                'select': new OpenLayers.Style(
+                	Reg.util.Util.sel_template, {
+                		context: Reg.util.Util.context
+                	}
+                )
+            }),
+        	protocol: new OpenLayers.Protocol.HTTP({
+                url: 'php/engineering/jobs/list.php',
+                format: new OpenLayers.Format.GeoJSON()
+            }),
+           strategies: [
+            	new OpenLayers.Strategy.Fixed()
+            ]
+     */    });
 
-        layers.push(road, suburb/*, property1, property*/);
+        layers.push(base);//, vecLayer);
 
-    /*    
-        // manually bind store to layer
-        me.getSummitsStore().bind(vecLayer);
+        //me.getEngineeringJobsStore().bind(vecLayer);
 
-    */    mapPanel.map.addLayers(layers);
+        mapPanel.map.addLayers(layers);
     	me.setMousePointerSwitcher();
     	//mapPanel.map.zoomToExtent(mapPanel.map.layers[0].getExtent());
 
@@ -159,5 +163,46 @@ Ext.define('Civic.controller.gis.Map', {
 		});
 
 		map.getControl('olDragPan').activate();
+	},
+
+	onSpecialKeyPress: function (combo, e, eOpts) {
+		var me = this;
+		if (e.getKey()== e.ENTER) {
+
+			Ext.getBody().mask('Searching...Please Wait...', 'loading');
+
+			combo.up('form').getForm().submit({
+				url: 'php/gis/search.php',
+				success: function (form, action) {
+					Ext.getBody().unmask();
+
+					var result = action.result;
+
+					if (result.success) {
+						map = me.getMapPanel().map;
+						map.zoomToExtent(result.data);
+					} else {
+						Civic.util.Util.showErrorMsg(result.msg);
+					};
+				},
+				failure: function (form, action) {
+					Ext.getBody().unmask();
+
+					switch (action.failureType) {
+						case Ext.form.action.Action.CLIENT_INVALID:
+							Ext.Msg.alert('Failure', 'Invalid values submitted!');
+							break;
+
+						case Ext.form.action.Action.CONNECT_FAILURE:
+							Ext.Msg.alert('Failure', 'Ajax communication failed.');
+							break;
+
+						case Ext.form.action.Action.SERVER_INVALID:
+							Ext.Msg.alert('Failure', action.result.msg);
+							break;
+					}
+				}
+			})
+		};
 	}
 });

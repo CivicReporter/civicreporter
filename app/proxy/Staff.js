@@ -24,10 +24,8 @@ Ext.define('Civic.proxy.Staff', {
 	},
 
 	api: {
-		create: 'php/engineering/staff/create.php',
 		read: 'php/engineering/staff/list.php',
-		update: 'php/engineering/staff/update.php',
-		destroy: 'php/engineering/staff/delete.php'
+		update: 'php/engineering/staff/update.php'
 	},
 
 	listeners: {

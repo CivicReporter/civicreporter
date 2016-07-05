@@ -9,19 +9,18 @@ Ext.define('Civic.view.gis.Map', {
     ],
 
     border: 'false',
-    zoom: 3,
-    extent: OpenLayers.Bounds.fromArray([583076.3125,7735767.0,748277.25,7816663.0]),
 
     initComponent: function() {
         var me = this,
             items = [];
 
         var map = new OpenLayers.Map('',{
-        	numZoomLevels:10,
-			displayProjection:'EPSG:32735',
-			projection:'EPSG:32735',
+        	resolutions: [611.4962261962891,305.74811309814453,152.87405654907226,76.43702827453613,38.218514137268066,19.109257068634033,9.554628534317017,4.777314267158508,2.388657133579254],
+			restrictedExtent: [3094175.5,-2329335.0,3259975.5,-2241285.75],
+			displayProjection:'EPSG:900913',
+			projection:'EPSG:900913',
 			units:'m',
-			maxExtent: new OpenLayers.Bounds(583076.3125,7735767.0,748277.25,7816663.0), 
+			maxExtent: [-20037508.34,-20037508.34,20037508.34,20037508.34], 
         	fallThrough: true
         });
 
@@ -107,6 +106,22 @@ Ext.define('Civic.view.gis.Map', {
             tooltip: "pan",
             iconCls: 'pan'
         })));
+
+        items.push(" ");
+
+        items.push({
+        	xtype: 'form',
+        	layout: 'fit',
+        	items: [
+        		{
+        			xtype: 'combo',
+        			name: 'suburb',
+		        	width: 150,
+		        	emptyText: 'search for a suburb',
+		        	hideTrigger: true
+        		}
+        	]        	
+        });
 
         Ext.apply(me, {
             map: map,

@@ -3,11 +3,14 @@ Ext.define('Civic.store.engineering.AvailableStaff', {
 
 	requires: [
 		'Civic.model.staticData.Staff',
-		'Civic.proxy.CVR'
+		'Civic.proxy.Staff'
 	],
 
 	model: 'Civic.model.staticData.Staff',
-
 	pageSize: 5,
-	storeId: 'availablestaff'
+	storeId: 'availablestaff',
+
+	proxy: {
+		type: 'staffproxy'
+	}
 });

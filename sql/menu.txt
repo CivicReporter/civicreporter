@@ -1,0 +1,18 @@
+ id |        ttext         |     iconcls     | parentid |   classname    
+----+----------------------+-----------------+----------+----------------
+  4 | menu13               | menu_profile    |        1 | panel
+ 12 | menu33               | menu_profile    |        9 | panel
+  1 | Security             | menu_admin      |          | 
+  2 | Groups & Permissions | menu_groups     |        1 | panel
+ 11 | menu32               | menu_users      |        9 | panel
+  3 | Users                | menu_users      |        1 | users
+  5 | Static Data          | menu_staticdata |          | 
+  6 | Actor                | menu_actor      |        5 | actorsgrid
+  7 | Category             | menu_category   |        5 | categoriesgrid
+  8 | Language             | menu_language   |        5 | languagesgrid
+ 13 | City                 | menu_city       |        5 | citiesgrid
+ 14 | Country              | menu_country    |        5 | countriesgrid
+ 10 | Films                | menu_films      |        9 | filmsgrid
+  9 | Content Management   | menu_content    |          | 
+(14 rows)
+

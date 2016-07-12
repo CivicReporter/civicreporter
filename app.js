@@ -8,6 +8,17 @@ Ext.application({
     name: 'Civic',
 
     extend: 'Civic.Application',
-    
-    autoCreateViewport: true
+
+    autoCreateViewport: false
+});
+
+Ext.Loader.setConfig({
+    enabled: true,
+    disableCaching: false,
+    paths: {
+        Ext: './ext/src',
+        GeoExt: './resources/geoext/src/GeoExt',
+        'Ext.ux': 'ext/ux',
+        'Civic.util': 'app/util'
+    }
 });

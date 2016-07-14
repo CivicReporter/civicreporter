@@ -36,7 +36,7 @@ Ext.define('Civic.controller.gis.Map', {
         var layers = [];
 
         var road = new OpenLayers.Layer.WMS('Bulawayo Roads',
-            'http://127.0.0.1/geoserver/wms?',
+            'http://192.168.43.171/geoserver/wms?',
             {
             	layers: 'geointel:road_all',
             	format: 'image/png',
@@ -53,7 +53,7 @@ Ext.define('Civic.controller.gis.Map', {
         );
 
         var property1 = new OpenLayers.Layer.WMS('Riffle Range',
-            'http://127.0.0.1/geoserver/wms?',
+            'http://192.168.43.171/geoserver/wms?',
             {
             	layers: 'geointel:property_rifflerange',
             	format: 'image/png',
@@ -68,7 +68,7 @@ Ext.define('Civic.controller.gis.Map', {
             	new OpenLayers.Strategy.BBOX()
             ],
             protocol: new OpenLayers.Protocol.WFS({
-                url: 'http://127.0.0.1/geoserver/wfs',
+                url: 'http://192.168.43.171/geoserver/wfs',
                 featureType: 'property_rifflerange',
                 featureNS: 'http://www.geointel.biz',
                 srsName: 'EPSG: 32735',
@@ -79,7 +79,7 @@ Ext.define('Civic.controller.gis.Map', {
         var suburb = new OpenLayers.Layer.Vector('Bulawayo Suburbs', {
             styleMap: Civic.util.Util.suburbStyle,
         	protocol: new OpenLayers.Protocol.HTTP({
-                url: "http://127.0.0.1/civicreporter/php/gis/list.php",
+                url: "http://192.168.43.171/civicreporter/php/gis/list.php",
                 params: {
                 	start: 0,
                 	limit: 500,
@@ -137,9 +137,9 @@ Ext.define('Civic.controller.gis.Map', {
 		var mousePointerStyle = 'default';
 
 		var MOUSE_POINTER_STYLES = {
-		    'olDragPan': "url('http://127.0.0.1/civicreporter/resources/images/app/pan.cur'), default",
-		    'olZoomIn': "url('http://127.0.0.1/civicreporter/resources/images/app/zoom-in.cur'), default",
-		    'olZoomOut': "url('http://127.0.0.1/civicreporter/resources/images/app/zoom-out.cur'), default",
+		    'olDragPan': "url('http://192.168.43.171/civicreporter/resources/images/app/pan.cur'), default",
+		    'olZoomIn': "url('http://192.168.43.171/civicreporter/resources/images/app/zoom-in.cur'), default",
+		    'olZoomOut': "url('http://192.168.43.171/civicreporter/resources/images/app/zoom-out.cur'), default",
 		    'none': 'default'
 		};
 

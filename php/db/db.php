@@ -1,7 +1,7 @@
 <?php 
 
 //connection details for civicdb database use '192.135.20.25' for db on acer machine
-	$server = '192.168.43.171';
+	$server = '127.0.0.1';
 	$port = '5432';
 	$user = 'postgres';
 	$pass = 'pumkin987!';

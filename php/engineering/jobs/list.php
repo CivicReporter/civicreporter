@@ -36,20 +36,26 @@
 
 						while ($r = pg_fetch_assoc($sth)) {
 
-							$sqlquery = "SELECT * FROM call_engineering ";
-							$sqlquery.= "WHERE job_id = ".$r['job_id']; 
-							$sqlquery.= " ORDER BY call_id";
+							$callsquery = "SELECT * FROM call_engineering ";
+							$callsquery.= "WHERE job_id = ".$r['job_id']; 
+							$callsquery.= " ORDER BY call_id";
 
-							if ($nodes = pg_query($dbh, $sqlquery)) {
+							$staffquery = "SELECT se.staff_id, call_sign, firstname, surname, phone, role, section_id, station_id ";
+							$staffquery.= "FROM staff_engineering se, engineering.assignment ea ";
+							$staffquery.= "WHERE se.staff_id = ea.staff_id AND job_id = ".$r['job_id']; 
+							$staffquery.= " ORDER BY se.staff_id";
 
-								$count = pg_num_rows($nodes);
+							if ($call_nodes = pg_query($dbh, $callsquery) && $staff_nodes = pg_query($dbh, $staffquery)) {
+
+								$ccount = pg_num_rows($call_nodes);
+								$scount = pg_num_rows($staff_nodes);
 
 								if ($count > 0) {
 
 									$r['leaf'] = false;
 									$r['calls'] = array();
 
-									while ($call = pg_fetch_assoc($nodes)) {
+									while ($call = pg_fetch_assoc($call_nodes)) {
 
 										$call['leaf'] = true;
 										$r['calls'][] = $call;

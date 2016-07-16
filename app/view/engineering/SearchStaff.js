@@ -40,7 +40,7 @@ Ext.define('Civic.view.engineering.SearchStaff', {
 							padding: '1 210 1 5',
 							store: 'staticData.Stations',
 							displayField: 'name',
-							valueField: 'station_id',
+							valueField: 'name',
 							hideTrigger: true,
 							typeAhead: true
 						}

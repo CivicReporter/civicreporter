@@ -44,26 +44,29 @@
 							$staffquery.= "FROM staff_engineering se, engineering.assignment ea ";
 							$staffquery.= "WHERE se.staff_id = ea.staff_id AND job_id = ".$r['job_id']; 
 							$staffquery.= " ORDER BY se.staff_id";
-
-							if ($call_nodes = pg_query($dbh, $callsquery) && $staff_nodes = pg_query($dbh, $staffquery)) {
-
+							if ($call_nodes = pg_query($dbh, $callsquery)) {
 								$ccount = pg_num_rows($call_nodes);
-								$scount = pg_num_rows($staff_nodes);
-
-								if ($count > 0) {
-
-									$r['leaf'] = false;
+								if ($ccount > 0) {
+									$r['leaf'] = false;	
 									$r['calls'] = array();
-
 									while ($call = pg_fetch_assoc($call_nodes)) {
-
 										$call['leaf'] = true;
 										$r['calls'][] = $call;
 									}
 								}
-
-								$folder['jobs'][] = $r;
+							}							
+							if ($staff_nodes = pg_query($dbh, $staffquery)) {								
+								$scount = pg_num_rows($staff_nodes);										
+								if ($scount > 0) {
+									$r['leaf'] = false;	
+									$r['staff'] = array();
+									while ($staff = pg_fetch_assoc($staff_nodes)) {
+										$staff['leaf'] = true;
+										$r['staff'][] = $staff;
+									}									
+								}
 							}
+							$folder['jobs'][] = $r;
 						}
 
 						pg_free_result($sth);

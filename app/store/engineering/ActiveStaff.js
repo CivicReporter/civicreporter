@@ -2,15 +2,15 @@ Ext.define('Civic.store.engineering.ActiveStaff', {
 	extend: 'Ext.data.Store',
 
 	requires: [
-		'Civic.model.engineering.Staff',
-		'Civic.proxy.CVR'
+		'Civic.model.staticData.Staff',
+		'Civic.proxy.Staff'
 	],
 
-	model: 'Civic.model.engineering.Staff',
+	model: 'Civic.model.staticData.Staff',
 	storeId: 'activestaff',
+	autoSync: true,
 
 	proxy: {
-		type: 'cvr',
-		url: 'php/engineering/staff/list.php'
+		type: 'staffproxy'
 	}
 });

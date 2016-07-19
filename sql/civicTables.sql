@@ -846,7 +846,7 @@ CREATE VIEW public.job_engineering AS(
 	SELECT ej.job_id, ss.name suburb, st.name station, ej.status, ej.opened_on, ej.closed_on, ej.last_update, ej.opened_by, ej.closed_by
 		FROM engineering.job ej
 		INNER JOIN staticdata.suburb ss ON ej.suburb_id = ss.suburb_id
-		INNER JOIN staticdata.station st ON ej.station_id = st.station_id
+		LEFT OUTER JOIN staticdata.station st ON ej.station_id = st.station_id
 );
 
 -- -----------------------------------------------------

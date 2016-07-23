@@ -15,8 +15,6 @@ Ext.define('Civic.view.engineering.JobsHistory', {
 			]
 		}
 	],
-	
-	dockedItems: [{}],
 
 	columns: [
 		{

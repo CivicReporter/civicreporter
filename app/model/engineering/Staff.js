@@ -1,34 +1,27 @@
 Ext.define('Civic.model.engineering.Staff', {
-	extend: 'Civic.model.public.AbstractDate',
+	extend: 'Civic.model.staticData.Staff',
+	requires: [
+		'Civic.model.public.AbstractJob'
+	],
 
 	idProperty: 'staff_id',
 
-	fields: [
+	hasMany: [
 		{
-			name: 'staff_id',
-			type: 'int',
-			useNull: false
-		},{
-			name: 'call_sign',
-			type: 'int'
-		},{
-			name: 'firstname'
-		},{
-			name: 'surname'
-		},{
-			name: 'phone'
-		},{
-			name: 'section',
-			type: 'int'
-		},{
-			name: 'station',
-			type: 'int'
-		},{
-			name: 'role'
-		},{
-			name: 'active'
-		},{
-			name: 'status'
+			foreignKey: 'staff_id',
+	        name: 'jobs',
+	        model: 'Civic.model.public.AbstractJob'
 		}
-	]
+	],
+
+    proxy:{
+        type: 'ajax',
+        url: 'php/engineering/staff/list.php',
+        
+        reader: {
+            type: 'json',
+			messageProperty: 'msg',
+            root: 'data'
+        }
+    }
 });

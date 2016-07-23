@@ -8,11 +8,6 @@ Ext.define('Civic.view.engineering.DutyRoster', {
 		'Ext.form.RadioGroup'
 	],
 
-	layout: {
-		type: 'hbox',
-		align: 'stretch'
-	},
-
 	initComponent: function () {
 		Ext.apply(this, {
 			items: [
@@ -20,14 +15,17 @@ Ext.define('Civic.view.engineering.DutyRoster', {
 					xtype: 'panel',
 					layout: {
 						type: 'table',
-						columns: 4
+						columns: 4,
+						rows: 3
 					},
 					width: '100%',
-					height: '100%',
+					height: 615,
 					items: [
 						{
 							xtype: 'abstractroster',
-							colspan: 2,
+							width: 880,
+							height: 315,
+							colspan: 3,
 							store: 'engineering.ActiveStaff',
 							columns: [
 								{
@@ -106,11 +104,13 @@ Ext.define('Civic.view.engineering.DutyRoster', {
 
 								}
 							]
-						}/*,{
+						},{
 							title: 'Staff details',
 							xtype: 'form',
 							frame: true,
-							//colspan: 1,
+							width: 300,
+							height: 615,
+							rowspan: 3,
 							bodyPadding: '25 0 0 5',
 							layout: 'anchor',
 							defaults: {
@@ -175,10 +175,17 @@ Ext.define('Civic.view.engineering.DutyRoster', {
 							title: 'Jobs List',
 							iconCls: 'menu_jobs',
 							colspan: 3,
-							collapsible: true,
-							collapseDirection: 'bottom',
-							collapsed: false
-						}*/
+							height: 300,
+							//store: 'engineering.Jobs',	
+							dockedItems: [
+								{
+									dock: 'bottom',
+									xtype: 'pagingtoolbar',
+									displayInfo: true,
+									displayMsg: 'Displaying Jobs {0} - {1} of {2}'
+								}
+							]
+						}
 					]
 				}
 			]

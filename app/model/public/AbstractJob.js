@@ -26,6 +26,10 @@ Ext.define('Civic.model.public.AbstractJob', {
 			name: 'closed_on',
 			type: 'date',
 			dateFormat: 'Y-m-d H:i:s'
+		},{
+			name: 'time_taken'/*,
+			type: 'date',
+			dateFormat: 'Y-m-d H:i:s'*/
 		}
 	]
 }); 

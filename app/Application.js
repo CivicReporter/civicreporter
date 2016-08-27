@@ -13,7 +13,8 @@ Ext.define('Civic.Application', {
     ],
 
     controllers: [
-        'login.Login',
+        'Main',
+		'login.Login',
         'menu.Menu',
         'security.Users',
         'staticData.AbstractController',

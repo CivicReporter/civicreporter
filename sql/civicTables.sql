@@ -872,3 +872,40 @@ CREATE VIEW public.staff_engineering AS(
 	INNER JOIN staticdata.station st ON sf.station_id = st.station_id
 );
 
+-- -----------------------------------------------------
+-- Table engineering.dashboardcalls
+-- -----------------------------------------------------
+DROP TABLE IF EXISTS engineering.dashboardcalls ;
+
+
+CREATE TABLE IF NOT EXISTS engineering.dashboardcalls (
+  station_id INT NOT NULL,
+  open_calls INT,
+  pending_calls INT,
+  closed_calls INT,
+  total_calls INT,
+  hr24 INT[3],
+  hr48 INT[3],
+  hr72 INT[3],
+  hr96 INT[3],
+  rec_date DATE NOT NULL DEFAULT CURRENT_DATE,
+  last_update TIMESTAMP(0) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  PRIMARY KEY (station_id, rec_date),
+  CONSTRAINT edbc_station
+    FOREIGN KEY (station_id)
+    REFERENCES staticdata.station (station_id)
+    ON DELETE CASCADE
+    ON UPDATE CASCADE
+);
+
+CREATE TRIGGER upd_engdashcall BEFORE UPDATE ON engineering.dashboardcalls FOR EACH ROW EXECUTE PROCEDURE upd_time();
+
+-- -----------------------------------------------------
+-- View public.calls_dashboard
+-- -----------------------------------------------------
+DROP VIEW IF EXISTS public.calls_dashboard;
+
+CREATE VIEW public.calls_dashboard AS(
+	SELECT ed.station_id, ss.name, ed.open_calls, ed.pending_calls, ed.closed_calls, ed.total_calls, ed.hr24, ed.hr48, ed.hr72, ed.hr96, ed.rec_date, ed.last_update 
+	FROM engineering.dashboardcalls ed INNER JOIN staticdata.station ss ON ed.station_id = ss.station_id
+);

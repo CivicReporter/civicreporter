@@ -5,7 +5,8 @@ Ext.define('Civic.controller.engineering.Calls', {
 	//	'Civic.util.Alert',
 	//	'Civic.util.MD5',
 		'Civic.view.Viewport',
-		'Civic.util.Util'
+		'Civic.util.Util',
+		'Ext.ux.IFrame' 
 	],
 
 	views: [
@@ -44,6 +45,15 @@ Ext.define('Civic.controller.engineering.Calls', {
 			},
 			'engcallsgrid button#clearFilter': {
 				click: this.onButtonClickClearFilter
+			},
+			'engcallsgrid button#print': {
+				click: this.onButtonClickPrint
+			},
+			'engcallsgrid button#toPdf': {
+				click: this.onButtonClickPDF
+			},
+			'engcallsgrid button#toExcel': {
+				click: this.onButtonClickExcel
 			},
 			//---call edit window---
 			'callwindow button#cancel': {
@@ -184,6 +194,30 @@ Ext.define('Civic.controller.engineering.Calls', {
 
 	onButtonClickClearFilter: function (button, e, options) {
 		button.up('engcallsgrid').filters.clearFilters();
+	},
+
+	onButtonClickPrint: function (button, e, options) {
+		//button.up('engcallsgrid').filters.clearFilters();
+	},
+
+	onButtonClickPDF: function (button, e, options) {
+		var mainPanel = Ext.ComponentQuery.query('mainpanel')[0];
+		newTab = mainPanel.add({      
+			xtype: 'panel',        
+			closable: true,        
+			iconCls: 'to_pdf',        
+			title: 'Calls PDF',        
+			layout: 'fit',        
+			items: [{            
+				xtype: 'uxiframe',            
+				src: 'php/pdf/exportCallsPdf.php'       
+			}]    
+		});
+		mainPanel.setActiveTab(newTab); 
+	},
+
+	onButtonClickExcel: function (button, e, options) {
+		window.open('php/pdf/exportCallsExcel.php');
 	},
 
 	onButtonClickCancel: function (button, e, options) {

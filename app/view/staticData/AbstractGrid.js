@@ -64,6 +64,26 @@ Ext.define('Civic.view.staticData.AbstractGrid', {
 						itemId: 'refresh',
 						text: 'Refresh View',
 						iconCls: 'refresh_view'
+					},{
+						xtype: 'tbseparator'
+					},{
+						xtype: 'button',
+						itemId: 'print',
+						text: 'Print',
+						iconCls: 'print',
+						tooltip: 'Print current page'
+					},{
+						xtype: 'button',
+						itemId: 'toPdf',
+						text: 'Export to PDF',
+						iconCls: 'to_pdf',
+						tooltip: 'Generate PDF document'
+					},{
+						xtype: 'button',
+						itemId: 'toExcel',
+						text: 'Export to Excel',
+						iconCls: 'to_excel',
+						tooltip: 'Generate Excel sheet'
 					}
 				]
 			}

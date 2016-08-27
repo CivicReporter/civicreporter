@@ -54,6 +54,15 @@ Ext.define('Civic.controller.staticData.AbstractController', {
 			'staticdatagrid button#refresh': {
 				click: this.onButtonClickRefresh
 			},
+			'staticdatagrid button#print': {
+				click: this.onButtonClickPrint
+			},
+			'staticdatagrid button#toPdf': {
+				click: this.onButtonClickPDF
+			},
+			'staticdatagrid button#toExcel': {
+				click: this.onButtonClickExcel
+			},
 			'staticdatagrid actioncolumn': {
 				itemclick: this.handleActionColumn
 			}
@@ -153,6 +162,30 @@ Ext.define('Civic.controller.staticData.AbstractController', {
 
 	onButtonClickRefresh: function (button, e, options) {
 		button.up('staticdatagrid').getStore().reload();
+	},
+
+	onButtonClickPrint: function (button, e, options) {
+		//button.up('engcallsgrid').filters.clearFilters();
+	},
+
+	onButtonClickPDF: function (button, e, options) {
+	/*	var mainPanel = Ext.ComponentQuery.query('mainpanel')[0];
+		newTab = mainPanel.add({      
+			xtype: 'panel',        
+			closable: true,        
+			iconCls: 'to_pdf',        
+			title: 'Calls PDF',        
+			layout: 'fit',        
+			items: [{            
+				xtype: 'uxiframe',            
+				src: 'php/pdf/exportCallsPdf.php'       
+			}]    
+		});
+		mainPanel.setActiveTab(newTab); */
+	},
+
+	onButtonClickExcel: function (button, e, options) {
+	//	window.open('php/pdf/exportCallsExcel.php');
 	},
 
 	onStoreSync: function (batch) {		 

@@ -1,0 +1,26 @@
+ suburb_id 	       name        	 count 
+2	 MAGWEGWE          	1
+3	 LUVEVE            	1
+4	 LOBENGULA         	4
+5	 ENTUMBANE         	3
+6	 EMAKHANDENI       	4
+8	 NKULUMANE         	1
+9	 TSHABALALA        	1
+10	 SIZINDA           	1
+11	 NKETA             	4
+12	 EMGAMWINI         	1
+13	 MPOPOMA           	1
+15	 PELANDABA         	1
+16	 IMINYELA          	1
+18	 MATSHOBANA        	1
+21	 BELMONT           	2
+22	 CITY CENTRE SOUTH 	1
+25	 DONNINGTON        	2
+31	 ILANDA            	1
+33	 SUBURBS           	1
+37	 MAKOKOBA          	2
+45	 NORTH END         	1
+56	 SELBORNE PARK     	3
+70	 DOUGLASDALE       	1
+71	 BELLEVUE          	1
+(24 rows)		

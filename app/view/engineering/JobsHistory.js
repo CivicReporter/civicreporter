@@ -7,8 +7,8 @@ Ext.define('Civic.view.engineering.JobsHistory', {
 			ptype: 'rowexpander',
 			rowBodyTpl: [
 				'<table>'+
-					'<tr><th align = "left">Stand Number:</th><td>{stand_no}</td></tr>'+
-					'<tr><th align = "left">Street:</th><td>{street}</td></tr>'+
+					'<tr><th align = "left">Time Taken:</th><td>{time_taken}</td></tr>'+
+					'<tr><th align = "left">Closed On:</th><td>{closed_on}</td></tr>'+
 					'<tr><th align = "left">Suburb:</th><td>{suburb}</td></tr>'+
 					'<tr><th align = "left">Description:</th><td>{description}</td></tr>'+
 				'</table>'

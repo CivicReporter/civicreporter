@@ -35,6 +35,26 @@ Ext.define('Civic.view.toolbar.AddEditCancelFilter', {
 			text: 'Clear Filters',
 			iconCls: 'clear_filter',
 			tooltip: 'Clear column filters'
+		},{
+			xtype: 'tbseparator'
+		},{
+			xtype: 'button',
+			itemId: 'print',
+			text: 'Print',
+			iconCls: 'print',
+			tooltip: 'Print current page'
+		},{
+			xtype: 'button',
+			itemId: 'toPdf',
+			text: 'Export to PDF',
+			iconCls: 'to_pdf',
+			tooltip: 'Generate PDF document'
+		},{
+			xtype: 'button',
+			itemId: 'toExcel',
+			text: 'Export to Excel',
+			iconCls: 'to_excel',
+			tooltip: 'Generate Excel sheet'
 		}
 	]
 });

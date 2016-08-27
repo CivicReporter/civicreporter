@@ -14,7 +14,7 @@ Ext.define('Civic.controller.engineering.DutyRoster', {
 		'engineering.AvailableStaff',
 		'engineering.StaffStatus',
 		'staticData.ActiveStatus',
-		'engineering.Jobs',
+		'engineering.Jobs'
 	],
 
 	refs: [
@@ -81,8 +81,8 @@ Ext.define('Civic.controller.engineering.DutyRoster', {
 		var grid = this.getJobsHistoryGrid();
         if (rec) {
             this.getDutyRosterForm().loadRecord(rec);
-            //this store from a has many association is not configured with a proxy and so is not working with the paging toolbar
-            jobsStore.setProxy({
+            //this store from a has many association is not configured with a proxy and so is not working with the paging toolbar properly
+        /*    jobsStore.setProxy({
             	type: 'ajax',
             	url:'php/engineering/staff/jobshisto.php',        
 		        reader: {
@@ -96,9 +96,9 @@ Ext.define('Civic.controller.engineering.DutyRoster', {
             		limit: 10
             	}
             });
-            //jobsStore.removeFilter('staff_id', false);
+            //jobsStore.removeFilter('staff_id', false);*/
             grid.reconfigure(jobsStore, grid.cloneConfig().columns);
-            grid.down('pagingtoolbar').bindStore(jobsStore);
+            //grid.down('pagingtoolbar').bindStore(jobsStore);
         }
 	}
 });

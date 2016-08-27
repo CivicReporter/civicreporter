@@ -172,18 +172,18 @@ Ext.define('Civic.view.engineering.DutyRoster', {
 							]
 						},{
 							xtype: 'engjobshistory',
-							title: 'Jobs List',
+							title: 'Assigned Jobs History',
 							iconCls: 'menu_jobs',
 							colspan: 3,
 							height: 300,
 							//store: 'engineering.Jobs',	
 							dockedItems: [
-								{
+							/*	{
 									dock: 'bottom',
 									xtype: 'pagingtoolbar',
 									displayInfo: true,
 									displayMsg: 'Displaying Jobs {0} - {1} of {2}'
-								}
+								}*/
 							]
 						}
 					]

@@ -58,7 +58,7 @@
 
 						while ($r = pg_fetch_assoc($sth)) {
 
-							$jobsquery = "SELECT je.job_id, je.suburb, je.status, je.opened_on, je.opened_by, je.closed_on, je.last_update";
+							$jobsquery = "SELECT je.job_id, je.suburb, je.status, je.opened_on, je.opened_by, je.closed_on, je.last_update, je.closed_on-je.opened_on time_taken";
 							$jobsquery.= " FROM job_engineering je INNER JOIN engineering.assignment ea";
 							$jobsquery.= " ON je.job_id = ea.job_id";
 							$jobsquery.= " WHERE ea.staff_id = ". $r['staff_id'];

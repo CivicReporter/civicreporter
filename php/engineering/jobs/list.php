@@ -16,24 +16,15 @@
 
 		while ($user = pg_fetch_assoc($sth)) {
 
-			$folder = array(
-				'type' => 'FeatureCollection',
-				'crs' => array(
-					'type' => 'name',
-					'properties' => array(
-						'name' => 'urn:ogc:def:crs:OGC:1.3:CRS84'
-					)
-				),
-				'features' => array()
-			);
+			$folder = array();
 			
 			if ($count == 1 AND ($user['urole'] == 'admin' || $user['urole'] == 'call centre')) {
 
 				pg_free_result($sth);
 
-				$sql = "SELECT *, ST_ASGEOJSON(geom) geometry  FROM job_engineering ";
+				$sql = "SELECT job_id,suburb,station,status,opened_on,closed_on,last_update,opened_by,closed_by FROM job_engineering ";
 				$sql.= "ORDER BY job_id DESC ";
-				//$sql.= "OFFSET $offset LIMIT $limit";
+				$sql.= "OFFSET $offset LIMIT $limit";
 
 				if ($sth = pg_query($dbh, $sql)) {
 
@@ -45,41 +36,37 @@
 
 						while ($r = pg_fetch_assoc($sth)) {
 
-							$feature = array( 
-								'type' => 'Feature',
-								'properties' => array(),
-								'geometry' => json_decode($r['geometry'])
-							);
+							$callsquery = "SELECT * FROM call_engineering ";
+							$callsquery.= "WHERE job_id = ".$r['job_id']; 
+							$callsquery.= " ORDER BY call_id";
 
-							foreach ($r as $key => $value) {
-								if ($key != 'geometry' && $key != 'geom') {
-									$feature['properties'][$key] = $value;
-								}
-							};
-
-							$sqlquery = "SELECT * FROM call_engineering ";
-							$sqlquery.= "WHERE job_id = ".$r['job_id']; 
-							$sqlquery.= " ORDER BY call_id";
-
-							if ($nodes = pg_query($dbh, $sqlquery)) {
-
-								$count = pg_num_rows($nodes);
-
-								if ($count > 0) {
-
-									$feature['properties']['leaf'] = false; //$r['leaf'] = false;
-									$feature['properties']['calls'] = array(); //$r['calls'] = array();
-
-									while ($call = pg_fetch_assoc($nodes)) {
-
+							$staffquery = "SELECT se.staff_id, call_sign, firstname, surname, phone, role, section_id, station_id ";
+							$staffquery.= "FROM staff_engineering se, engineering.assignment ea ";
+							$staffquery.= "WHERE se.staff_id = ea.staff_id AND job_id = ".$r['job_id']; 
+							$staffquery.= " ORDER BY se.staff_id";
+							if ($call_nodes = pg_query($dbh, $callsquery)) {
+								$ccount = pg_num_rows($call_nodes);
+								if ($ccount > 0) {
+									$r['leaf'] = false;	
+									$r['calls'] = array();
+									while ($call = pg_fetch_assoc($call_nodes)) {
 										$call['leaf'] = true;
-										$feature['properties']['calls'][] = $call; //$r['calls'][] = $call;
+										$r['calls'][] = $call;
 									}
 								}
-
-								//$folder['jobs'][] = $r;
-								array_push($folder['features'], $feature);
+							}							
+							if ($staff_nodes = pg_query($dbh, $staffquery)) {								
+								$scount = pg_num_rows($staff_nodes);										
+								if ($scount > 0) {
+									$r['leaf'] = false;	
+									$r['staff'] = array();
+									while ($staff = pg_fetch_assoc($staff_nodes)) {
+										$staff['leaf'] = true;
+										$r['staff'][] = $staff;
+									}									
+								}
 							}
+							$folder['jobs'][] = $r;
 						}
 
 						pg_free_result($sth);

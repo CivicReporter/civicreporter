@@ -2,11 +2,14 @@ Ext.define('Civic.proxy.GisData', {
 	extend: 'GeoExt.data.proxy.Protocol',
 	alias: 'proxy.gisdataproxy',
 
-	type: 'ajax',
+	requires: [
+		'GeoExt.data.reader.Feature'
+	],
+
 	reader: {
-		type: 'json',
+		type: 'feature',
 		messageProperty: 'msg',
-		root: 'data'
+		root: 'features'
 	},
 
 	protocol: new OpenLayers.Protocol.HTTP({

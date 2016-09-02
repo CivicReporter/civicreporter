@@ -1,6 +1,6 @@
-Ext.define('Civic.view.gis.Map', {
+Ext.define('Civic.view.gis.AbstractMap', {
     extend: 'GeoExt.panel.Map',
-    alias : 'widget.civicr_map',
+    alias : 'widget.abstract_map',
 
     requires: [
         'Ext.window.MessageBox',
@@ -53,6 +53,72 @@ Ext.define('Civic.view.gis.Map', {
             items: [
 				{
 					xtype:'splitbutton',
+					text: 'File',
+					iconCls: 'file',
+					menu: [
+						{
+							text: 'Add Layer'
+						},{
+							text: 'Create New',
+							menu: [
+								{
+									text: 'Point Layer'
+								},{
+									text: 'Multiline Layer'
+								},{
+									text: 'Polygon Layer'
+								}
+							]
+						},{
+							text: 'Base Map',
+							menu: [
+								{
+									text: 'Bing Map'
+								},{
+									text: 'OpenStreet Map'
+								}
+							]
+						}
+					]
+				},{
+					xtype:'splitbutton',
+					text: 'Edit',
+					iconCls: 'edit',
+					menu: [
+						{
+							text: 'Undo',
+							disabled: true
+						},{
+							text: 'Redo',
+							disabled: true
+						},{
+							text: 'Add Feature(s)'
+						},{
+							text: 'Delete Feature(s)',
+							disabled: true
+						},{
+							text: 'Select Feature(s)',
+							menu: [
+								{
+									text: 'By Attributes'
+								},{
+									text: 'By Point'
+								},{
+									text: 'By Box'
+								},{
+									text: 'By Polygon'
+								}
+							]
+						},{
+							text: 'Remove Selection',
+							disabled: true
+						},{
+							text: 'Save Edits',
+							disabled: true
+						}
+					]
+				},{
+					xtype:'splitbutton',
 					text: 'View',
 					iconCls: 'view',
 					menu: [
@@ -60,6 +126,26 @@ Ext.define('Civic.view.gis.Map', {
 							text: 'Attribute Table'
 						},{
 							text: 'Map Legend'
+						},{
+							text: 'Editing Toolbar'
+						}
+					]
+				},{
+					xtype:'splitbutton',
+					text: 'Tools',
+					iconCls: 'tools',
+					menu: [
+						{
+							text: 'Measure',
+							menu: [
+								{
+									text: 'Point'
+								},{
+									text: 'Line'
+								},{
+									text: 'Area'
+								}
+							]
 						}
 					]
 				},{
@@ -88,6 +174,8 @@ Ext.define('Civic.view.gis.Map', {
 			]
         });
         
+        //items.push(buttonGroup);
+
         group.push(Ext.create('Ext.button.Button', Ext.create('GeoExt.Action', {
             text: "Back",
             control: nav.previous,
@@ -107,6 +195,8 @@ Ext.define('Civic.view.gis.Map', {
             tooltip: "forward",
             iconCls: 'next'
         })));
+
+        //group.push("-");
         
         group.push(Ext.create('Ext.button.Button', Ext.create('GeoExt.Action', {
             text: "Down",
@@ -128,6 +218,8 @@ Ext.define('Civic.view.gis.Map', {
             iconCls: 'zoom_out'
         })));
 
+        //group.push("-");
+
         group.push(Ext.create('Ext.button.Button', Ext.create('GeoExt.Action', {
             control: new OpenLayers.Control.ZoomToMaxExtent(),
             map: map,
@@ -147,22 +239,8 @@ Ext.define('Civic.view.gis.Map', {
             iconCls: 'pan'
         })));
 
-        /*items.push({
-        	xtype: 'form',
-        	layout: 'fit',
-        	items: [
-        		{
-        			xtype: 'combo',
-        			name: 'suburb',
-		        	width: 150,
-		        	emptyText: 'search for a suburb',
-		        	hideTrigger: true
-        		}
-        	]        	
-        });
-		*/
-		var buttonGroup2 = Ext.create('Ext.container.ButtonGroup', {
-        	columns: 7,
+        var buttonGroup2 = Ext.create('Ext.container.ButtonGroup', {
+        	columns: 6,
             defaults: {
                 scale: 'small'
             },

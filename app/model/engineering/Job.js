@@ -1,8 +1,7 @@
 Ext.define('Civic.model.engineering.Job', {
 	extend: 'Civic.model.public.AbstractJob',
 	requires: [
-		'Civic.model.engineering.Call',
-		'Civic.proxy.GisData'
+		'Civic.model.engineering.Call'
 	],
 
 	idProperty: 'job_id',
@@ -13,9 +12,9 @@ Ext.define('Civic.model.engineering.Job', {
 	        name: 'calls',
 	        model: 'Civic.model.engineering.Call'
 		}
-	]//,
+	],
 
-/*    proxy:{
+    proxy:{
         type: 'ajax',
         url: 'php/engineering/jobs/list.php',
         
@@ -25,8 +24,4 @@ Ext.define('Civic.model.engineering.Job', {
             root: 'jobs'
         }
     }
-
-	proxy: {
-		type: 'gisdataproxy'
-	}*/
 });

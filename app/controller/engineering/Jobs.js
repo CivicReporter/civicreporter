@@ -24,6 +24,9 @@ Ext.define('Civic.controller.engineering.Jobs', {
 			ref: 'jobsGrid',
 			selector: 'engjobsgrid'
 		},{
+			ref: 'mapPanel',
+			selector: 'civicr_map'
+		},{
 			ref: 'jobWindow',
 			selector: 'jobwindow'
 		},{
@@ -133,11 +136,20 @@ Ext.define('Civic.controller.engineering.Jobs', {
 
 	onSelectionChange: function (selModel, selected, eOpts) {
 		grid = this.getJobsGrid();
+		map = this.getMapPanel().map;
 
 		if (selModel.hasSelection()) {		
 			grid.down('button#edit').enable();
 			grid.down('button#close').enable();
 			grid.down('button#cancel').enable();
+
+			//vector layer selection
+			var rec = selModel.getSelection()[0],
+				selControl = map.getControl('olSelect'),
+				vecLayer = map.getLayersByName('priority jobs')[0];
+			
+			selControl.highlight(vecLayer.getFeaturesByAttribute('job_id', String(rec.get('job_id')))[0]);
+
 		} else{
 			grid.down('button#edit').disable();
 			grid.down('button#close').disable();

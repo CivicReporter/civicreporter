@@ -2,11 +2,11 @@ Ext.define('Civic.store.engineering.ActiveStaff', {
 	extend: 'Ext.data.Store',
 
 	requires: [
-		'Civic.model.staticData.Staff',
+		'Civic.model.engineering.Staff',
 		'Civic.proxy.Staff'
 	],
 
-	model: 'Civic.model.staticData.Staff',
+	model: 'Civic.model.engineering.Staff',
 	storeId: 'activestaff',
 	autoSync: true,
 

@@ -13,13 +13,17 @@ Ext.define('Civic.controller.engineering.DutyRoster', {
 		'engineering.ActiveStaff',
 		'engineering.AvailableStaff',
 		'engineering.StaffStatus',
-		'staticData.ActiveStatus'
+		'staticData.ActiveStatus',
+		'engineering.Jobs',
 	],
 
 	refs: [
 		{
 			ref: 'dutyRosterForm',
 			selector: 'engdutyroster'
+		},{
+			ref: 'jobsHistoryGrid',
+			selector: 'engjobshistory'
 		}
 	],
 	
@@ -38,7 +42,11 @@ Ext.define('Civic.controller.engineering.DutyRoster', {
 			},
 			'engdutyroster abstractroster': {
 				selectionchange: this.onSelectionChange
+			},
+			'engjobshistory': {
+				//selectionchange: this.onStaffSelectionChange
 			}
+
 		});
 	},
 
@@ -48,7 +56,7 @@ Ext.define('Civic.controller.engineering.DutyRoster', {
 
 	onEdit: function (editor, e, options) {
 		rec = e.record;
-		this.onSelectionChange(e.grid.getSelectionModel(),[rec])
+		this.onSelectionChange(e.grid.getSelectionModel(),[rec]);
 	},
 
 	onCancelEdit: function (editor, e, options) {
@@ -66,11 +74,31 @@ Ext.define('Civic.controller.engineering.DutyRoster', {
 	onButtonClickRefresh: function (button, e, options) {
 		button.up('abstractroster').getStore().reload();
 	},
-
+	
 	onSelectionChange: function (model, records, eOpts) {
 		var rec = records[0];
+		var jobsStore = rec.jobs();
+		var grid = this.getJobsHistoryGrid();
         if (rec) {
             this.getDutyRosterForm().loadRecord(rec);
+            //this store from a has many association is not configured with a proxy and so is not working with the paging toolbar
+            jobsStore.setProxy({
+            	type: 'ajax',
+            	url:'php/engineering/staff/jobshisto.php',        
+		        reader: {
+		            type: 'json',
+					messageProperty: 'msg',
+					totalProperty: 'total',					
+		            root: 'data'
+		        },
+            	extraParams: {
+            		staff_id: rec.get('staff_id'),
+            		limit: 10
+            	}
+            });
+            //jobsStore.removeFilter('staff_id', false);
+            grid.reconfigure(jobsStore, grid.cloneConfig().columns);
+            grid.down('pagingtoolbar').bindStore(jobsStore);
         }
 	}
 });

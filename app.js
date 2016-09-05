@@ -8,7 +8,7 @@ Ext.application({
     name: 'Civic',
 
     extend: 'Civic.Application',
-    
+
     autoCreateViewport: false
 });
 

@@ -82,7 +82,8 @@ Ext.define('Civic.view.engineering.JobWindow', {
 								},{
 									fieldLabel: 'Station Assigned',
 									name: 'station',
-									allowBlank: false
+									allowBlank: true,
+									emptyText: 'UNASSIGNED'
 								},{
 									xtype: 'datefield',
 									fieldLabel: 'Opened On',

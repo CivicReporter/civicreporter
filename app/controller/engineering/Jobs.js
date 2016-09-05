@@ -243,10 +243,10 @@ Ext.define('Civic.controller.engineering.Jobs', {
 		if (staffStore.data.length == 0) {
 			staffStore = Ext.create('Civic.store.staticData.Staff', {
 				data: records
-			});
-			
+			});			
 			form.getForm().setValues({
-				station: records[0].get('station_id')
+				station: records[0].get('station_id'),
+				status: 'PENDING'
 			});
 		} else{
 			if (records[0].get('station_id') == staffStore.data.getAt(0).get('station_id')) {
@@ -260,11 +260,12 @@ Ext.define('Civic.controller.engineering.Jobs', {
 		var cancelBtn = searchWindow.down('button#cancel');
 		cancelBtn.fireEvent('click', cancelBtn, e, options);
 	},
-//now working on this
+	
 	onButtonClickEdit: function (button, e, options) {
 		var grid = button.up('engjobsgrid');
 		record = grid.getSelectionModel().getSelection();
 		callStore = record[0].calls();
+		staffStore = record[0].staff();
 
 		if (record[0]) {
 			status = record[0].get('status');
@@ -286,6 +287,7 @@ Ext.define('Civic.controller.engineering.Jobs', {
 
 				form.getForm().setValues(values);
 				form.down('engjobcalls').reconfigure(callStore, this.getCallsGrid().cloneConfig().columns);
+				form.down('engjobstaff').reconfigure(staffStore, this.getStaffGrid().cloneConfig().columns);
 				form.down('tabpanel').setActiveTab(2);
 
 				win.setTitle('Editing Job #' + values.job_id);

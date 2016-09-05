@@ -44,8 +44,8 @@ CREATE OR REPLACE FUNCTION fault_upd(callid INTEGER, cod TEXT, callerid INTEGER,
 
 
 --function to handle fault jobs
---DROP FUNCTION job_handler(INTEGER, TEXT , INTEGER [], INTEGER [], TEXT);
-CREATE OR REPLACE FUNCTION job_handler(jobid INTEGER, subb TEXT, stn TEXT, newcalls INTEGER [], newstaff INTEGER [], createdby TEXT)
+--DROP FUNCTION job_handler(INTEGER, TEXT, TEXT, INTEGER [], INTEGER [], TEXT, JOBSTATUS);
+CREATE OR REPLACE FUNCTION job_handler(jobid INTEGER, subb TEXT, stn TEXT, newcalls INTEGER [], newstaff INTEGER [], createdby TEXT, newstatus JOBSTATUS)
 	RETURNS TEXT AS 
 	$$
 		DECLARE 
@@ -97,25 +97,34 @@ CREATE OR REPLACE FUNCTION job_handler(jobid INTEGER, subb TEXT, stn TEXT, newca
 							WHERE staff_id = s;
 					END IF;
 				END LOOP;
+				SELECT INTO stationid station_id FROM staticdata.station WHERE name = UPPER(stn);
+				UPDATE engineering.job
+					SET status = newstatus, station_id = stationid
+					WHERE job_id = jobid;
 			ELSE --insert query--
 				SELECT INTO suburbid suburb_id FROM staticdata.suburb WHERE name = UPPER(subb);
-				SELECT INTO stationid station_id FROM staticdata.station WHERE name = UPPER(stn);
-				INSERT INTO engineering.job(job_id, status, suburb_id, station_id, opened_by)
-					VALUES(jobid, 'PENDING', suburbid, stationid, createdby);
+				IF newstatus = 'PENDING' THEN --create and assign job
+					SELECT INTO stationid station_id FROM staticdata.station WHERE name = UPPER(stn);
+					INSERT INTO engineering.job(job_id, status, suburb_id, station_id, opened_by)
+						VALUES(jobid, newstatus, suburbid, stationid, createdby);
+				ELSE --create job without assigning
+					INSERT INTO engineering.job(job_id, status, suburb_id, opened_by)
+						VALUES(jobid, newstatus, suburbid, createdby);
+					FOREACH s IN ARRAY newstaff
+					LOOP
+						INSERT INTO engineering.assignment(job_id, staff_id)
+							VALUES(jobid, s);
+						UPDATE staticdata.staff
+							SET status = 'BUSY'
+							WHERE staff_id = s;
+					END LOOP;
+				END IF;
 				FOREACH c IN ARRAY newcalls
 				LOOP
 					UPDATE engineering.call
 						SET job_id = jobid, status = 'PENDING'
 						WHERE call_id = c;
-				END LOOP;
-				FOREACH s IN ARRAY newstaff
-				LOOP
-					INSERT INTO engineering.assignment(job_id, staff_id)
-						VALUES(jobid, s);
-					UPDATE staticdata.staff
-						SET status = 'BUSY'
-						WHERE staff_id = s;
-				END LOOP;
+				END LOOP;				
 			END IF;
 			RETURN TRUE;
 		END;

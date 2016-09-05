@@ -8,6 +8,7 @@
 	$jobId = $_POST['job_id'];
 	$suburb = $_POST['suburb'];
 	$station = $_POST['station'];
+	$status = $_POST['status'];
 	
 	$success = false;
 
@@ -16,22 +17,28 @@
 		$calls = json_decode($_POST['calls']);
 		$staff = json_decode($_POST['staff']);
 
-		$callId = '{';
-		$staffId = '{';
-
-		foreach ($calls as $call) {
-			$callId .= $call. ',';
+		if (empty($calls)) {
+			$callId = '{}';
+		} else {
+			$callId = '{';
+			foreach ($calls as $call) {
+				$callId .= $call. ',';
+			}
+			$callId = substr($callId, 0, -1) . '}';
 		}
-
-		foreach ($staff as $tech) {
-			$staffId .= $tech. ',';
+		
+		if (empty($staff)) {
+			$staffId = '{}';
+		} else {
+			$staffId = '{';
+			foreach ($staff as $tech) {
+				$staffId .= $tech. ',';
+			}
+			$staffId = substr($staffId, 0, -1) . '}';
 		}
-
-		$callId = substr($callId, 0, -1) . '}';
-		$staffId = substr($staffId, 0, -1) . '}';
-
-
-		$insertQuery = "SELECT job_handler('$jobId','$suburb','$station','$callId','$staffId','$userName')";
+		
+		//temporarily altered engineering.job to insert a default geom value on acer civicdb
+		$insertQuery = "SELECT job_handler('$jobId','$suburb','$station','$callId','$staffId','$userName', '$status')";
 
 		$sth = pg_query($dbh, $insertQuery);
 
@@ -46,8 +53,6 @@
 		}
 
 	} else { //modify job status only
-
-		$status = $_POST['status'];
 		
 		$updateQuery = "UPDATE engineering.job ";
 		$updateQuery.= "SET status = '$status', closed_by = '$userName' ";

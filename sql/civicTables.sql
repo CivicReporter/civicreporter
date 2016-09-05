@@ -320,6 +320,8 @@ CREATE TABLE IF NOT EXISTS engineering.job (
     ON UPDATE CASCADE
 );
 
+ALTER TABLE engineering.job ADD COLUMN geom GEOMETRY(POINT,32735) NOT NULL;
+CREATE INDEX job_geom_idx ON engineering.job USING GIST(geom);
 CREATE TRIGGER upd_engjob BEFORE UPDATE ON engineering.job FOR EACH ROW EXECUTE PROCEDURE upd_time();
 
 
@@ -843,7 +845,7 @@ CREATE SCHEMA IF NOT EXISTS gis;
 DROP VIEW IF EXISTS public.job_engineering;
 
 CREATE VIEW public.job_engineering AS(
-	SELECT ej.job_id, ss.name suburb, st.name station, ej.status, ej.opened_on, ej.closed_on, ej.last_update, ej.opened_by, ej.closed_by
+	SELECT ej.job_id, ss.name suburb, st.name station, ej.status, ej.opened_on, ej.closed_on, ej.last_update, ej.opened_by, ej.closed_by, ej.geom
 		FROM engineering.job ej
 		INNER JOIN staticdata.suburb ss ON ej.suburb_id = ss.suburb_id
 		LEFT OUTER JOIN staticdata.station st ON ej.station_id = st.station_id

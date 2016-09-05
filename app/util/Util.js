@@ -76,14 +76,30 @@ Ext.define('Civic.util.Util', {
 			}
 		},
 
+		context: {
+            getColor: function(feature) {
+            	switch (feature.attributes.status) {
+            		case 'OPEN':
+                    	return 'red';
+                    	break;
+                    case 'PENDING':
+                		return 'blue';
+                		break;
+                	default:
+                    	return 'green';
+                    	break;
+                }
+            }
+        },
+
 		suburbStyle: new OpenLayers.StyleMap({
 			'default': new OpenLayers.Style({
 			    strokeColor: 'black',
 				strokeOpacity: 0.6,
 				strokeWidth: 1.5,
 				fillColor: 'brown',
-				fillOpacity: 0.4,
-				label: '${suburb}',
+				fillOpacity: 0.2,
+				label: '${PROVNAMEFU}',
 				fontFamily: 'Verdana',
 				fontSize: 8,
 				fontWeight: 'bold'
@@ -95,6 +111,25 @@ Ext.define('Civic.util.Util', {
 				fillColor: 'blue',
 				fillOpacity: 0.7
 			})
-		})
+		}),
+
+		def_template: {
+            cursor: 'pointer',
+            fillOpacity: 0.5,
+            fillColor: '${getColor}',
+            pointRadius: 5,
+            strokeWidth: 1.5,
+            strokeOpacity: 0.7,
+            strokeColor: 'black',
+            graphicName: 'circle'
+        },
+
+        sel_template: {
+        	strokeColor: 'blue',
+			strokeOpacity: 0.7,
+			strokeWidth: 2,
+			pointRadius: 7,
+			fillOpacity: 0.7
+        }
 	}
 });

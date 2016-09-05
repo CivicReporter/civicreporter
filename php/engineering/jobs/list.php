@@ -22,7 +22,7 @@
 
 				pg_free_result($sth);
 
-				$sql = "SELECT * FROM job_engineering ";
+				$sql = "SELECT job_id,suburb,station,status,opened_on,closed_on,last_update,opened_by,closed_by FROM job_engineering ";
 				$sql.= "ORDER BY job_id DESC ";
 				$sql.= "OFFSET $offset LIMIT $limit";
 

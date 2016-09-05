@@ -4,6 +4,7 @@ Ext.define('Civic.view.civicr.JobsGrid', {
 
 	requires: [
 		'Ux.grid.plugin.AssociationRowExpander',
+		'GeoExt.selection.FeatureModel',
 		'Ext.ux.grid.FiltersFeature',
 		'Civic.util.Util'
 	],

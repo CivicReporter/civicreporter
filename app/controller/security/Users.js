@@ -30,11 +30,7 @@ Ext.define('Civic.controller.security.Users', {
 				render: this.onRender,
 				selectionchange: this.onSelectionChange
 			},
-		/*
-			'users button#add': {
-				click: this.onButtonClickAdd
-			},
-		*/
+
 			'users button#edit': {
 				click: this.onButtonClickEdit
 			},
@@ -210,9 +206,7 @@ Ext.define('Civic.controller.security.Users', {
 
 					Ext.get(Ext.getBody()).mask('Saving...Please Wait...', 'loading');
 
-					record = Ext.create('Civic.model.security.User', form.getFieldValues({
-						dirtyOnly: true
-					}));
+					record = Ext.create('Civic.model.security.User', values);
 
 					store.add(record);
 

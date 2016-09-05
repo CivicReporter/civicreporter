@@ -22,7 +22,7 @@
 				'crs' => array(
 					'type' => 'name',
 					'properties' => array(
-						'name' => 'urn:ogc:def:crs:OGC:1.3:CRS84'
+						'name' => 'urn:ogc:def:crs:EPSG::32735'
 					)
 				),
 				'features' => array()
@@ -33,8 +33,8 @@
 				pg_free_result($sth);
 
 				$sql = "SELECT *, ST_ASGEOJSON(geom) geometry ";
-				$sql.= "FROM $entity ";
-				$sql.= "ORDER BY gid ASC ";
+				$sql.= "FROM job_engineering ";
+				$sql.= "ORDER BY job_id DESC ";
 				$sql.= "OFFSET $offset LIMIT $limit";
 
 				if ($sth = pg_query($dbh, $sql)) {
@@ -62,7 +62,7 @@
 
 						pg_free_result($sth);
 
-						$countQuery = "SELECT COUNT(*) count FROM gis.suburb_all ";
+						$countQuery = "SELECT COUNT(*) count FROM job_engineering ";
 
 						if ($sth = pg_query($dbh, $countQuery)) {
 							while ($count = pg_fetch_assoc($sth)) {

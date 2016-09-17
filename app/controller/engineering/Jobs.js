@@ -46,7 +46,8 @@ Ext.define('Civic.controller.engineering.Jobs', {
 			//---engineering jobsgrid---
 			'engjobsgrid': {
 				render: this.onPanelRender,
-				selectionchange: this.onSelectionChange
+				selectionchange: this.onSelectionChange,
+				celldblclick: this.onDoubleClick
 			},
 			'engjobsgrid button#add': {
 				click: this.onButtonClickAdd
@@ -187,6 +188,14 @@ Ext.define('Civic.controller.engineering.Jobs', {
 		} else{
 			grid.down('button#delete').disable();
 		};
+	},
+	
+	onDoubleClick: function ( table, td, cellIndex, record, tr, rowIndex, e, eOpts ) {
+		var map = this.getMapPanel().map,
+			vecLayer = map.getLayersByName('priority jobs')[0],			
+			job = vecLayer.getFeaturesByAttribute('job_id', String(record.get('job_id')))[0];
+			
+		map.zoomToExtent(job.geometry.getBounds());
 	},
 
 	onButtonClickAdd: function (button, e, options) {

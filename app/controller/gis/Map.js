@@ -32,8 +32,8 @@ Ext.define('Civic.controller.gis.Map', {
 					'beforerender': this.onMapPanelBeforeRender
 				},
 
-				'civicr_map toolbar form combobox': {
-					'specialkey': this.onSpecialKeyPress
+				'civicr_map button#view  menuitem#list_attribute': {
+					'click': this.onAttributesShow
 				},
 
 				'civicr_map toolbar': {
@@ -228,10 +228,10 @@ Ext.define('Civic.controller.gis.Map', {
 		var mousePointerStyle = 'default';
 
 		var MOUSE_POINTER_STYLES = {
-		    'olDragPan': "url('http://127.0.0.1/civicreporter/resources/images/app/pan.cur'), default",
-		    'olSelect': "url('http://127.0.0.1/civicreporter/resources/images/app/pan.cur'), default",
-		    'olZoomIn': "url('http://127.0.0.1/civicreporter/resources/images/app/zoom-in.cur'), default",
-		    'olZoomOut': "url('http://127.0.0.1/civicreporter/resources/images/app/zoom-out.cur'), default",
+		    'olDragPan': "url('http://127.0.0.1/civicreporter_dev/resources/images/app/pan.cur'), default",
+		    'olSelect': "url('http://127.0.0.1/civicreporter_dev/resources/images/app/pan.cur'), default",
+		    'olZoomIn': "url('http://127.0.0.1/civicreporter_dev/resources/images/app/zoom-in.cur'), default",
+		    'olZoomOut': "url('http://127.0.0.1/civicreporter_dev/resources/images/app/zoom-out.cur'), default",
 		    'none': 'default'
 		};
 
@@ -346,6 +346,14 @@ Ext.define('Civic.controller.gis.Map', {
 		pop = Ext.ComponentQuery.query('civicr_pop')[0];
 		if (pop) {
 			pop.close();
+		}
+	},
+	
+	onAttributesShow: function (item, e, eOpts) {
+		jobsGrid = this.getMapPanel().up('jobspanel').down('engjobsgrid');
+		
+		if (jobsGrid.getCollapsed()) {
+			jobsGrid.expand();
 		}
 	}
 });

@@ -58,7 +58,8 @@ Ext.define('Civic.view.staticData.AbstractGrid', {
 						xtype: 'button',
 						itemId: 'clearFilter',
 						text: 'Clear Filters',
-						iconCls: 'clear_filter'
+						iconCls: 'clear_filter',
+						disabled: true
 					},{
 						xtype: 'button',
 						itemId: 'refresh',

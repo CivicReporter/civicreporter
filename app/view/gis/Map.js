@@ -54,12 +54,15 @@ Ext.define('Civic.view.gis.Map', {
 				{
 					xtype:'splitbutton',
 					text: 'View',
+					itemId: 'view',
 					iconCls: 'view',
 					menu: [
 						{
-							text: 'Attribute Table'
+							text: 'Attribute Table',
+							itemId: 'list_attribute'
 						},{
-							text: 'Map Legend'
+							text: 'Map Legend',
+							itemId: 'legend'
 						}
 					]
 				},{
@@ -68,9 +71,11 @@ Ext.define('Civic.view.gis.Map', {
 					iconCls: 'search',
 					menu: [
 						{
-							text: 'By Attributes'
+							text: 'By Attributes',
+							itemId: 'search_attribute'
 						},{
-							text: 'By Location'
+							text: 'By Location',
+							itemId: 'search_location'
 						}
 					]
 				},{
@@ -79,9 +84,11 @@ Ext.define('Civic.view.gis.Map', {
 					iconCls: 'export',
 					menu: [
 						{
-							text: 'To Image'
+							text: 'To Image',
+							itemId: 'toimage'
 						},{
-							text: 'To PDF'
+							text: 'To PDF',
+							itemId: 'topdf'
 						}
 					]
 				}

@@ -26,6 +26,10 @@ Ext.define('Civic.view.staticData.Vehicles', {
 			text: 'Type',
 			dataIndex: 'type',
 			editor: {
+				xtype: 'combobox',
+				store: 'staticData.Catchments',
+				displayField: 'text',
+				queryMode: 'local',
 				allowBlank: false,
 				maxLength: 45
 			},

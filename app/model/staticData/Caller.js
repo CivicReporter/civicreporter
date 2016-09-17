@@ -13,6 +13,8 @@ Ext.define('Civic.model.staticData.Caller', {
 			name: 'surname'
 		},{
 			name: 'phone'
+		},{
+			name: 'nid'
 		}
 	]
 });

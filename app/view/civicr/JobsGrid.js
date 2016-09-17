@@ -4,7 +4,6 @@ Ext.define('Civic.view.civicr.JobsGrid', {
 
 	requires: [
 		'Ux.grid.plugin.AssociationRowExpander',
-		'GeoExt.selection.FeatureModel',
 		'Ext.ux.grid.FiltersFeature',
 		'Civic.util.Util'
 	],
@@ -37,14 +36,28 @@ Ext.define('Civic.view.civicr.JobsGrid', {
 					},{
 						text: 'Fault Code',
 						width: 100,
-						dataIndex: 'code',
+						dataIndex: 'code_id',
 						filter: {
 							type: 'string'
+						},
+						renderer: function(value, metaData, record){
+							var fcStore = Ext.getStore('staticData.FaultCodes');
+							var code = fcStore.findRecord('code_id', value);
+
+							return value ? code.get('code') : '';
 						}
 					},{
 						text: 'Caller Name',
 						flex: 1,
 						dataIndex: 'caller',
+						filter: {
+							type: 'string'
+						}
+					},{
+						text: 'National ID',
+						width: 100,
+						dataIndex: 'nid',
+						sortable: false,
 						filter: {
 							type: 'string'
 						}
@@ -58,17 +71,15 @@ Ext.define('Civic.view.civicr.JobsGrid', {
 					},{
 						text: 'Suburb',
 						width: 200,
-						dataIndex: 'suburb',
+						dataIndex: 'suburb_id',
 						filter: {
 							type: 'string'
-						}
-					},{
-						text: 'Severity',
-						width: 60,
-						dataIndex: 'severity',
-						sortable: true,
-						filter: {
-							type: 'numeric'
+						},
+						renderer: function(value, metaData, record){
+							var sbStore = Ext.getStore('staticData.Suburbs');
+							var suburb = sbStore.findRecord('suburb_id', value);
+
+							return value ? suburb.get('name') : '';
 						}
 					},{
 						text: 'Property Damage',
@@ -76,10 +87,10 @@ Ext.define('Civic.view.civicr.JobsGrid', {
 						dataIndex: 'property_damage',
 						sortable: true,
 						filter: {
-							type: 'string'
+							type: 'numeric'
 						},
 						renderer: function (value, metaData, record) {
-							return value == 't' ? 'Yes' : 'No';
+							return value+'%';
 						}
 					},{
 						xtype: 'datecolumn',

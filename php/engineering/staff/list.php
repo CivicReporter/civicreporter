@@ -33,7 +33,7 @@
 
 				pg_free_result($sth);
 
-				$sql = "SELECT * FROM staff_engineering ";
+				$sql = "SELECT * FROM staticdata.staff ";//staff_engineering
 				$sql.= "WHERE active = 't' ";
 
 				if (isset($status) && isset($station)) {

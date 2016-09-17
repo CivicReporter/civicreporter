@@ -16,8 +16,6 @@ Ext.define('Civic.store.security.Groups', {
 			type: 'json',
 			root: 'data'
 		}
-	},
-
-	autoLoad: true
+	}
 
 });

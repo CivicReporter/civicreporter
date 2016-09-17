@@ -6,7 +6,6 @@ Ext.define('Civic.controller.staticData.AbstractController', {
 	],
 
 	views: [
-	//	'staticData.AbstractGrid',
 		'staticData.EmergencyCodes',
 		'staticData.FaultCodes',
 		'staticData.FireCodes',
@@ -16,22 +15,11 @@ Ext.define('Civic.controller.staticData.AbstractController', {
 		'staticData.Stations',
 		'staticData.Suburbs',
 		'staticData.Vehicles',
-		'staticData.Zones'
+		'staticData.Fire',
+		'staticData.Sewer',
+		'staticData.Water'
 	],
 
-	stores: [
-		'staticData.EmergencyCodes',
-		'staticData.FaultCodes',
-		'staticData.FireCodes',
-		'staticData.Properties',
-		'staticData.Staff',
-		'staticData.Sections',
-		'staticData.Stations',
-		'staticData.Suburbs',
-		'staticData.Vehicles',
-		'staticData.Zones' 
-	],
-	
 	init: function(application){
 		this.control({
 			'staticdatagrid': {
@@ -71,28 +59,23 @@ Ext.define('Civic.controller.staticData.AbstractController', {
 
 	render: function (component, options) {
 
-	/*	function loadStore (storename) {
-			store = Ext.getStore(storename);
+	/*	var me = this,
+			gridStore = component.getStore(),
+			btn = component.down('button#clearFilter');
 
-			if (store.data.items.length == 0) {
-				store.load();				
-			}
-		}
+		gridStore.on('filterchange', function (gridStore) {
+			if (gridStore.isFiltered()) {
+				btn.enable();
+				alert('filters');
+			} else{
+				btn.disable();
+				alert('no-filters');
+			};
+			 
 
-		switch (component.getXType()) {
-			case 'faultcodesgrid': 
-				loadStore('staticData.Sections');
-				break;
-			case 'suburbsgrid': 
-				loadStore('staticData.Zones');
-				break;
-			case 'vehiclesgrid': 
-				loadStore('staticData.Stations');
-				break;
-		};
+		}, this);
 	*/
-		var gridStore = component.getStore();
-		gridStore.load();
+	//	gridStore.load();
 	//	gridStore.sort('%id', 'ASC');
 	},
 

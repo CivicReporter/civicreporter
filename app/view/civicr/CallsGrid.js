@@ -20,7 +20,7 @@ Ext.define('Civic.view.civicr.CallsGrid', {
 				'<table>'+
 					'<tr><th align = "left">Stand Number:</th><td>{stand_no}</td></tr>'+
 					'<tr><th align = "left">Street:</th><td>{street}</td></tr>'+
-					'<tr><th align = "left">Suburb:</th><td>{suburb}</td></tr>'+
+					'<tr><th align = "left">Suburb:</th><td>{suburb_id}</td></tr>'+
 					'<tr><th align = "left">Description:</th><td>{description}</td></tr>'+
 				'</table>'
 			]
@@ -51,12 +51,15 @@ Ext.define('Civic.view.civicr.CallsGrid', {
 			},{
 				text: 'Fault Code',
 				width: 80,
-				dataIndex: 'code',
+				dataIndex: 'code_id',
 				filter: {
 					type: 'string'
 				},
-				renderer: function (value, metaData, record) {
-					 return Civic.util.Util.renderText(value, metaData, record);
+				renderer: function(value, metaData, record){
+					var fcStore = Ext.getStore('staticData.FaultCodes');
+					var code = fcStore.findRecord('code_id', value);
+
+					return value ? Civic.util.Util.renderText(code.get('code'), metaData, record) : '';
 				}
 			},{
 				text: 'Caller Name',
@@ -69,8 +72,19 @@ Ext.define('Civic.view.civicr.CallsGrid', {
 					 return Civic.util.Util.renderText(value, metaData, record);
 				}
 			},{
-				text: 'Stand Number',
+				text: 'National ID',
 				width: 100,
+				dataIndex: 'nid',
+				sortable: false,
+				filter: {
+					type: 'string'
+				},
+				renderer: function (value, metaData, record) {
+					 return Civic.util.Util.renderText(value, metaData, record);
+				}
+			},{
+				text: 'Stand Number',
+				width: 80,
 				dataIndex: 'stand_no',
 				filter: {
 					type: 'numeric'
@@ -81,12 +95,15 @@ Ext.define('Civic.view.civicr.CallsGrid', {
 			},{
 				text: 'Suburb',
 				width: 160,
-				dataIndex: 'suburb',
+				dataIndex: 'suburb_id',
 				filter: {
 					type: 'string'
 				},
-				renderer: function (value, metaData, record) {
-					 return Civic.util.Util.renderText(value, metaData, record);
+				renderer: function(value, metaData, record){
+					var sbStore = Ext.getStore('staticData.Suburbs');
+					var suburb = sbStore.findRecord('suburb_id', value);
+
+					return value ? Civic.util.Util.renderText(suburb.get('name'), metaData, record) : '';
 				}
 			}
 		],

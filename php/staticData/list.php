@@ -23,7 +23,7 @@
 
 				pg_free_result($sth);
 
-				$sql = "SELECT * FROM staticdata.$entity ";
+				$sql = "SELECT * FROM $entity ";
 				$sql.= "ORDER BY $pkey";
 
 				if ($sth = pg_query($dbh, $sql)) {
@@ -35,7 +35,12 @@
 						$r['success'] = true;
 
 						while ($items = pg_fetch_assoc($sth)) {
-							$r['data'][] = $items;
+							foreach ($items as $key => $value) {
+								if ($key != 'shape_leng' && $key != 'shape_area' && $key != 'geom') {
+									$new[$key] = $value;
+								}
+							};
+							$r['data'][] = $new;
 						}
 					} else {
 						$r['success'] = false;

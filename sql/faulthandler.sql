@@ -1,22 +1,18 @@
 
 --function to handle fault reporting
-CREATE OR REPLACE FUNCTION fault_handler(cod TEXT, fname TEXT, sname TEXT, phn TEXT, stdno INTEGER, strt TEXT, subb TEXT, svrty INTEGER, prpdmg BOOL, dscrp TEXT)
+CREATE OR REPLACE FUNCTION fault_handler(codeid INTEGER, fname TEXT, sname TEXT, phn TEXT, stdno INTEGER, strt TEXT, suburbid INTEGER, natid TEXT, prpdmg INTEGER, dscrp TEXT)
 	RETURNS TEXT AS 
 	$$
 		DECLARE 
-			callerid staticdata.caller.caller_id%TYPE;
-			suburbid staticdata.suburb.suburb_id%TYPE;	
+			callerid staticdata.caller.caller_id%TYPE;	
 			callid engineering.call.call_id%TYPE;
-			codeid staticdata.fault_codes.code_id%TYPE;
 		BEGIN
 			SELECT INTO callerid SETVAL('staticdata.caller_caller_id_seq', (SELECT MAX(caller_id) FROM staticdata.caller));
-			INSERT INTO staticdata.caller(firstname, surname, phone)
-				VALUES(UPPER(fname), UPPER(sname), phn);
-			SELECT INTO suburbid suburb_id FROM staticdata.suburb WHERE name = UPPER(subb);
-			SELECT INTO codeid code_id FROM staticdata.fault_codes WHERE code = UPPER(cod);
+			INSERT INTO staticdata.caller(firstname, surname, nid, phone)
+				VALUES(UPPER(fname), UPPER(sname), UPPER(natid), phn);
 			SELECT INTO callid SETVAL('engineering.call_call_id_seq', (SELECT MAX(call_id) FROM engineering.call));
-			INSERT INTO engineering.call(code_id, caller_id, stand_no, street, suburb_id, severity, property_damage, reported_on, description) 
-				VALUES(codeid, callerid+1, stdno, UPPER(strt), suburbid, svrty, prpdmg, now(), UPPER(dscrp));
+			INSERT INTO engineering.call(code_id, caller_id, stand_no, street, suburb_id, property_damage, reported_on, description) 
+				VALUES(codeid, callerid+1, stdno, UPPER(strt), suburbid, prpdmg, now(), UPPER(dscrp));
 			RETURN TRUE;
 		END;
 	$$ 
@@ -24,18 +20,13 @@ CREATE OR REPLACE FUNCTION fault_handler(cod TEXT, fname TEXT, sname TEXT, phn T
 
 
 --function to handle fault updates
-CREATE OR REPLACE FUNCTION fault_upd(callid INTEGER, cod TEXT, callerid INTEGER, fname TEXT, sname TEXT, phn TEXT, stdno INTEGER, strt TEXT, subb TEXT, svrty INTEGER, prpdmg BOOL, dscrp TEXT)
+CREATE OR REPLACE FUNCTION fault_upd(callid INTEGER, codeid INTEGER, callerid INTEGER, fname TEXT, sname TEXT, phn TEXT, stdno INTEGER, strt TEXT, suburbid INTEGER, natid TEXT, prpdmg INTEGER, dscrp TEXT)
 	RETURNS TEXT AS 
 	$$
-		DECLARE 
-			suburbid staticdata.suburb.suburb_id%TYPE;	
-			codeid staticdata.fault_codes.code_id%TYPE;
 		BEGIN
-			UPDATE staticdata.caller SET firstname = UPPER(fname), surname = UPPER(sname), phone = phn
+			UPDATE staticdata.caller SET firstname = UPPER(fname), surname = UPPER(sname), nid = UPPER(natid), phone = phn
 				WHERE caller_id = callerid;
-			SELECT INTO suburbid suburb_id FROM staticdata.suburb WHERE name = UPPER(subb);
-			SELECT INTO codeid code_id FROM staticdata.fault_codes WHERE code = UPPER(cod);
-			UPDATE engineering.call SET code_id = codeid, caller_id = callerid, stand_no = stdno, street = UPPER(strt), suburb_id = suburbid, severity = svrty, property_damage = prpdmg, description = UPPER(dscrp)
+			UPDATE engineering.call SET code_id = codeid, caller_id = callerid, stand_no = stdno, street = UPPER(strt), suburb_id = suburbid, property_damage = prpdmg, description = UPPER(dscrp)
 				WHERE call_id = callid;
 			RETURN TRUE;
 		END;
@@ -45,7 +36,7 @@ CREATE OR REPLACE FUNCTION fault_upd(callid INTEGER, cod TEXT, callerid INTEGER,
 
 --function to handle fault jobs
 --DROP FUNCTION job_handler(INTEGER, TEXT, TEXT, INTEGER [], INTEGER [], TEXT, JOBSTATUS);
-CREATE OR REPLACE FUNCTION job_handler(jobid INTEGER, subb TEXT, stn TEXT, newcalls INTEGER [], newstaff INTEGER [], createdby TEXT, newstatus JOBSTATUS)
+CREATE OR REPLACE FUNCTION job_handler(jobid INTEGER, suburbid INTEGER, stationid INTEGER, newcalls INTEGER [], newstaff INTEGER [], createdby TEXT, newstatus JOBSTATUS, location TEXT)
 	RETURNS TEXT AS 
 	$$
 		DECLARE 
@@ -54,8 +45,6 @@ CREATE OR REPLACE FUNCTION job_handler(jobid INTEGER, subb TEXT, stn TEXT, newca
 			d BOOL;
 			oldcalls INTEGER [];
 			oldstaff INTEGER [];
-			suburbid staticdata.suburb.suburb_id%TYPE;
-			stationid staticdata.station.station_id%TYPE;
 		BEGIN
 			SELECT INTO d true FROM engineering.job WHERE job_id = jobid;
 			IF d THEN --update query--
@@ -97,19 +86,19 @@ CREATE OR REPLACE FUNCTION job_handler(jobid INTEGER, subb TEXT, stn TEXT, newca
 							WHERE staff_id = s;
 					END IF;
 				END LOOP;
-				SELECT INTO stationid station_id FROM staticdata.station WHERE name = UPPER(stn);
-				UPDATE engineering.job
-					SET status = newstatus, station_id = stationid
-					WHERE job_id = jobid;
+				IF newstatus = 'PENDING' THEN --update and assign job
+					UPDATE engineering.job
+						SET status = newstatus, station_id = stationid, geom = ST_POINTFROMTEXT(location::text, 32735)
+						WHERE job_id = jobid;
+				ELSE --update job without assigning
+					UPDATE engineering.job
+						SET status = newstatus, geom = ST_POINTFROMTEXT(location::text, 32735)
+						WHERE job_id = jobid;
+				END IF;
 			ELSE --insert query--
-				SELECT INTO suburbid suburb_id FROM staticdata.suburb WHERE name = UPPER(subb);
 				IF newstatus = 'PENDING' THEN --create and assign job
-					SELECT INTO stationid station_id FROM staticdata.station WHERE name = UPPER(stn);
-					INSERT INTO engineering.job(job_id, status, suburb_id, station_id, opened_by)
-						VALUES(jobid, newstatus, suburbid, stationid, createdby);
-				ELSE --create job without assigning
-					INSERT INTO engineering.job(job_id, status, suburb_id, opened_by)
-						VALUES(jobid, newstatus, suburbid, createdby);
+					INSERT INTO engineering.job(job_id, status, suburb_id, station_id, opened_by, geom)
+						VALUES(jobid, newstatus, suburbid, stationid, createdby, ST_POINTFROMTEXT(location::text, 32735));
 					FOREACH s IN ARRAY newstaff
 					LOOP
 						INSERT INTO engineering.assignment(job_id, staff_id)
@@ -118,6 +107,9 @@ CREATE OR REPLACE FUNCTION job_handler(jobid INTEGER, subb TEXT, stn TEXT, newca
 							SET status = 'BUSY'
 							WHERE staff_id = s;
 					END LOOP;
+				ELSE --create job without assigning
+					INSERT INTO engineering.job(job_id, status, suburb_id, opened_by, geom)
+						VALUES(jobid, newstatus, suburbid, createdby, ST_POINTFROMTEXT(location::text, 32735));
 				END IF;
 				FOREACH c IN ARRAY newcalls
 				LOOP
@@ -199,17 +191,26 @@ CREATE OR REPLACE FUNCTION serial_pk()
     			SELECT INTO pk MAX(staff_id) + 1 FROM staticdata.staff;
     			NEW.staff_id = pk;
     		WHEN 'station' THEN 
-    			SELECT INTO pk MAX(station_id) + 1 FROM staticdata.station;
+    			SELECT INTO pk MAX(station_id) + 1 FROM gis.station;
     			NEW.station_id = pk;
     		WHEN 'suburb' THEN 
-    			SELECT INTO pk MAX(suburb_id) + 1 FROM staticdata.suburb;
+    			SELECT INTO pk MAX(suburb_id) + 1 FROM gis.suburb;
     			NEW.suburb_id = pk;
     		WHEN 'vehicle' THEN 
     			SELECT INTO pk MAX(vehicle_id) + 1 FROM staticdata.vehicle;
     			NEW.vehicle_id = pk;
-    		WHEN 'zone' THEN 
-    			SELECT INTO pk MAX(zone_id) + 1 FROM staticdata.zone;
-    			NEW.zone_id = pk;
+    		WHEN 'fire_catchment' THEN 
+    			SELECT INTO pk MAX(catch_id) + 1 FROM gis.fire_catchment;
+    			NEW.catch_id = pk;
+    		WHEN 'sewer_catchment' THEN 
+    			SELECT INTO pk MAX(catch_id) + 1 FROM gis.sewer_catchment;
+    			NEW.catch_id = pk;
+    		WHEN 'water_catchment' THEN 
+    			SELECT INTO pk MAX(catch_id) + 1 FROM gis.water_catchment;
+    			NEW.catch_id = pk;
+    		WHEN 'road' THEN 
+    			SELECT INTO pk MAX(gid) + 1 FROM gis.road;
+    			NEW.gid = pk;
     		WHEN 'user' THEN 
     			SELECT INTO pk MAX(id) + 1 FROM security.user;
     			NEW.id = pk;
@@ -233,10 +234,13 @@ CREATE TRIGGER serial_frc BEFORE INSERT ON staticdata.fire_codes FOR EACH ROW EX
 CREATE TRIGGER serial_pt BEFORE INSERT ON staticdata.property FOR EACH ROW EXECUTE PROCEDURE serial_pk();
 CREATE TRIGGER serial_sx BEFORE INSERT ON staticdata.section FOR EACH ROW EXECUTE PROCEDURE serial_pk();
 CREATE TRIGGER serial_stf BEFORE INSERT ON staticdata.staff FOR EACH ROW EXECUTE PROCEDURE serial_pk();
-CREATE TRIGGER serial_stn BEFORE INSERT ON staticdata.station FOR EACH ROW EXECUTE PROCEDURE serial_pk();
-CREATE TRIGGER serial_sb BEFORE INSERT ON staticdata.suburb FOR EACH ROW EXECUTE PROCEDURE serial_pk();
+CREATE TRIGGER serial_stn BEFORE INSERT ON gis.station FOR EACH ROW EXECUTE PROCEDURE serial_pk();
+CREATE TRIGGER serial_sb BEFORE INSERT ON gis.suburb FOR EACH ROW EXECUTE PROCEDURE serial_pk();
 CREATE TRIGGER serial_vh BEFORE INSERT ON staticdata.vehicle FOR EACH ROW EXECUTE PROCEDURE serial_pk();
-CREATE TRIGGER serial_zn BEFORE INSERT ON staticdata.zone FOR EACH ROW EXECUTE PROCEDURE serial_pk();
+CREATE TRIGGER serial_fc BEFORE INSERT ON gis.fire_catchment FOR EACH ROW EXECUTE PROCEDURE serial_pk();
+CREATE TRIGGER serial_sc BEFORE INSERT ON gis.sewer_catchment FOR EACH ROW EXECUTE PROCEDURE serial_pk();
+CREATE TRIGGER serial_wc BEFORE INSERT ON gis.water_catchment FOR EACH ROW EXECUTE PROCEDURE serial_pk();
+CREATE TRIGGER serial_rd BEFORE INSERT ON gis.road FOR EACH ROW EXECUTE PROCEDURE serial_pk();
 CREATE TRIGGER serial_us BEFORE INSERT ON security.user FOR EACH ROW EXECUTE PROCEDURE serial_pk();
 
 BEGIN;

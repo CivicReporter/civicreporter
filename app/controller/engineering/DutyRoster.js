@@ -14,7 +14,7 @@ Ext.define('Civic.controller.engineering.DutyRoster', {
 		'engineering.AvailableStaff',
 		'engineering.StaffStatus',
 		'staticData.ActiveStatus',
-		'engineering.Jobs',
+		'engineering.Jobs'
 	],
 
 	refs: [

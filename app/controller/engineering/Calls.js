@@ -23,6 +23,12 @@ Ext.define('Civic.controller.engineering.Calls', {
 		{
 			ref: 'engCallsGrid',
 			selector: 'engcallsgrid'
+		},{
+			ref: 'streetCombo',
+			selector: 'callwindow form combobox#street'
+		},{
+			ref: 'suburbCombo',
+			selector: 'callwindow form combobox#suburb'
 		}
 	],
 	
@@ -46,6 +52,9 @@ Ext.define('Civic.controller.engineering.Calls', {
 				click: this.onButtonClickClearFilter
 			},
 			//---call edit window---
+			'callwindow': {
+				show: this.onShow
+			},
 			'callwindow button#cancel': {
 				click: this.onButtonClickCancel
 			},
@@ -54,24 +63,32 @@ Ext.define('Civic.controller.engineering.Calls', {
 			},
 			'callwindow form textfield': {
 				specialkey: this.onTextfieldSpecialKey
+			},
+			'callwindow form combobox#suburb': {
+				select: this.onComboSelect
 			}			
 		});
 	},
 
 	render: function (component, options) {
 		component.getStore().load();
+	},
 
-		function loadStore (storename) {
-			store = Ext.getStore(storename);
+	onShow: function (win, eOpts) {
+		var me = this,
+			streets = me.getStreetCombo(),
+			suburb = me.getSuburbCombo(),
+			comboStore = streets.getStore();
 
-			if (store.data.items.length == 0) {
-				store.load();				
-			}
-		}
+		if (comboStore.isFiltered()) {
+			comboStore.clearFilter(true);
+		};
 
-		loadStore('staticData.FaultCodes');
-		loadStore('staticData.Suburbs');
-		loadStore('staticData.Callers');
+		comboStore.filter('suburb_id', suburb.getValue());
+
+		if (streets.value) {			
+			streets.enable();
+		};
 	},
 
 	onSelectionChange: function (selModel, selected, eOpts) {
@@ -110,11 +127,12 @@ Ext.define('Civic.controller.engineering.Calls', {
 				var values = {
 					firstname: caller.get('firstname'),
 					lastname: caller.get('surname'),
+					nid: record[0].get('nid'),
 					phone: caller.get('phone'),
 					call_id: record[0].get('call_id'),
 					caller_id: callerId,
-					code: record[0].get('code'),
-					suburb: record[0].get('suburb'),
+					code: record[0].get('code_id'),
+					suburb: record[0].get('suburb_id'),
 					street: record[0].get('street'),
 					stand_no: record[0].get('stand_no'),
 					severity: record[0].get('severity'),
@@ -162,7 +180,8 @@ Ext.define('Civic.controller.engineering.Calls', {
 	                                    //Civic.util.Alert.msg('Success!', 'Call Deleted.');
 										Ext.Msg.alert('Success!', 'Call status set to "CANCELLED".');
 
-	                                    store.load();                                  
+	                                    store.load();
+	                                    Ext.getStore('staticData.Callers').load();                                  
 	                                } else {
 
 	                                    Civic.util.Util.showErrorMsg(conn.responseText);
@@ -210,6 +229,7 @@ Ext.define('Civic.controller.engineering.Calls', {
 						//Civic.util.Alert.msg('Call Saved Successfully!');
 						Ext.Msg.alert('Success', 'Call Saved Successfully!');
 						store.load();
+                        Ext.getStore('staticData.Callers').load();
 						win.close()
 					} else {
 						Civic.util.Util.showErrorMsg(result.msg);
@@ -241,5 +261,22 @@ Ext.define('Civic.controller.engineering.Calls', {
 			var saveBtn = field.up('window').down('button#save');
 			saveBtn.fireEvent('click', saveBtn, e, options);
 		}
-	} 
+	},
+
+	onComboSelect: function (combo, records, eOpts) {
+		var me = this,
+			streets = me.getStreetCombo(),
+			comboStore = streets.getStore();
+
+		if (comboStore.isFiltered()) {
+			comboStore.clearFilter(true);
+		};
+
+		comboStore.filter('suburb_id', combo.getValue());
+		streets.clearValue();
+
+		if (streets.isDisabled()) {			
+			streets.enable();
+		};
+	}
 });

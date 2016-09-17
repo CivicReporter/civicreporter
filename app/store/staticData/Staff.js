@@ -8,10 +8,17 @@ Ext.define('Civic.store.staticData.Staff', {
 
 	model:'Civic.model.staticData.Staff',
 
+	sorters: [
+		{
+			direction: 'ASC',
+			property: 'staff_id'
+		}
+	],
+
 	proxy: {
 		type: 'staticdataproxy',
 		extraParams: {
-			entity: 'Staff',
+			entity: 'staticdata.staff',
 			pkey: 'staff_id'
 		}
 	}

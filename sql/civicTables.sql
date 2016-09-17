@@ -180,6 +180,7 @@ CREATE TABLE IF NOT EXISTS staticdata.caller (
   firstname VARCHAR(45) NULL,
   surname VARCHAR(45) NULL,
   phone VARCHAR(45) NULL,
+  nid VARCHAR(45) NOT NULL,
   last_update TIMESTAMP(0) NOT NULL DEFAULT CURRENT_TIMESTAMP,
   PRIMARY KEY (caller_id)
 );
@@ -320,7 +321,7 @@ CREATE TABLE IF NOT EXISTS engineering.job (
     ON UPDATE CASCADE
 );
 
-ALTER TABLE engineering.job ADD COLUMN geom GEOMETRY(POINT,32735) NOT NULL;
+ALTER TABLE engineering.job ADD COLUMN geom GEOMETRY(POINT,32735) NOT NULL DEFAULT ST_POINTFROMTEXT('point(662413.677657099 7772452.69620407)'::text, 32735);
 CREATE INDEX job_geom_idx ON engineering.job USING GIST(geom);
 CREATE TRIGGER upd_engjob BEFORE UPDATE ON engineering.job FOR EACH ROW EXECUTE PROCEDURE upd_time();
 
@@ -342,7 +343,7 @@ CREATE TABLE IF NOT EXISTS engineering.call (
   status JOBSTATUS NOT NULL DEFAULT 'OPEN',
   description VARCHAR(200) NULL,
   severity INT NOT NULL DEFAULT 1 CHECK(severity BETWEEN 1 AND 5),
-  property_damage BOOL NOT NULL DEFAULT FALSE,
+  property_damage INT NOT NULL DEFAULT 0 CHECK(property_damage BETWEEN 0 AND 100),
   last_update TIMESTAMP(0) NOT NULL DEFAULT CURRENT_TIMESTAMP,
   job_id INT,
   UNIQUE (call_id),
@@ -845,10 +846,10 @@ CREATE SCHEMA IF NOT EXISTS gis;
 DROP VIEW IF EXISTS public.job_engineering;
 
 CREATE VIEW public.job_engineering AS(
-	SELECT ej.job_id, ss.name suburb, st.name station, ej.status, ej.opened_on, ej.closed_on, ej.last_update, ej.opened_by, ej.closed_by, ej.geom
+	SELECT ej.job_id, gs.name suburb, gst.name station, ej.status, ej.opened_on, ej.closed_on, ej.last_update, ej.opened_by, ej.closed_by, ej.geom
 		FROM engineering.job ej
-		INNER JOIN staticdata.suburb ss ON ej.suburb_id = ss.suburb_id
-		LEFT OUTER JOIN staticdata.station st ON ej.station_id = st.station_id
+		INNER JOIN gis.suburb gs ON ej.suburb_id = gs.suburb_id
+		LEFT OUTER JOIN gis.station gst ON ej.station_id = gst.station_id
 );
 
 -- -----------------------------------------------------
@@ -869,8 +870,19 @@ CREATE VIEW public.call_engineering AS(
 DROP VIEW IF EXISTS public.staff_engineering;
 
 CREATE VIEW public.staff_engineering AS(
-	SELECT staff_id, call_sign, firstname, surname, phone, sn.name section_id, st.name station_id, role, sf.last_update, active, status
+	SELECT staff_id, call_sign, firstname, surname, phone, sn.name section_id, gst.name station_id, role, sf.last_update, active, status
 	FROM staticdata.staff sf INNER JOIN staticdata.section sn ON sf.section_id = sn.section_id
-	INNER JOIN staticdata.station st ON sf.station_id = st.station_id
+	INNER JOIN gis.station gst ON sf.station_id = gst.station_id
 );
 
+
+-- -----------------------------------------------------
+-- View public.suburb_road
+-- -----------------------------------------------------
+DROP VIEW IF EXISTS public.suburb_road;
+
+CREATE VIEW public.suburb_road AS(
+	SELECT r.gid, r.name, s.suburb_id
+	FROM gis.road r INNER JOIN gis.road_suburb rs ON r.gid = rs.road_id
+	INNER JOIN gis.suburb s ON rs.suburb_id = s.suburb_id
+);

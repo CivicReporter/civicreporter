@@ -8,7 +8,8 @@ Ext.define('Civic.model.engineering.Call', {
 			name: 'severity',
 			type: 'int'
 		},{
-			name: 'property_damage'
+			name: 'property_damage',
+			type: 'int'
 		}
 	]
 });

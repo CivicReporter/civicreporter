@@ -18,9 +18,11 @@ Ext.define('Civic.model.staticData.Staff', {
 		},{
 			name: 'phone'
 		},{
-			name: 'section_id'
+			name: 'section_id',
+			type: 'int'
 		},{
-			name: 'station_id'
+			name: 'station_id',
+			type: 'int'
 		},{
 			name: 'role'
 		},{

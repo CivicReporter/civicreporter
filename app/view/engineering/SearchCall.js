@@ -39,10 +39,11 @@ Ext.define('Civic.view.engineering.SearchCall', {
 							emptyText: 'search for calls by suburb',
 							padding: '1 210 1 5',
 							store: 'staticData.Suburbs',
+							queryMode: 'local',
 							displayField: 'name',
-							//valueField: 'suburb_id',
+							valueField: 'suburb_id'/*,
 							hideTrigger: true,
-							typeAhead: true
+							typeAhead: true*/
 						}
 
 					]

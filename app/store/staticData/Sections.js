@@ -8,13 +8,18 @@ Ext.define('Civic.store.staticData.Sections', {
 
 	model:'Civic.model.staticData.Section',
 
+	sorters: [
+		{
+			direction: 'ASC',
+			property: 'section_id'
+		}
+	],
+
 	proxy: {
 		type: 'staticdataproxy',
 		extraParams: {
-			entity: 'Section',
+			entity: 'staticdata.section',
 			pkey: 'section_id'
 		}
-	},
-
-	autoLoad: true
+	}
 });

@@ -36,7 +36,7 @@
 					
 					$in = substr($in, 0, -1). ')';
 
-					$deleteQuery = "DELETE FROM staticdata.$entity WHERE $pkey IN $in";
+					$deleteQuery = "DELETE FROM $entity WHERE $pkey IN $in";
 
 					$sth = pg_query($dbh, $deleteQuery);
 				}

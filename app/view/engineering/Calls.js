@@ -11,26 +11,15 @@ Ext.define('Civic.view.engineering.Calls', {
 
 	columns: [
 		{
-			text: 'Severity',
-			width: 60,
-			dataIndex: 'severity',
-			sortable: true,
-			filter: {
-				type: 'numeric'
-			},
-			renderer: function (value, metaData, record) {
-				 return Civic.util.Util.renderText(value, metaData, record);
-			}
-		},{
 			text: 'Property Damage',
 			width: 100,
 			dataIndex: 'property_damage',
 			sortable: true,
 			filter: {
-				type: 'string'
+				type: 'numeric'
 			},
 			renderer: function (value, metaData, record) {
-				return value == 't' ? 'Yes' : 'No';
+				return Civic.util.Util.renderText(value+'%', metaData, record);
 			}
 		}
 	],

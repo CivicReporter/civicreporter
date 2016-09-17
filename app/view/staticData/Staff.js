@@ -79,7 +79,8 @@ Ext.define('Civic.view.staticData.Staff', {
 				displayField: 'name',
 				valueField: 'section_id',
 				queryMode: 'local',
-				allowBlank: false
+				allowBlank: false,
+				maxLength: 45
 			},
 			renderer: function(value, metaData, record){
 				var sectionsStore = Ext.getStore('staticData.Sections');
@@ -97,7 +98,8 @@ Ext.define('Civic.view.staticData.Staff', {
 				displayField: 'name',
 				valueField: 'station_id',
 				queryMode: 'local',
-				allowBlank: false
+				allowBlank: false,
+				maxLength: 45
 			},
 			renderer: function(value, metaData, record){
 				var stationsStore = Ext.getStore('staticData.Stations');

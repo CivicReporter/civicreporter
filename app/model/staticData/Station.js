@@ -9,7 +9,12 @@ Ext.define('Civic.model.staticData.Station', {
 			type: 'int',
 			useNull: false
 		},{
+			name: 'suburb_id',
+			type: 'int'
+		},{
 			name: 'name'
+		},{
+			name: 'type'
 		}
 	]
 });

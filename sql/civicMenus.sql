@@ -100,7 +100,9 @@ BEGIN;
 	INSERT INTO security.menu(ttext, iconCls)
 		VALUES	('Security', 'menu_admin'),
 				('Static Data', 'menu_staticdata'),
-				('Sewer & Water','menu_engineering');
+				('Sewer & Water','menu_engineering'),
+				('Reports', 'menu_reports'),
+				('GIS Section', 'menu_gis');
 
 	INSERT INTO security.menu(ttext, iconCls, parentid, classname)
 		VALUES	('Groups & Permissions', 'menu_groups', 1, 'panel'),
@@ -114,17 +116,23 @@ BEGIN;
 				('Stations', 'menu_station', 2, 'stationsgrid'),
 				('Suburbs', 'menu_suburb', 2, 'suburbsgrid'),
 				('Vehicles', 'menu_vehicle', 2, 'vehiclesgrid'),
-				('Zones', 'menu_zones', 2, 'zonesgrid'),
+				('Fire Catchments', 'menu_zones', 2, 'firegrid'),
+				('Sewer Catchments', 'menu_zones', 2, 'sewergrid'),
+				('Water Catchments', 'menu_zones', 2, 'watergrid'),
 				('Calls', 'menu_calls', 3, 'engcallsgrid'),
 				('Jobs', 'menu_jobs', 3, 'jobspanel'),
-				('Duty Roster', 'menu_roster', 3, 'engdutyroster');
+				('Duty Roster', 'menu_roster', 3, 'engdutyroster'),
+				('Call Reports', 'report_calls', 4, 'callreportpanel'),
+				('Job Reports', 'report_jobs', 4, 'jobreportpanel'),
+				('Staff Reports', 'report_staff', 4, 'staffreportpanel'),
+				('Application Maps', 'menu_maps', 5, 'abstractgispanel');
 
 	INSERT INTO security.permissions(menuid, groupid)
 		VALUES
-			(1, 1),(2, 1),(3, 1),(4, 1),(5, 1),(6, 1),
-			(7, 1),(8, 1),(9, 1),(10, 1),(11, 1),(12, 1),
-			(13, 1),(14, 1),(15, 1),(16, 1),(17, 1),(18, 1),(3, 2),
-			(16, 2),(17, 2),(18, 2);
+			(1,1), (2,1), (3,1), (3,2), (4,1), (5,1), (6,1), (7,1),
+			(8,1), (9,1), (10,1), (11,1), (12,1), (13,1), (14,1),
+			(15,1), (16,1), (16,2), (17,1), (17,2), (18,1), (18,2),
+			(19,1), (20,1), (21,1), (22,1), (23,1), (23,2), (24,1), (24,2), (25,1), (25,2), (26,1), (26,2);
 
 COMMIT;
 

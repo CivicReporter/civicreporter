@@ -3,17 +3,13 @@ Ext.define('Civic.view.civicr.WindowForm', {
 	alias: 'widget.windowform',
 
 	requires: [
-		'Civic.view.toolbar.CancelSave'
+		'Civic.view.toolbar.CancelSave',
+		'Civic.view.toolbar.BackNextCancelSave'
 	],
-	autoScroll: true,
+	autoScroll: false,
 	layout: {
 		type: 'fit'
 	},
-	modal: true/*,
-
-	dockedItems: [
-		{
-			xtype: 'cancelsave'			
-		}
-	]*/
+	modal: false,//true,
+	draggable: false
 });

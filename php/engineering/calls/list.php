@@ -37,7 +37,7 @@
 					$sql.= "WHERE status = '$status' ";
 				}
 				if (isset($suburb)) {
-					$sql.= "AND suburb = '$suburb' ";
+					$sql.= "AND suburb_id = '$suburb' ";
 				}
 				$sql.= "ORDER BY call_id DESC ";
 				$sql.= "OFFSET $offset LIMIT $limit";

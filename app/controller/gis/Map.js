@@ -20,6 +20,9 @@ Ext.define('Civic.controller.gis.Map', {
 		},{
 			ref: 'mapPanel2', 
 			selector: 'abstract_map'
+		},{
+			ref: 'jobWindow',
+			selector: 'jobwindow'
 		}
     ],    
 
@@ -128,12 +131,19 @@ Ext.define('Civic.controller.gis.Map', {
 			]
 		});
 
-        layers.push(base, vecLayer);
+		var pointLayer = new OpenLayers.Layer.Vector("Point Layer",{
+			eventListeners: {
+				'beforefeatureadded': function (evt) {
+					this.removeAllFeatures();
+				}
+			}
+		});
+
+        layers.push(base, vecLayer, pointLayer);
 
         mapPanel.map.addLayers(layers);
-    	me.setMousePointerSwitcher(mapPanel);
 
-    	mapPanel.map.addControl(
+    	mapPanel.map.addControls([
     		new OpenLayers.Control.SelectFeature(vecLayer,{
     			id: 'olSelect',
 				classname: 'navig',
@@ -153,8 +163,20 @@ Ext.define('Civic.controller.gis.Map', {
     					};
     				}
     			}
+    		}),
+
+    		new OpenLayers.Control.DrawFeature(
+    			pointLayer,
+				OpenLayers.Handler.Point,{
+    			id: 'olDraw',
+    			classname: 'navig',
+    			autoActivate: false,
+    			featureAdded: function (feature) {
+    				me.onFeatureAdd(feature);
+    			}
     		})
-    	);
+	   
+    	]);
     	
         // some more controls
     /*    mapPanel.map.addControls([new OpenLayers.Control.DragFeature(vecLayer, {
@@ -188,10 +210,96 @@ Ext.define('Civic.controller.gis.Map', {
             }
         );
 
-        layers.push(base);
+		var suburb = new OpenLayers.Layer.Vector('suburbs', {
+			
+			preFeatureInsert: function(feature) {
+				feature.geometry.transform(new OpenLayers.Projection("EPSG:32735"), new OpenLayers.Projection("EPSG:900913"))
+			},
 
+		/*	eventListeners: {
+				
+				'beforefeaturesadded': function (evt) {
+					Ext.get(mapPanel.getEl()).mask('Loading...', 'loading');
+				},
+
+				'featuresadded': function (evt) {
+					this.map.zoomToExtent(this.getDataExtent());
+					Ext.get(mapPanel.getEl()).unmask();
+				}
+			},
+
+			styleMap: new OpenLayers.StyleMap({
+				'default': new OpenLayers.Style(
+					Civic.util.Util.def_template, {
+						context: Civic.util.Util.context
+					}
+				),
+				'select': new OpenLayers.Style(
+					Civic.util.Util.sel_template, {
+						context: Civic.util.Util.context
+					}
+				)
+			}),
+
+		*/	protocol: new OpenLayers.Protocol.HTTP({
+				url: 'php/gis/staticlist.php',
+				params: {
+					layer: 'suburb'
+				},
+				format: new OpenLayers.Format.GeoJSON()
+			}),
+
+			strategies: [
+				new OpenLayers.Strategy.Fixed()
+			]
+		});
+
+		var road = new OpenLayers.Layer.Vector('roads', {
+			
+			preFeatureInsert: function(feature) {
+				feature.geometry.transform(new OpenLayers.Projection("EPSG:32735"), new OpenLayers.Projection("EPSG:900913"))
+			},
+
+		/*	eventListeners: {
+				
+				'beforefeaturesadded': function (evt) {
+					Ext.get(mapPanel.getEl()).mask('Loading...', 'loading');
+				},
+
+				'featuresadded': function (evt) {
+					this.map.zoomToExtent(this.getDataExtent());
+					Ext.get(mapPanel.getEl()).unmask();
+				}
+			},
+
+			styleMap: new OpenLayers.StyleMap({
+				'default': new OpenLayers.Style(
+					Civic.util.Util.def_template, {
+						context: Civic.util.Util.context
+					}
+				),
+				'select': new OpenLayers.Style(
+					Civic.util.Util.sel_template, {
+						context: Civic.util.Util.context
+					}
+				)
+			}),
+
+		*/	protocol: new OpenLayers.Protocol.HTTP({
+				url: 'php/gis/staticlist.php',
+				params: {
+					layer: 'road'
+				},
+				format: new OpenLayers.Format.GeoJSON()
+			}),
+
+			strategies: [
+				new OpenLayers.Strategy.Fixed()
+			]
+		});
+
+        layers.push(base, suburb, road);
         mapPanel.map.addLayers(layers);
-    	me.setMousePointerSwitcher(mapPanel);
     },
 
     onLaunch: function() {
@@ -207,7 +315,7 @@ Ext.define('Civic.controller.gis.Map', {
         	vecLayer = map.getLayersByName('priority jobs')[0];
 
         if (successful) {        	
-        	if (records[0].index > 0) {
+        	//if (records[0].index > 0) {
         		vecLayer.addOptions({
         			protocol: new OpenLayers.Protocol.HTTP({
 						url: 'php/gis/list.php',
@@ -219,7 +327,7 @@ Ext.define('Civic.controller.gis.Map', {
         		}, true);
 
         		vecLayer.refresh();
-        	};
+        	//};
         };
     },
 
@@ -232,6 +340,7 @@ Ext.define('Civic.controller.gis.Map', {
 		    'olSelect': "url('http://127.0.0.1/civicreporter_dev/resources/images/app/pan.cur'), default",
 		    'olZoomIn': "url('http://127.0.0.1/civicreporter_dev/resources/images/app/zoom-in.cur'), default",
 		    'olZoomOut': "url('http://127.0.0.1/civicreporter_dev/resources/images/app/zoom-out.cur'), default",
+		    'olDraw': "url('http://127.0.0.1/civicreporter_dev/resources/images/app/pencil.cur'), default",
 		    'none': 'default'
 		};
 
@@ -254,7 +363,6 @@ Ext.define('Civic.controller.gis.Map', {
 			}
 		});
 
-		map.getControl('olDragPan').activate();
 	},
 
 	onSpecialKeyPress: function (combo, e, eOpts) {
@@ -300,9 +408,11 @@ Ext.define('Civic.controller.gis.Map', {
 
     onToolBarBeforeRender: function (tbar, eOpts) {
     	
-    	map = this.getMapPanel().map;
-
-    	buttonGroup2 = tbar.items.get(0);
+    	var me = this,
+    		mapPanel = me.getMapPanel(),
+    		map = mapPanel.map,
+    		buttonGroup2 = tbar.items.get(0);
+    	
     	buttonGroup2.items.add(Ext.create('Ext.button.Button', Ext.create('GeoExt.Action', {
             text: "Info",
             control: map.getControl('olSelect'),
@@ -312,6 +422,9 @@ Ext.define('Civic.controller.gis.Map', {
             tooltip: "feature info",
             iconCls: 'info'
         })));
+
+    	me.setMousePointerSwitcher(mapPanel);
+		map.getControl('olDragPan').activate();
     },
 
 	onFeatureSelect: function (feature) {
@@ -355,5 +468,16 @@ Ext.define('Civic.controller.gis.Map', {
 		if (jobsGrid.getCollapsed()) {
 			jobsGrid.expand();
 		}
+	},
+	
+	onFeatureAdd: function (feature) {
+		var me = this,
+			win = me.getJobWindow();
+
+		win.down('form').getForm().setValues({
+			coordinates: feature.geometry.transform(new OpenLayers.Projection("EPSG:900913"), new OpenLayers.Projection("EPSG:32735")).toString() 
+		});
+		win.expand();
+		win.toFront();
 	}
 });

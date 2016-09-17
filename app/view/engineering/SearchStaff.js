@@ -39,10 +39,11 @@ Ext.define('Civic.view.engineering.SearchStaff', {
 							emptyText: 'search for technicians by station',
 							padding: '1 210 1 5',
 							store: 'staticData.Stations',
+							queryMode: 'local',
 							displayField: 'name',
-							valueField: 'name',
+							valueField: 'station_id'/*,
 							hideTrigger: true,
-							typeAhead: true
+							typeAhead: true*/
 						}
 
 					]

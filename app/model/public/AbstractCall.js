@@ -6,11 +6,13 @@ Ext.define('Civic.model.public.AbstractCall', {
 			name: 'call_id',
 			type: 'int'
 		},{
-			name: 'code',
-			type: 'string'
+			name: 'code_id',
+			type: 'int'
 		},{
 			name: 'caller',
 			type: 'string'
+		},{
+			name: 'nid'
 		},{
 			name: 'caller_id',
 			type: 'int'
@@ -19,8 +21,8 @@ Ext.define('Civic.model.public.AbstractCall', {
 		},{
 			name: 'street'
 		},{
-			name: 'suburb',
-			type: 'string'
+			name: 'suburb_id',
+			type: 'int'
 		},{
 			name: 'status'
 		},{

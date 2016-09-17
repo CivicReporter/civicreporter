@@ -11,8 +11,16 @@ Ext.define('Civic.model.staticData.Suburb', {
 		},{
 			name: 'name'
 		},{
-			name: 'zone_id',
+			name: 'fire_catch_id',
 			type: 'int'
+		},{
+			name: 'sewer_catch_id',
+			type: 'int'
+		},{
+			name: 'water_catch_id',
+			type: 'int'
+		},{
+			name: 'geom_900913'
 		}
 	]
 });

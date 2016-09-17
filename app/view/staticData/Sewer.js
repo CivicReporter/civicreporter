@@ -1,13 +1,13 @@
-Ext.define('Civic.view.staticData.Zones', {
+Ext.define('Civic.view.staticData.Sewer', {
 	extend: 'Civic.view.staticData.AbstractGrid',
-	alias: 'widget.zonesgrid',
+	alias: 'widget.sewergrid',
 
-	store: 'staticData.Zones',
+	store: 'staticData.Sewer',
 	columns:[
 		{
-			text: 'Zone Id',
+			text: 'Catchment Id',
 			width: 100,
-			dataIndex: 'zone_id',
+			dataIndex: 'catch_id',
 			filter: {
 				type: 'numeric'
 			}

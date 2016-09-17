@@ -1,13 +1,16 @@
-Ext.define('Civic.model.staticData.Zone', {
+Ext.define('Civic.model.staticData.Road', {
 	extend: 'Civic.model.public.AbstractDate',
 
-	idProperty: 'zone_id',
+	idProperty: 'gid',
 
 	fields: [
 		{
-			name: 'zone_id',
+			name: 'gid',
 			type: 'int',
 			useNull: false
+		},{
+			name: 'suburb_id',
+			type: 'int'
 		},{
 			name: 'name'
 		}

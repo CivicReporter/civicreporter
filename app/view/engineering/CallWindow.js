@@ -2,7 +2,7 @@ Ext.define('Civic.view.engineering.CallWindow', {
 	extend: 'Civic.view.civicr.WindowForm',
 	alias: 'widget.callwindow',
 
-	height: 470,
+	height: 480,
 	width: 400,
 
 	requires: [
@@ -46,9 +46,16 @@ Ext.define('Civic.view.engineering.CallWindow', {
 							maxLength: 100,
 							name: 'lastname'
 						},{
+							fieldLabel: 'ID Number',
+							maxLength: 15,
+							name: 'nid',
+							emptyText: 'XX-XXXXXX-X-XX'
+						},{
 							fieldLabel: 'Phone Number',
-							maxLength: 100,
-							name: 'phone'
+							maxLength: 12,
+							name: 'phone',
+							emptyText: 'XXX-XXXXXX'
+
 						}
 					]
 				},{
@@ -75,27 +82,31 @@ Ext.define('Civic.view.engineering.CallWindow', {
 							fieldLabel: 'Fault Code',
 							name: 'code',
 							displayField: 'description',
-							valueField: 'code',
+							valueField: 'code_id',
 							queryMode: 'local',
 							store: 'staticData.FaultCodes'
 						},{
 							xtype: 'combobox',
 							fieldLabel: 'Suburb',
 							name: 'suburb',
+							itemId: 'suburb',
 							displayField: 'name',
-							valueField: 'name',
+							valueField: 'suburb_id',
 							queryMode: 'local',
 							store: 'staticData.Suburbs'
 						},{
 							xtype: 'combobox',
 							fieldLabel: 'Street',
 							name: 'street',
-							displayField: 'street',
-							valueField: 'street',
+							itemId: 'street',
+							displayField: 'name',
+							//valueField: 'gid',
 							queryMode: 'local',
-							store: 'staticData.FaultCodes',
+							store: 'staticData.Roads',
 							allowBlank: true,
-							afterLabelTextTpl: ''
+							disabled: true,
+							afterLabelTextTpl: '',
+							emptyText: '--select street--'
 						},{
 							xtype: 'numberfield',
 							fieldLabel: 'Stand Number',
@@ -103,24 +114,18 @@ Ext.define('Civic.view.engineering.CallWindow', {
 							minValue: 1
 						},{
 							xtype: 'numberfield',
-							fieldLabel: 'Severity',
-							name: 'severity',
-							maxValue: 5,
-							minValue: 1,
-							step: 1
+							fieldLabel: 'Property Damage %',
+							name: 'property_damage',
+							maxValue: 100,
+							minValue: 0,
+							step: 10
 						},{
 							xtype: 'textareafield',
 							fieldLabel: 'Description',
 							name: 'description',
-							maxLength: 5000,
+							maxLength: 1000,
 							height: 100,
 							allowBlank: true,
-							afterLabelTextTpl: ''
-						},{
-							xtype: 'checkboxfield',
-							fieldLabel: 'Property Damage',
-							name: 'property_damage',
-							inputValue: 't',
 							afterLabelTextTpl: ''
 						}
 					]

@@ -7,8 +7,9 @@
 	$userName = $_SESSION['username'];
 	$jobId = $_POST['job_id'];
 	$suburb = $_POST['suburb'];
-	$station = $_POST['station'];
+	$station = ($_POST['station'] != 'UNASSIGNED')? $_POST['station']: 9999;
 	$status = $_POST['status'];
+	$coordinates = $_POST['coordinates'];
 	
 	$success = false;
 
@@ -38,7 +39,7 @@
 		}
 		
 		//temporarily altered engineering.job to insert a default geom value on acer civicdb
-		$insertQuery = "SELECT job_handler('$jobId','$suburb','$station','$callId','$staffId','$userName', '$status')";
+		$insertQuery = "SELECT job_handler('$jobId',$suburb,$station,'$callId','$staffId','$userName','$status','$coordinates')";
 
 		$sth = pg_query($dbh, $insertQuery);
 

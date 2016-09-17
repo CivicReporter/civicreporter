@@ -130,6 +130,54 @@ Ext.define('Civic.util.Util', {
 			strokeWidth: 2,
 			pointRadius: 7,
 			fillOpacity: 0.7
-        }
+        },
+
+        staticDataStores: [
+        	{
+        		storeId: 'security.Groups',
+				entity: 'security.groups'
+        	},{
+        		storeId: 'staticData.Callers',
+				entity: 'staticdata.caller'
+        	},{
+        		storeId: 'staticData.EmergencyCodes',
+				entity: 'staticdata.emergency_codes'
+        	},{
+        		storeId: 'staticData.FaultCodes',
+				entity: 'staticdata.fault_codes'
+        	},{
+        		storeId: 'staticData.Fire',
+				entity: 'gis.fire_catchment'
+        	},{
+        		storeId: 'staticData.FireCodes',
+				entity: 'staticdata.fire_codes'
+        	},{
+        		storeId: 'staticData.Sections',
+				entity: 'staticdata.section'
+        	},{
+        		storeId: 'staticData.Sewer',
+				entity: 'gis.sewer_catchment'
+        	},{
+        		storeId: 'staticData.Staff',
+				entity: 'staticdata.staff'
+        	},{
+        		storeId: 'staticData.Stations',
+				entity: 'gis.station'
+        	},{
+        		storeId: 'staticData.Suburbs',
+				entity: 'gis.suburb'
+        	},{
+        		storeId: 'staticData.Roads',
+				entity: 'suburb_road'
+        	},{
+        		storeId: 'staticData.Vehicles',
+				entity: 'staticdata.vehicle'
+        	},{
+        		storeId: 'staticData.Water',
+				entity: 'gis.water_catchment'
+        	}
+        ],
+
+        stores: {}
 	}
 });

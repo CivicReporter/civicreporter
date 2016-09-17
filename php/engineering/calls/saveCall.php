@@ -13,15 +13,15 @@
 	$suburb = $_POST['suburb'];
 	$street = $_POST['street'];
 	$standNo = $_POST['stand_no'];
-	$severity = $_POST['severity'];
+	$nid = $_POST['nid'];
 	$description = stripcslashes($_POST['description']);
-	$prpDmg = ($_POST['property_damage'] != null) ? 't' : 'f';
+	$prpDmg = ($_POST['property_damage']);
 	$jobId = $_POST['job_id'];
 
 
 	if ($callId ==  0) { //create
 
-		$insertQuery = "SELECT fault_handler('$code','$fname','$sname','$phone',$standNo,'$street','$suburb',$severity,'$prpDmg','$description')";
+		$insertQuery = "SELECT fault_handler($code,'$fname','$sname','$phone',$standNo,'$street',$suburb,'$nid',$prpDmg,'$description')";
 
 		$sth = pg_query($dbh, $insertQuery);
 
@@ -38,7 +38,7 @@
 
 	} else {//update
 
-		$updateQuery = "SELECT fault_upd($callId,'$code',$callerId,'$fname','$sname','$phone',$standNo,'$street','$suburb',$severity,'$prpDmg','$description')";
+		$updateQuery = "SELECT fault_upd($callId,$code,$callerId,'$fname','$sname','$phone',$standNo,'$street',$suburb,'$nid','$prpDmg','$description')";
 
 		$sth = pg_query($dbh, $updateQuery);
 

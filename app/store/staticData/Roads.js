@@ -1,25 +1,25 @@
-Ext.define('Civic.store.staticData.Stations', {
+Ext.define('Civic.store.staticData.Roads', {
 	extend: 'Civic.store.staticData.Abstract',
 
 	requires: [
-		'Civic.model.staticData.Station',
+		'Civic.model.staticData.Road',
 		'Civic.proxy.StaticData'
 	],
 
-	model:'Civic.model.staticData.Station',
+	model:'Civic.model.staticData.Road',
 
 	sorters: [
 		{
 			direction: 'ASC',
-			property: 'station_id'
+			property: 'name'
 		}
 	],
 
 	proxy: {
 		type: 'staticdataproxy',
 		extraParams: {
-			entity: 'gis.station',
-			pkey: 'station_id'
+			entity: 'suburb_road',
+			pkey: 'gid'
 		}
 	}
 });

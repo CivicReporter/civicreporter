@@ -40,10 +40,10 @@
 							$callsquery.= "WHERE job_id = ".$r['job_id']; 
 							$callsquery.= " ORDER BY call_id";
 
-							$staffquery = "SELECT se.staff_id, call_sign, firstname, surname, phone, role, section_id, station_id ";
-							$staffquery.= "FROM staff_engineering se, engineering.assignment ea ";
-							$staffquery.= "WHERE se.staff_id = ea.staff_id AND job_id = ".$r['job_id']; 
-							$staffquery.= " ORDER BY se.staff_id";
+							$staffquery = "SELECT ss.staff_id, call_sign, firstname, surname, phone, role, section_id, station_id ";
+							$staffquery.= "FROM staticdata.staff ss, engineering.assignment ea ";
+							$staffquery.= "WHERE ss.staff_id = ea.staff_id AND job_id = ".$r['job_id']; 
+							$staffquery.= " ORDER BY ss.staff_id";
 							if ($call_nodes = pg_query($dbh, $callsquery)) {
 								$ccount = pg_num_rows($call_nodes);
 								if ($ccount > 0) {

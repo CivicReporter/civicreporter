@@ -8,10 +8,17 @@ Ext.define('Civic.store.staticData.Suburbs', {
 
 	model:'Civic.model.staticData.Suburb',
 
+	sorters: [
+		{
+			direction: 'ASC',
+			property: 'suburb_id'
+		}
+	],
+
 	proxy: {
 		type: 'staticdataproxy',
 		extraParams: {
-			entity: 'Suburb',
+			entity: 'gis.suburb',
 			pkey: 'suburb_id'
 		}
 	}

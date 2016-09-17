@@ -27,9 +27,15 @@ Ext.define('Civic.view.engineering.JobCalls', {
 		},{
 			text: 'Fault Code',
 			width: 70,
-			dataIndex: 'code',
+			dataIndex: 'code_id',
 			filter: {
 				type: 'string'
+			},
+			renderer: function(value, metaData, record){
+				var fcStore = Ext.getStore('staticData.FaultCodes');
+				var code = fcStore.findRecord('code_id', value);
+
+				return value ? code.get('code') : '';
 			}
 		},{
 			text: 'Caller Name',
@@ -41,9 +47,15 @@ Ext.define('Civic.view.engineering.JobCalls', {
 		},{
 			text: 'Suburb',
 			width: 100,
-			dataIndex: 'suburb',
+			dataIndex: 'suburb_id',
 			filter: {
 				type: 'string'
+			},
+			renderer: function(value, metaData, record){
+				var sbStore = Ext.getStore('staticData.Suburbs');
+				var suburb = sbStore.findRecord('suburb_id', value);
+
+				return value ? suburb.get('name') : '';
 			}
 		},{
 			xtype: 'datecolumn',

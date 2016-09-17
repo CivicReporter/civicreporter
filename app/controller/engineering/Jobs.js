@@ -6,7 +6,8 @@ Ext.define('Civic.controller.engineering.Jobs', {
 		'Civic.util.Util',
 		'Civic.view.civcr.AbstractJobDetails',
 		'Civic.view.engineering.SearchCall',
-		'Civic.view.engineering.SearchStaff'
+		'Civic.view.engineering.SearchStaff',
+		'Civic.view.gis.EditingToolbar'
 	],
 
 	views: [
@@ -38,6 +39,9 @@ Ext.define('Civic.controller.engineering.Jobs', {
 		},{
 			ref: 'searchWindow',
 			selector: 'searchwindow'//searchcall
+		},{
+			ref: 'editingToolbar',
+			selector: 'editingtoolbar'
 		}
 	],
 	
@@ -67,7 +71,8 @@ Ext.define('Civic.controller.engineering.Jobs', {
 				itemclick: this.onItemClick
 			},
 			'jobwindow': {
-				close: this.onWindowClose
+				close: this.onWindowClose,
+				minimize: this.onWindowMinimize
 			},
 			'jobwindow engjobcalls': {
 				selectionchange: this.onSelectionChange2
@@ -83,6 +88,12 @@ Ext.define('Civic.controller.engineering.Jobs', {
 			},
 			'jobwindow engjobstaff button#delete': {
 				click: this.onButtonClickDelete2
+			},
+			'jobwindow button#back': {
+				click: this.onButtonClickBack
+			},
+			'jobwindow button#next': {
+				click: this.onButtonClickNext
 			},
 			'jobwindow button#cancel': {
 				click: this.onButtonClickCancel
@@ -102,7 +113,7 @@ Ext.define('Civic.controller.engineering.Jobs', {
 				specialkey: this.onSpecialKeyPress
 			},
 			'searchstaff form combobox': {
-				render: this.onComboRender,
+				render: this.onComboRender2,
 				select: this.onComboSelect2,
 				specialkey: this.onSpecialKeyPress
 			},
@@ -120,13 +131,19 @@ Ext.define('Civic.controller.engineering.Jobs', {
 			},
 			'searchstaff button#add': {
 				click: this.onButtonClickAdd5
-			}/*,
-			'jobwindow engjobstaff': {//engjobstaff
-				selectionchange: this.onSelectionChange2
-			}*/,
-			'jobwindow engjobstaff button#add': {//engjobstaff
+			},
+			'jobwindow engjobstaff button#add': {
 				click: this.onButtonClickAdd4
-			}			
+			},
+			'jobwindow form button#point': {
+				click: this.onButtonClickPoint
+			},
+			'editingtoolbar': {
+				close: this.onEditorClose
+			},
+			'editingtoolbar toolbar': {
+				beforerender: this.onEditorRender
+			}				
 		});
 	},
 
@@ -208,10 +225,10 @@ Ext.define('Civic.controller.engineering.Jobs', {
 	},
 
 	onButtonClickAdd3: function (button, e, options) {
-		searchWindow = this.getSearchWindow();
-		records = searchWindow.down('engjobcalls').getSelectionModel().getSelection();
-		form = this.getJobWindow().down('form');
-		callStore = form.down('engjobcalls').getStore();
+		var searchWindow = this.getSearchWindow(),
+			records = searchWindow.down('engjobcalls').getSelectionModel().getSelection(),
+			form = this.getJobWindow().down('form'),
+			callStore = form.down('engjobcalls').getStore();
 
 		if (callStore.data.length == 0) {
 			callStore = Ext.create('Civic.store.engineering.Calls', {
@@ -219,10 +236,10 @@ Ext.define('Civic.controller.engineering.Jobs', {
 			});
 			
 			form.getForm().setValues({
-				suburb: records[0].get('suburb')
+				suburb: records[0].get('suburb_id')
 			});
 		} else{
-			if (records[0].get('suburb') == callStore.data.getAt(0).get('suburb')) {
+			if (records[0].get('suburb_id') == callStore.data.getAt(0).get('suburb_id')) {
 				callStore.add(records);
 			} else{
 				Civic.util.Util.showErrorMsg('<p>You cannot create a job with calls from different suburbs.</p>'+'<p>These calls are not linked!</p>');				
@@ -267,6 +284,10 @@ Ext.define('Civic.controller.engineering.Jobs', {
 		callStore = record[0].calls();
 		staffStore = record[0].staff();
 
+		var map = this.getMapPanel().map,
+			vecLayer = map.getLayersByName('priority jobs')[0],
+			job = vecLayer.getFeaturesByAttribute('job_id', String(record[0].get('job_id')))[0];
+
 		if (record[0]) {
 			status = record[0].get('status');
 
@@ -276,9 +297,10 @@ Ext.define('Civic.controller.engineering.Jobs', {
 				var form = win.down('form');
 				var values = {
 					job_id: record[0].get('job_id'),
-					suburb: callStore.getAt(0).get('suburb'),
+					suburb: callStore.getAt(0).get('suburb_id'),
 					status: status,
-					station: record[0].get('station'),
+					station: record[0].get('station') == '' ? '' : staffStore.getAt(0).get('station_id'),
+					coordinates: job.geometry.transform(new OpenLayers.Projection("EPSG:900913"), new OpenLayers.Projection("EPSG:32735")).toString(),
 					opened_on: record[0].get('opened_on'),
 					opened_by: record[0].get('opened_by'),
 					closed_on: record[0].get('closed_on'),
@@ -288,7 +310,6 @@ Ext.define('Civic.controller.engineering.Jobs', {
 				form.getForm().setValues(values);
 				form.down('engjobcalls').reconfigure(callStore, this.getCallsGrid().cloneConfig().columns);
 				form.down('engjobstaff').reconfigure(staffStore, this.getStaffGrid().cloneConfig().columns);
-				form.down('tabpanel').setActiveTab(2);
 
 				win.setTitle('Editing Job #' + values.job_id);
 				win.setIconCls('edit');
@@ -522,6 +543,9 @@ Ext.define('Civic.controller.engineering.Jobs', {
 	onWindowClose: function (window, eOpts) {
 		grid = this.getJobsGrid();
 		grid.getSelectionModel().deselectAll();
+		if (this.getEditingToolbar()) {
+			this.getEditingToolbar().close();
+		};
 	},
 
 	onWindowClose2: function (window, eOpts) {
@@ -533,7 +557,32 @@ Ext.define('Civic.controller.engineering.Jobs', {
 	},
 
 	onComboRender: function (combo, eOpts) {
-		combo.getStore().sort('name', 'ASC');
+		var me = this,
+			callsStore = me.getJobWindow().down('form').down('engjobcalls').getStore();
+
+		if (callsStore.getAt(0)) {
+			suburb = callsStore.getAt(0).get('suburb_id');
+
+			combo.setValue(suburb);
+			combo.fireEvent('select', combo);	
+		};			
+		
+	},
+
+	onComboRender2: function (combo, eOpts) {
+		var me = this,
+			suburbStore = Ext.getStore('staticData.Suburbs'),
+			catchmentStore = Ext.getStore('staticData.Sewer'),//sewer catchments
+			callsStore = me.getJobWindow().down('form').down('engjobcalls').getStore();
+
+		if (callsStore.getAt(0)) {
+			suburb = suburbStore.findRecord('suburb_id', callsStore.getAt(0).get('suburb_id'));
+			catchment = catchmentStore.findRecord('catch_id', suburb.get('sewer_catch_id'));
+			
+			combo.setValue(catchment.get('station_id'));
+			combo.fireEvent('select', combo);
+		};
+		
 	},
 
 	onComboSelect: function (combo, records, eOpts ) {
@@ -573,5 +622,125 @@ Ext.define('Civic.controller.engineering.Jobs', {
 		win.down('engjobstaff').reconfigure(store, this.getStaffGrid().cloneConfig().columns);
 		win.down('pagingtoolbar').bindStore(store);
 		win.show();
-	} 
+	},
+
+	onButtonClickBack: function (button, e, options) {
+		this.navigate(button.up("form"), "prev");
+	},
+
+	onButtonClickNext: function (button, e, options) {
+		this.navigate(button.up("form"), "next");
+	},
+
+	navigate: function (panel, direction) {
+		var layout = panel.getLayout();
+	    layout[direction]();
+
+	    panel.down('button#back').setDisabled(!layout.getPrev());
+	    panel.down('button#next').setDisabled(!layout.getNext());
+	},
+
+	onButtonClickPoint: function (button, e, options) {		
+		var me = this;
+			suburbStore = Ext.getStore('staticData.Suburbs'),
+			suburb_id = button.up('form').getForm().getFieldValues().suburb;
+
+		button.up('jobwindow').minimize();
+		
+		if (suburb_id) {
+			suburb = suburbStore.findRecord('suburb_id', suburb_id),
+			geom = OpenLayers.Geometry.fromWKT(suburb.get('geom_900913'));
+
+			me.getMapPanel().map.zoomToExtent(geom.getBounds());				
+		};
+	},
+
+	onWindowMinimize: function (window, eOpts) {
+		var me = this,
+			grid = me.getJobsGrid();
+
+		grid.collapse();
+		window.collapse();
+
+		if (!Ext.ComponentQuery.query('editingtoolbar')[0]) {			
+			Ext.widget('editingtoolbar').show();
+		};
+	},
+
+	onEditorRender: function (tbar, eOpts) {
+
+		var group = [],
+			map = this.getMapPanel().map,
+			drawControl = map.getControl('olDraw'),
+			editWindow = tbar.up('editingtoolbar'); 
+
+		group.push(Ext.create('Ext.button.Button', Ext.create('GeoExt.Action', {
+            control: drawControl,
+            disabled: false,
+            enableToggle: true,
+            toggleGroup: "draw",
+            allowDepress: false,
+            group: "draw",
+            tooltip: "draw point",
+            iconCls: 'point'
+        })));
+
+        group.push(Ext.create('Ext.button.Button', Ext.create('GeoExt.Action', {
+            //control: drawControl.undo(),
+            disabled: true,
+            enableToggle: false,
+            group: "draw",
+            tooltip: "undo point",
+            iconCls: 'undo'
+        })));
+
+        group.push(Ext.create('Ext.button.Button', Ext.create('GeoExt.Action', {
+            //control: drawControl.redo(),
+            disabled: true,
+            enableToggle: false,
+            group: "draw",
+            tooltip: "redo point",
+            iconCls: 'redo'
+        })));
+
+        group.push(Ext.create('Ext.button.Button', Ext.create('GeoExt.Action', {
+            //control: drawControl.cancel(),
+            disabled: true,
+            enableToggle: true,
+            toggleGroup: "draw",
+            allowDepress: false,
+            group: "draw",
+            tooltip: "select point",
+            iconCls: 'delete'
+        })));
+
+        group.push(Ext.create('Ext.button.Button', Ext.create('GeoExt.Action', {
+            //control: drawControl.finishSketch(),
+            disabled: true,
+            enableToggle: false,
+            group: "draw",
+            tooltip: "save point",
+            iconCls: 'save'
+        })));
+
+		tbar.items.add(group);
+		drawControl.activate();	
+	},
+
+	onEditorClose: function (window, eOpts) {
+		var me = this,
+			win = me.getJobWindow(),
+			map = me.getMapPanel().map,
+			drawControl = map.getControl('olDraw');
+
+		if (drawControl.active) {
+			drawControl.cancel();
+			map.getLayersByName('Point Layer')[0].removeAllFeatures();
+			map.getControl('olDragPan').activate();
+		}
+
+		if (win.getCollapsed()) {
+			win.expand();
+		};
+	}
 });

@@ -22,6 +22,17 @@ Ext.define('Civic.view.staticData.Stations', {
 			filter: {
 				type: 'string'
 			}
+		},{
+			text: 'Type',
+			width: 150,
+			dataIndex: 'type',
+			editor: {
+				xtype: 'combobox',
+				store: 'staticData.Catchments',
+				displayField: 'text',
+				queryMode: 'local',
+				allowBlank: false
+			}
 		}
 	]
 });

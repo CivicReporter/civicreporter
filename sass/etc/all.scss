@@ -178,6 +178,18 @@
 	background-image: url(images/app/export.png)!important;
 }
 
+.back{
+	background-image: url(images/app/back.jpg)!important;
+}
+
+.forward{
+	background-image: url(images/app/forward.jpg)!important;
+}
+
+.clear{
+	background-image: url(images/app/clear.png)!important;
+}
+
 //map iconCls
 
 .previous{
@@ -210,4 +222,24 @@
 
 .legend{
 	background-image: url(images/app/legend.png)!important;
+}
+
+.point{
+	background-image: url(images/app/point-create.png)!important;
+}
+
+.polygon{
+	background-image: url(images/app/polygon-create.png)!important;
+}
+
+.line{
+	background-image: url(images/app/line-create.png)!important;
+}
+
+.undo{
+	background-image: url(images/app/undo.png)!important;
+}
+
+.redo{
+	background-image: url(images/app/redo.png)!important;
 }

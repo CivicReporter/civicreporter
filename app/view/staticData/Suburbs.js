@@ -23,16 +23,59 @@ Ext.define('Civic.view.staticData.Suburbs', {
 				type: 'string'
 			}
 		},{
-			text: 'Zone',
-			dataIndex: 'zone_id',
+			text: 'Fire Catchment',
+			dataIndex: 'fire_catch_id',
 			width: 200,
 			editor: {
+				xtype: 'combobox',
+				store: 'staticData.Fire',
+				displayField: 'name',
+				valueField: 'catch_id',
+				queryMode: 'local',
 				allowBlank: false,
 				maxLength: 45
 			},
 			renderer: function(value, metaData, record){
-				var zonesStore = Ext.getStore('staticData.Zones');
-				var zone = zonesStore.findRecord('zone_id', value);
+				var fireStore = Ext.getStore('staticData.Fire');
+				var zone = fireStore.findRecord('catch_id', value);
+
+				return value ? zone.get('name'): '';
+			}
+		},{
+			text: 'Sewer Catchment',
+			dataIndex: 'sewer_catch_id',
+			width: 200,
+			editor: {
+				xtype: 'combobox',
+				store: 'staticData.Sewer',
+				displayField: 'name',
+				valueField: 'catch_id',
+				queryMode: 'local',
+				allowBlank: false,
+				maxLength: 45
+			},
+			renderer: function(value, metaData, record){
+				var sewerStore = Ext.getStore('staticData.Sewer');
+				var zone = sewerStore.findRecord('catch_id', value);
+
+				return value ? zone.get('name'): '';
+			}
+		},{
+			text: 'Water Catchment',
+			dataIndex: 'water_catch_id',
+			width: 200,
+			editor: {
+				xtype: 'combobox',
+				store: 'staticData.Water',
+				displayField: 'name',
+				valueField: 'catch_id',
+				queryMode: 'local',
+				allowBlank: false,
+				maxLength: 45
+			},
+			renderer: function(value, metaData, record){
+				var waterStore = Ext.getStore('staticData.Water');
+				var zone = waterStore.findRecord('catch_id', value);
 
 				return value ? zone.get('name'): '';
 			}

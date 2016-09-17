@@ -26,7 +26,7 @@
 					
 					pg_free_result($sth);
 
-					$insertQuery = "INSERT INTO staticdata.$entity(";					
+					$insertQuery = "INSERT INTO $entity(";					
 
 					foreach ($data as $key => $value) {
 						if ($key != $pkey && $data[$key] != '' && $key != 'last_update') {

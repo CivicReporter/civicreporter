@@ -26,10 +26,11 @@
 					
 					pg_free_result($sth);
 
-					$updateQuery = "UPDATE staticdata.$entity SET ";					
+					$updateQuery = "UPDATE $entity SET ";					
 
 					foreach ($data as $key => $value) {
 						if ($key != $pkey && $data[$key] != '' && $key != 'last_update') {
+							$value = strtoupper($value);
 							$updateQuery.= "$key = '$value',";
 						}
 					}

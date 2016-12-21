@@ -17,7 +17,7 @@ Ext.define( 'Civic.view.dashboard.GaugeChart', {
 		maximum: 10,
 		steps: 10,
 		margin: 7
-	}],/*
+	}]/*,
 	
 	series: [{
 		type: 'gauge',

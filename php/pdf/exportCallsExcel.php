@@ -27,9 +27,11 @@ $objPHPExcel->getProperties()->setCreator("Maarten Balliauw")
 							 ->setCategory("Test result file");
 
 //load data
-$sql = "SELECT * FROM call_engineering ";
-$sql .= "ORDER BY call_id DESC ";
-//$sql .= "inner join language l on f.language_id = l.language_id LIMIT 0,100";
+$sql = "SELECT ec.call_id, sfc.code, ec.caller, ec.nid, ec.stand_no, ss.name, ec.status, ec.reported_on
+		FROM call_engineering ec 
+		INNER JOIN staticdata.fault_codes sfc ON ec.code_id = sfc.code_id
+		INNER JOIN gis.suburb ss ON ec.suburb_id = ss.suburb_id 
+		ORDER BY status";
 
 $result = array();
 if ($resultdb = pg_query($dbh, $sql)) {
@@ -39,12 +41,11 @@ if ($resultdb = pg_query($dbh, $sql)) {
 		->setCellValue('A1', 'Call ID')
 		->setCellValue('B1', 'Fault Code')
 		->setCellValue('C1', 'Caller Name')
-		->setCellValue('D1', 'Stand No.')
-		->setCellValue('E1', 'Suburb')
-		->setCellValue('F1', 'Severity')
-		->setCellValue('G1', 'Property Damage')
-		->setCellValue('H1', 'Status')
-		->setCellValue('I1', 'Time Reported');
+		->setCellValue('D1', 'ID Number')
+		->setCellValue('E1', 'Stand No.')
+		->setCellValue('F1', 'Suburb')
+		->setCellValue('G1', 'Fault Status')
+		->setCellValue('H1', 'Time Reported');
 		
 	while($record = pg_fetch_assoc($resultdb)) {
 
@@ -58,12 +59,11 @@ if ($resultdb = pg_query($dbh, $sql)) {
             ->setCellValue('A'.($i+2), $result[$i]['call_id'])
             ->setCellValue('B'.($i+2), $result[$i]['code'])
             ->setCellValue('C'.($i+2), $result[$i]['caller'])
-            ->setCellValue('D'.($i+2), $result[$i]['stand_no'])
-            ->setCellValue('E'.($i+2), $result[$i]['suburb'])
-            ->setCellValue('F'.($i+2), $result[$i]['severity'])
-            ->setCellValue('G'.($i+2), $result[$i]['property_damage'])
-            ->setCellValue('H'.($i+2), $result[$i]['status'])
-            ->setCellValue('I'.($i+2), $result[$i]['reported_on']);
+            ->setCellValue('D'.($i+2), $result[$i]['nid'])
+            ->setCellValue('E'.($i+2), $result[$i]['stand_no'])
+            ->setCellValue('F'.($i+2), $result[$i]['name'])
+            ->setCellValue('G'.($i+2), $result[$i]['status'])
+            ->setCellValue('H'.($i+2), $result[$i]['reported_on']);
 	}
 // Rename worksheet
 $objPHPExcel->getActiveSheet()->setTitle('calls');

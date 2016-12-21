@@ -22,6 +22,13 @@ Ext.define('Civic.view.toolbar.AddEditCancelFilter', {
 			tooltip: 'Edit selected call'
 		},{
 			xtype: 'button',
+			text: 'Close',
+			itemId: 'close',
+			disabled: true,
+			iconCls: 'accept',
+			tooltip: 'Set call status to "Closed"'
+		},{
+			xtype: 'button',
 			text: 'Cancel',
 			itemId: 'cancel',
 			disabled: true,

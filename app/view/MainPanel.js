@@ -78,21 +78,21 @@ Ext.define('Civic.view.MainPanel', {
 															width: 300,
 															series: [{
 																type: 'gauge',
-																field: 'open_calls',
+																field: 'carried',
 																donut: 50,
-																colorSet: ['#ff6347','#ddd'],
+																colorSet: ['#ff6347','#ddd']/*,
 																tips: {
 																	trackMouse: true,
 																	width: 150,
 																	height: 20,
 																	renderer: function(rec, item) {
 																		this.setTitle(
-																			rec.get('open_calls') + ' faults currently OPEN'
+																			rec.get('carried') + ' faults currently OPEN'
 																		);
 																	}
-																}
+																}*/
 															}],
-															store: 'dashboard.Stations'
+															store: 'dashboard.SuburbGroups'
 														},{
 															xtype: 'piechart',
 															flex: 1,
@@ -100,7 +100,7 @@ Ext.define('Civic.view.MainPanel', {
 																type: 'pie',
 																angleField: 'calls',
 																showInLegend: true,
-																donut: 25,
+																donut: 25,/*
 																tips: {
 																	trackMouse: true,
 																	width: 155,
@@ -110,7 +110,7 @@ Ext.define('Civic.view.MainPanel', {
 																			rec.get('calls') + ' faults OPEN for ' + rec.get('name')
 																		);
 																	}
-																},
+																},*/
 																highlight: {
 																	segment: {
 																		margin: 10
@@ -129,9 +129,9 @@ Ext.define('Civic.view.MainPanel', {
 															width: 300,
 															series: [{
 																type: 'gauge',
-																field: 'pending_calls',
+																field: 'carried',
 																donut: 50,
-																colorSet: ['#3aa8cb','#ddd'],
+																colorSet: ['#3aa8cb','#ddd']/*,
 																tips: {
 																	trackMouse: true,
 																	width: 165,
@@ -141,9 +141,9 @@ Ext.define('Civic.view.MainPanel', {
 																			rec.get('pending_calls') + ' faults currently PENDING'
 																		);
 																	}
-																}
+																}*/
 															}],
-															store: 'dashboard.Stations'
+															store: 'dashboard.SuburbGroups'
 														},{												
 															xtype: 'piechart',
 															flex: 1,
@@ -191,8 +191,7 @@ Ext.define('Civic.view.MainPanel', {
 									]
 								},{
 									xtype: 'panel',
-									title: 'FAULT DISTRIBUTION BY CATCHMENT AREA FOR THE MONTH OF '+Ext.Date.format(new Date(), 'F, Y'),
-									titleAlign: 'right',
+									title: 'CALLS DISTRIBUTION BY CATCHMENT AREA '+Ext.Date.format(new Date(), 'd F, Y'),
 									layout: {
 										type: 'hbox',
 										align: 'stretch'
@@ -202,7 +201,7 @@ Ext.define('Civic.view.MainPanel', {
 										{
 											xtype: 'stationsummary',
 											flex: 1,
-											store: 'dashboard.Stations',
+											store: 'dashboard.SuburbGroups'
 										},{
 											xtype: 'barchart',
 											width: 500,

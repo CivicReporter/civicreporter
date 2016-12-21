@@ -131,8 +131,21 @@ Ext.define('Civic.view.civicr.JobsGrid', {
 				 return Civic.util.Util.renderText(value, metaData, record);
 			}
 		},{
+			text: 'Fault Code',
+			width: 80,
+			dataIndex: 'code_id',
+			filter: {
+				type: 'string'
+			},
+			renderer: function(value, metaData, record){
+				var fcStore = Ext.getStore('staticData.FaultCodes');
+				var code = fcStore.findRecord('code_id', value);
+
+				return value ? Civic.util.Util.renderText(code.get('code'), metaData, record) : '';
+			}
+		},{
 			text: 'Suburb',
-			width: 150,
+			width: 140,
 			dataIndex: 'suburb',
 			filter: {
 				type: 'string'
@@ -153,7 +166,7 @@ Ext.define('Civic.view.civicr.JobsGrid', {
 			}
 		},{
 			text: 'Station Assigned',
-			width: 150,
+			width: 200,
 			dataIndex: 'station',
 			filter: {
 				type: 'string'
@@ -163,7 +176,7 @@ Ext.define('Civic.view.civicr.JobsGrid', {
 			}
 		},{
 			text: 'Opened By',
-			width: 100,
+			width: 80,
 			dataIndex: 'opened_by',
 			filter: {
 				type: 'string'
@@ -174,7 +187,7 @@ Ext.define('Civic.view.civicr.JobsGrid', {
 		},{
 			xtype: 'datecolumn',
 			text: 'Opened On',
-			width: 140,
+			width: 130,
 			dataIndex: 'opened_on',
 			format: 'Y-m-d H:i:s',
 			filter: true,
@@ -182,8 +195,18 @@ Ext.define('Civic.view.civicr.JobsGrid', {
 				 return Civic.util.Util.renderText(value, metaData, record);
 			}
 		},{
+			xtype: 'datecolumn',
+			text: 'Assigned On',
+			width: 130,
+			dataIndex: 'assigned_on',
+			format: 'Y-m-d H:i:s',
+			filter: true,
+			renderer: function (value, metaData, record) {
+				 return Civic.util.Util.renderText(value, metaData, record);
+			}
+		},{
 			text: 'Closed By',
-			width: 100,
+			width: 80,
 			dataIndex: 'closed_by',
 			filter: {
 				type: 'string'
@@ -194,18 +217,8 @@ Ext.define('Civic.view.civicr.JobsGrid', {
 		},{
 			xtype: 'datecolumn',
 			text: 'Closed On',
-			width: 140,
+			width: 130,
 			dataIndex: 'closed_on',
-			format: 'Y-m-d H:i:s',
-			filter: true,
-			renderer: function (value, metaData, record) {
-				 return Civic.util.Util.renderText(value, metaData, record);
-			}
-		},{
-			xtype: 'datecolumn',
-			text: 'Last Update',
-			width: 140,
-			dataIndex: 'last_update',
 			format: 'Y-m-d H:i:s',
 			filter: true,
 			renderer: function (value, metaData, record) {

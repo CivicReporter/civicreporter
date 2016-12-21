@@ -6,6 +6,9 @@ Ext.define('Civic.model.public.AbstractJob', {
 			name: 'job_id',
 			type: 'int'
 		},{
+			name: 'code_id',
+			type: 'int'
+		},{
 			name: 'suburb',
 			type: 'string'
 		},{
@@ -24,6 +27,10 @@ Ext.define('Civic.model.public.AbstractJob', {
 			name: 'closed_by'
 		},{
 			name: 'closed_on',
+			type: 'date',
+			dateFormat: 'Y-m-d H:i:s'
+		},{
+			name: 'assigned_on',
 			type: 'date',
 			dateFormat: 'Y-m-d H:i:s'
 		},{

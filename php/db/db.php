@@ -5,7 +5,7 @@
 	$port = '5432';
 	$user = 'postgres';
 	$pass = 'pumkin987!';
-	$dbname = 'bcc';
+	$dbname = 'civicdb';
 	$dbh = pg_connect("host=$server port=$port user=$user password=$pass dbname=$dbname");
 	if (!$dbh){
 		printf('Connect Failed: %s\n', pg_error());

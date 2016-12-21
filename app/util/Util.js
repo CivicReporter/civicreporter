@@ -32,6 +32,10 @@ Ext.define('Civic.util.Util', {
                 	metaD.style = "color: red;";// font-weight: bold;";
                 	return Ext.isDate(val) ? Ext.util.Format.date(val, 'd M Y H:i:s'): val;
                 	break;
+            	case 'ASSIGNED':
+                	metaD.style = "color: black;";// font-weight: bold;";
+                	return Ext.isDate(val) ? Ext.util.Format.date(val, 'd M Y H:i:s'): val;
+                	break;
             	case 'PENDING':
                 	metaD.style = "color: blue;";// font-weight: bold;";
                 	return Ext.isDate(val) ? Ext.util.Format.date(val, 'd M Y H:i:s'): val;
@@ -82,6 +86,9 @@ Ext.define('Civic.util.Util', {
             		case 'OPEN':
                     	return 'red';
                     	break;
+                    case 'ASSIGNED':
+                		return 'black';
+                		break;
                     case 'PENDING':
                 		return 'blue';
                 		break;
@@ -125,17 +132,20 @@ Ext.define('Civic.util.Util', {
         },
 
         sel_template: {
-        	strokeColor: 'blue',
+        	strokeColor: 'cyan',
 			strokeOpacity: 0.7,
 			strokeWidth: 2,
-			pointRadius: 7,
-			fillOpacity: 0.7
+			pointRadius: 7//,
+			//fillOpacity: 0.7
         },
 
         staticDataStores: [
         	{
         		storeId: 'security.Groups',
 				entity: 'security.groups'
+        	},{
+        		storeId: 'security.Users',
+				entity: 'security.user'
         	},{
         		storeId: 'staticData.Callers',
 				entity: 'staticdata.caller'

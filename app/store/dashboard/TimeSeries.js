@@ -1,5 +1,5 @@
 Ext.define('Civic.store.dashboard.TimeSeries', {
-	extend: 'Ext.data.ArrayStore',
+	extend: 'Ext.data.Store',
 
 	requires: [
 		'Civic.model.dashboard.StationCalls'
@@ -9,7 +9,7 @@ Ext.define('Civic.store.dashboard.TimeSeries', {
 	
 	model: 'Civic.model.dashboard.StationCalls',
 
-	data: [
+/*	data: [
 		[Ext.Date.format(Ext.Date.subtract(new Date(), Ext.Date.DAY, 6), 'D, j'), 6],
 		[Ext.Date.format(Ext.Date.subtract(new Date(), Ext.Date.DAY, 5), 'D, j'), 3],
 		[Ext.Date.format(Ext.Date.subtract(new Date(), Ext.Date.DAY, 4), 'D, j'), 1],
@@ -18,6 +18,6 @@ Ext.define('Civic.store.dashboard.TimeSeries', {
 		[Ext.Date.format(Ext.Date.subtract(new Date(), Ext.Date.DAY, 1), 'D, j'), 3],
 		[Ext.Date.format(new Date(), 'D, j'), 5]
 	],
-
-	autoLoad: true
+*/
+	autoLoad: false
 });

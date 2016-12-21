@@ -12,7 +12,7 @@ Ext.define( 'Civic.view.dashboard.BarChart', {
 		{
 			type: 'Numeric',
 			position: 'bottom',
-			fields: ['closed_calls', 'total_calls'],
+			fields: [/* 'received',*/ 'completed', 'pending', 'carried'],
 			minimum: 0,
 			grid: true
 		},{
@@ -36,7 +36,7 @@ Ext.define( 'Civic.view.dashboard.BarChart', {
 				}
 			},*/
 			xField: 'name',
-			yField: ['closed_calls', 'total_calls']
+			yField: [/* 'received',*/ 'completed', 'pending', 'carried']
 		}
 	]
 });

@@ -272,7 +272,7 @@ Ext.define('Civic.controller.engineering.Jobs', {
 			});			
 			form.getForm().setValues({
 				station: records[0].get('station_id'),
-				status: 'PENDING'
+				status: 'ASSIGNED'
 			});
 		} else{
 			if (records[0].get('station_id') == staffStore.data.getAt(0).get('station_id')) {
@@ -300,7 +300,7 @@ Ext.define('Civic.controller.engineering.Jobs', {
 		if (record[0]) {
 			status = record[0].get('status');
 
-			if (status == 'OPEN' || status == 'PENDING') {
+			if (status == 'OPEN' || status == 'PENDING' || status == 'ASSIGNED') {
 
 				var win = Ext.widget('jobwindow');
 				var form = win.down('form');
@@ -411,7 +411,7 @@ Ext.define('Civic.controller.engineering.Jobs', {
 
 		if (action == 'cancel') {
 
-			if (status == 'OPEN' || status == 'PENDING') {
+			if (status == 'OPEN' || status == 'ASSIGNED') {
 				Ext.Msg.show({
 					title: 'Cancel Job?',
 					msg: 'Are you sure you want to cancel the selected job?',
@@ -449,7 +449,7 @@ Ext.define('Civic.controller.engineering.Jobs', {
 
 		} else if (action == 'close') {
 
-			if (status == 'OPEN' || status == 'PENDING') {
+			if (status == 'PENDING') {
 				Ext.Msg.show({
 					title: 'Close Job?',
 					msg: 'Are you sure you want to close the selected job?',
@@ -482,8 +482,11 @@ Ext.define('Civic.controller.engineering.Jobs', {
 					}
 				});
 
-			} else {
-				Civic.util.Util.showErrorMsg('This job is already '+status+' !');
+			} else if (status == 'OPEN' || status == 'ASSIGNED') {
+				Civic.util.Util.showErrorMsg('You cannot close a job which is currently '+status+' !');
+
+			}else {
+				Civic.util.Util.showErrorMsg('This job is already '+status+' !');	
 			};
 		};
 	},

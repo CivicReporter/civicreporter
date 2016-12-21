@@ -22,12 +22,14 @@ Ext.define('Civic.Application', {
         'engineering.Calls',
         'engineering.Jobs',
         'engineering.DutyRoster',
-        'gis.Map'
+        'gis.Map',
+        'reports.SewerReports'
     ],
 
     stores: [
         'menu.Menu',
         'security.Groups',
+        'security.Users',
         'staticData.ActiveStatus',
         'staticData.Callers',
         'staticData.Catchments',

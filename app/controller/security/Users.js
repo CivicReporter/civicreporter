@@ -202,18 +202,27 @@ Ext.define('Civic.controller.security.Users', {
 					dirtyOnly: true
 				});
 
-				if (values.password == values.password2) {
+				user = store.findRecord('username',values.username);
 
-					Ext.get(Ext.getBody()).mask('Saving...Please Wait...', 'loading');
+				if (user) {	
 
-					record = Ext.create('Civic.model.security.User', values);
-
-					store.add(record);
-
+					form.findField('username').markInvalid('this username is already taken');
 				} else{
+					
+					if (values.password == values.password2) {
 
-					form.findField('password2').markInvalid('passwords do not match');
+						Ext.get(Ext.getBody()).mask('Saving...Please Wait...', 'loading');
+
+						record = Ext.create('Civic.model.security.User', values);
+
+						store.add(record);
+
+					} else{
+
+						form.findField('password2').markInvalid('passwords do not match');
+					};
 				};
+					
 			
 			};
 

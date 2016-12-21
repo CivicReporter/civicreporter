@@ -30,7 +30,7 @@ class MYPDF extends TCPDF {
 		$this->SetLineWidth(0.3);
 		$this->SetFont('', 'B');
 		// Header
-		$w = array(15, 20, 65, 20, 40, 15, 30, 25, 40);
+		$w = array(15, 20, 65, 40, 20, 40, 25, 40);
 		$num_headers = count($header);
 		for($i = 0; $i < $num_headers; ++$i) {
 			$this->Cell($w[$i], 7, $header[$i], 1, 0, 'C', 1);
@@ -46,12 +46,11 @@ class MYPDF extends TCPDF {
 			$this->Cell($w[0], 6, $row['call_id'], 'LR', 0, 'L', $fill);
 			$this->Cell($w[1], 6, $row['code'], 'LR', 0, 'L', $fill);
 			$this->Cell($w[2], 6, $row['caller'], 'LR', 0, 'L', $fill);
-			$this->Cell($w[3], 6, $row['stand_no'], 'LR', 0, 'L', $fill);
-			$this->Cell($w[4], 6, $row['suburb'], 'LR', 0, 'L', $fill);
-			$this->Cell($w[5], 6, $row['severity'], 'LR', 0, 'C', $fill);
-			$this->Cell($w[6], 6, $row['property_damage'], 'LR', 0, 'C', $fill);
-			$this->Cell($w[7], 6, $row['status'], 'LR', 0, 'L', $fill);
-			$this->Cell($w[8], 6, $row['reported_on'], 'LR', 0, 'L', $fill);
+			$this->Cell($w[3], 6, $row['nid'], 'LR', 0, 'L', $fill);
+			$this->Cell($w[4], 6, $row['stand_no'], 'LR', 0, 'L', $fill);
+			$this->Cell($w[5], 6, $row['name'], 'LR', 0, 'L', $fill);
+			$this->Cell($w[6], 6, $row['status'], 'LR', 0, 'L', $fill);
+			$this->Cell($w[7], 6, $row['reported_on'], 'LR', 0, 'L', $fill);
 			$this->Ln();
 			$fill=!$fill;
 		}
@@ -60,9 +59,11 @@ class MYPDF extends TCPDF {
 }
 
 //load data
-$sql = "SELECT * FROM call_engineering ";
-$sql .= "ORDER BY call_id DESC ";
-//$sql .= "inner join language l on f.language_id = l.language_id LIMIT 0,100";
+$sql = "SELECT ec.call_id, sfc.code, ec.caller, ec.nid, ec.stand_no, ss.name, ec.status, ec.reported_on
+		FROM call_engineering ec 
+		INNER JOIN staticdata.fault_codes sfc ON ec.code_id = sfc.code_id
+		INNER JOIN gis.suburb ss ON ec.suburb_id = ss.suburb_id 
+		ORDER BY status";
 
 $result = array();
 if ($resultdb = pg_query($dbh, $sql)) {
@@ -110,7 +111,7 @@ $pdf->SetFont('helvetica', '', 10);
 $pdf->AddPage();
 
 //Column titles
-$header = array('Call Id', 'Fault Code', 'Caller Name', 'Stand No.', 'Suburb', 'Severity', 'Property Damage', 'Status', 'Time Reported');
+$header = array('Call Id', 'Fault Code', 'Caller Name', 'ID Number', 'Stand No.', 'Suburb', ' Fault Status', 'Time Reported');
 
 // print colored table
 $pdf->ColoredTable($header, $result);

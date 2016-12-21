@@ -19,7 +19,7 @@
 
 					foreach ($items as $key => $value) {
 
-						if ($key != 'shape_leng' && $key != 'shape_area' && $key != 'geom') {
+						if ($key != 'password' && $key != 'shape_leng' && $key != 'shape_area' && $key != 'geom') {
 
 							$new[$key] = $value;
 						}

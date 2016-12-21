@@ -49,6 +49,9 @@ Ext.define('Civic.controller.engineering.Calls', {
 			'engcallsgrid button#cancel': {
 				click: this.onButtonClickDelete
 			},
+			'engcallsgrid button#close': {
+				click: this.onButtonClickDelete2
+			},
 			'engcallsgrid button#clearFilter': {
 				click: this.onButtonClickClearFilter
 			},
@@ -107,10 +110,12 @@ Ext.define('Civic.controller.engineering.Calls', {
 		if (selModel.hasSelection()) {
 			
 			grid.down('button#edit').enable();
+			grid.down('button#close').enable();
 			grid.down('button#cancel').enable();
 		} else{
 
 			grid.down('button#edit').disable();
+			grid.down('button#close').disable();
 			grid.down('button#cancel').disable();
 		};
 	},
@@ -180,7 +185,8 @@ Ext.define('Civic.controller.engineering.Calls', {
 							Ext.Ajax.request({
 	                            url: 'php/engineering/calls/deleteCall.php',
 	                            params: {
-	                                call_id: record[0].get('call_id')
+	                                call_id: record[0].get('call_id'),
+	                                status: 'CANCELLED'
 	                            },
 	                            success: function(conn, response, options, eOpts) {
 
@@ -207,6 +213,58 @@ Ext.define('Civic.controller.engineering.Calls', {
 				});
 			} else {
 				Civic.util.Util.showErrorMsg('This call is currently '+status+' !');				
+			}
+		}
+	},
+
+	onButtonClickDelete2: function (button, e, options) {
+		var grid = button.up('engcallsgrid');
+		var store = grid.getStore();
+		record = grid.getSelectionModel().getSelection();
+
+		if (record[0]) {
+			status = record[0].get('status');
+			code = record[0].get('code_id');
+
+			if (status == 'OPEN' && code == 1) {
+				Ext.Msg.show({
+					title: 'Close Call?',
+					msg: 'Are you sure you want to close the selected call?',
+					buttons: Ext.Msg.YESNO,
+					icon: Ext.Msg.QUESTION,
+					fn: function (buttonId) {
+						if (buttonId == 'yes') {
+							Ext.Ajax.request({
+	                            url: 'php/engineering/calls/deleteCall.php',
+	                            params: {
+	                                call_id: record[0].get('call_id'),
+	                                status: 'CLOSED'
+	                            },
+	                            success: function(conn, response, options, eOpts) {
+
+	                                var result = Civic.util.Util.decodeJSON(conn.responseText);
+
+	                                if (result.success) {
+	                                    //Civic.util.Alert.msg('Success!', 'Call Deleted.');
+										Ext.Msg.alert('Success!', 'Call status set to "CLOSED".');
+
+	                                    store.load();
+	                                    Ext.getStore('staticData.Callers').load();                                  
+	                                } else {
+
+	                                    Civic.util.Util.showErrorMsg(conn.responseText);
+	                                }
+	                            },
+	                            failure: function(conn, response, options, eOpts) {
+
+	                                Civic.util.Util.showErrorMsg(conn.responseText);
+	                            }
+	                        });
+						};
+					}
+				});
+			} else {
+				Civic.util.Util.showErrorMsg('You cannot close this call!');				
 			}
 		}
 	},
@@ -264,6 +322,7 @@ Ext.define('Civic.controller.engineering.Calls', {
 						Ext.Msg.alert('Success', 'Call Saved Successfully!');
 						store.load();
                         Ext.getStore('staticData.Callers').load();
+                        Ext.getStore('dashboard.SuburbGroups').load();                        
 						win.close()
 					} else {
 						Civic.util.Util.showErrorMsg(result.msg);

@@ -3,7 +3,7 @@ Ext.define('Civic.controller.Main', {
 
 	stores: [
 		'dashboard.Stations',
-		'dashboard.Suburbs',
+		'dashboard.SuburbGroups',
 		'dashboard.StationCalls',
 		'dashboard.TimeSeries'		
 	],
@@ -36,8 +36,8 @@ Ext.define('Civic.controller.Main', {
 		this.listen({    
 			store: {        
 				'#dashboard.Stations': {            
-					beforesort: this.onStoreSort,
-					refresh: this.onStoreRefresh
+					//beforesort: this.onStoreSort,
+					//refresh: this.onStoreRefresh
 				}    
 			} 		
 		});
@@ -45,6 +45,7 @@ Ext.define('Civic.controller.Main', {
 	
 	onGridRender: function(component, options) {
 		component.getStore().load();
+		this.getDashboardStationsStore().load();
 	},
 	
 	onGridSelectionChange: function(model, records) {
@@ -56,16 +57,16 @@ Ext.define('Civic.controller.Main', {
 		var gchart1 = tab1.down('gaugechart'),
 			gchart2 = tab2.down('gaugechart');
 			
-		var store = this.getDashboardStationCallsStore();
+		//var store = this.getDashboardStationCallsStore();
 		
 		if(records[0]) {
-			this.highlightChartColumn(records[0]);
+			//this.highlightChartColumn(records[0]);
 			
 			if(gchart1.rendered) {
-				gchart1.series.get(0).setValue(records[0].get('open_calls'));			
+				gchart1.series.get(0).setValue(records[0].get('carried'));			
 			}
 			if(gchart2.rendered) {
-				gchart2.series.get(0).setValue(records[0].get('pending_calls'));			
+				gchart2.series.get(0).setValue(records[0].get('pending'));			
 			}
 		/*
 			rec1 = Ext.create('Civic.model.dashboard.StationCalls',{

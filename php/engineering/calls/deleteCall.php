@@ -5,10 +5,11 @@
 	session_start();
  
 	$callId = $_POST['call_id'];
+	$status = $_POST['status'];
 	$success = false;
 
 	$cancelQuery = "UPDATE engineering.call ";
-	$cancelQuery.= "SET status = 'CANCELLED' ";
+	$cancelQuery.= "SET status = '$status' ";
 	$cancelQuery.= "WHERE call_id = '$callId'";
 
 	$sth = pg_query($dbh, $cancelQuery);

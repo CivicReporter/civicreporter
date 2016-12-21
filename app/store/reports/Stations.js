@@ -1,4 +1,4 @@
-Ext.define('Civic.store.dashboard.Stations', {
+Ext.define('Civic.store.reports.Stations', {
 	extend: 'Ext.data.Store',
 
 	fields: [
@@ -25,7 +25,7 @@ Ext.define('Civic.store.dashboard.Stations', {
 
 	proxy: {
 		type: 'ajax',
-		url: 'php/dashboard/sewer.php',
+		url: 'php/reports/sewer.php',
 		extraParams: {
 			query: 'stations'
 		},

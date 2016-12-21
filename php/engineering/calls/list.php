@@ -39,7 +39,7 @@
 				if (isset($suburb)) {
 					$sql.= "AND suburb_id = '$suburb' ";
 				}
-				$sql.= "ORDER BY call_id DESC ";
+				$sql.= "ORDER BY status ";
 				$sql.= "OFFSET $offset LIMIT $limit";
 
 				if ($sth = pg_query($dbh, $sql)) {

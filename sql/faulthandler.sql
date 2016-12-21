@@ -86,7 +86,7 @@ CREATE OR REPLACE FUNCTION job_handler(jobid INTEGER, suburbid INTEGER, stationi
 							WHERE staff_id = s;
 					END IF;
 				END LOOP;
-				IF newstatus = 'PENDING' THEN --update and assign job
+				IF newstatus = 'ASSIGNED' THEN --update and assign job
 					UPDATE engineering.job
 						SET status = newstatus, station_id = stationid, geom = ST_POINTFROMTEXT(location::text, 32735)
 						WHERE job_id = jobid;
@@ -96,7 +96,7 @@ CREATE OR REPLACE FUNCTION job_handler(jobid INTEGER, suburbid INTEGER, stationi
 						WHERE job_id = jobid;
 				END IF;
 			ELSE --insert query--
-				IF newstatus = 'PENDING' THEN --create and assign job
+				IF newstatus = 'ASSIGNED' THEN --create and assign job
 					INSERT INTO engineering.job(job_id, status, suburb_id, station_id, opened_by, geom)
 						VALUES(jobid, newstatus, suburbid, stationid, createdby, ST_POINTFROMTEXT(location::text, 32735));
 					FOREACH s IN ARRAY newstaff

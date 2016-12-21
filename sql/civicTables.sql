@@ -24,7 +24,7 @@ DROP TYPE IF EXISTS jobstatus CASCADE;
 
 
 CREATE TYPE jobstatus
-  AS ENUM ('OPEN','PENDING','CLOSED','CANCELLED');
+  AS ENUM ('OPEN','ASSIGNED','PENDING','CLOSED','CANCELLED');
 
 CREATE TYPE staffstatus
   AS ENUM ('OFF DUTY','BUSY','AVAILABLE','STANDBY'); 
@@ -300,7 +300,8 @@ DROP TABLE IF EXISTS engineering.job ;
 CREATE TABLE IF NOT EXISTS engineering.job (
   job_id SERIAL NOT NULL,
   suburb_id INT,
-  station_id INT,
+  station_id INT,  
+  code_id INT NOT NULL,
   status JOBSTATUS NOT NULL DEFAULT 'OPEN',
   opened_on TIMESTAMP(0) NOT NULL DEFAULT CURRENT_TIMESTAMP,
   closed_on TIMESTAMP(0) NULL,
@@ -318,10 +319,16 @@ CREATE TABLE IF NOT EXISTS engineering.job (
     FOREIGN KEY (station_id)
     REFERENCES staticdata.station (station_id)
     ON DELETE CASCADE
+    ON UPDATE CASCADE,
+  CONSTRAINT job_faultcodes
+    FOREIGN KEY (code_id)
+    REFERENCES staticdata.fault_codes (code_id)
+    ON DELETE CASCADE
     ON UPDATE CASCADE
 );
 
 ALTER TABLE engineering.job ADD COLUMN geom GEOMETRY(POINT,32735) NOT NULL DEFAULT ST_POINTFROMTEXT('point(662413.677657099 7772452.69620407)'::text, 32735);
+CREATE INDEX job_faultcodes_idx ON engineering.job (code_id);
 CREATE INDEX job_geom_idx ON engineering.job USING GIST(geom);
 CREATE TRIGGER upd_engjob BEFORE UPDATE ON engineering.job FOR EACH ROW EXECUTE PROCEDURE upd_time();
 
@@ -846,10 +853,15 @@ CREATE SCHEMA IF NOT EXISTS gis;
 DROP VIEW IF EXISTS public.job_engineering;
 
 CREATE VIEW public.job_engineering AS(
-	SELECT ej.job_id, gs.name suburb, gst.name station, ej.status, ej.opened_on, ej.closed_on, ej.last_update, ej.opened_by, ej.closed_by, ej.geom
+	SELECT ej.job_id, gs.name suburb, gst.name station, ej.code_id, ej.status, ej.opened_on, ea.assigned_on, ej.closed_on, ej.last_update, ej.opened_by, ej.closed_by, ej.geom
 		FROM engineering.job ej
 		INNER JOIN gis.suburb gs ON ej.suburb_id = gs.suburb_id
 		LEFT OUTER JOIN gis.station gst ON ej.station_id = gst.station_id
+		LEFT OUTER JOIN(
+			SELECT job_id, MIN(assigned_on) assigned_on
+				FROM engineering.assignment
+				GROUP BY job_id
+		) ea ON ej.job_id = ea.job_id
 );
 
 -- -----------------------------------------------------
@@ -858,10 +870,10 @@ CREATE VIEW public.job_engineering AS(
 DROP VIEW IF EXISTS public.call_engineering;
 
 CREATE VIEW public.call_engineering AS(
-	SELECT ec.call_id, sfc.code, CONCAT_WS(' ', sc.firstname, sc.surname) caller, ec.caller_id, ec.job_id, ec.stand_no, ec.street, ss.name suburb, ec.severity, ec.property_damage, ec.status, ec.description, ec.reported_on, ec.last_update
-		FROM engineering.call ec INNER JOIN staticdata.fault_codes sfc ON ec.code_id = sfc.code_id
+	SELECT ec.call_id, ec.code_id, CONCAT_WS(' ', sc.firstname, sc.surname) caller, sc.nid, ec.caller_id, ec.job_id, ec.stand_no, ec.street, ec.suburb_id, ec.severity, ec.property_damage, ec.status, ec.description, ec.reported_on, ec.last_update
+		FROM engineering.call ec --INNER JOIN staticdata.fault_codes sfc ON ec.code_id = sfc.code_id
 		INNER JOIN staticdata.caller sc ON ec.caller_id = sc.caller_id
-		INNER JOIN staticdata.suburb ss ON ec.suburb_id = ss.suburb_id
+		--INNER JOIN gis.suburb ss ON ec.suburb_id = ss.suburb_id
 );
 
 -- -----------------------------------------------------
